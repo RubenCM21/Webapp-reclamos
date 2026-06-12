@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Dashboard Cliente | Claro Atención 360</title>
+
+  <meta
+    name="description"
+    content="Panel del cliente para gestionar reclamos, incidencias, servicios, seguimiento, notificaciones y atención digital."
+  />
+
+  <link rel="stylesheet" href="../assets/css/cliente.css" />
+</head>
+
+<body data-page="dashboard">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR CLIENTE -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="../index.html" class="brand">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">✦</span>
+      </a>
+      <span class="brand__tag">Atención 360</span>
+    </div>
+
+    <nav class="sidebar__nav">
+      <a href="dashboard.html" class="sidebar-link active">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="registrar-reclamo.html" class="sidebar-link">
+        <span>📝</span>
+        Registrar reclamo
+      </a>
+
+      <a href="registrar-incidencia.html" class="sidebar-link">
+        <span>⚠️</span>
+        Registrar incidencia
+      </a>
+
+      <a href="mis-casos.html" class="sidebar-link">
+        <span>🎫</span>
+        Mis casos
+      </a>
+
+      <a href="servicios-contratados.html" class="sidebar-link">
+        <span>📡</span>
+        Servicios contratados
+      </a>
+
+      <a href="notificaciones.html" class="sidebar-link">
+        <span>🔔</span>
+        Notificaciones
+        <small id="sidebarNotificationCount"></small>
+      </a>
+
+      <a href="perfil.html" class="sidebar-link">
+        <span>👤</span>
+        Perfil
+      </a>
+
+      <a href="../centro-ayuda.html" class="sidebar-link">
+        <span>❓</span>
+        Centro de ayuda
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        ClaroBot IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>🚪</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow">Panel del cliente</span>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          🔎
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <button type="button" class="notification-btn" id="notificationBtn" aria-label="Notificaciones">
+          🔔
+          <span id="notificationBadge"></span>
+        </button>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">CD</span>
+            <div>
+              <strong id="userNameTop">Cliente Demo</strong>
+              <small id="userTypeTop">Cliente Persona</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="perfil.html">Mi perfil</a>
+            <a href="servicios-contratados.html">Mis servicios</a>
+            <a href="../seleccionar-rol.html">Cambiar perfil</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard-page">
+      <!-- HERO PRINCIPAL -->
+      <section class="client-hero">
+        <div class="client-hero__content">
+          <span class="eyebrow eyebrow--red" id="welcomeSegment">Cliente digital</span>
+
+          <h2 id="welcomeTitle">
+            Gestiona tus reclamos, incidencias y servicios desde un solo lugar
+          </h2>
+
+          <p id="welcomeMessage">
+            Revisa el estado de tus casos, recibe alertas, consulta servicios contratados
+            y usa ClaroBot IA para entender qué acción corresponde realizar.
+          </p>
+
+          <div class="welcome-actions">
+            <a href="registrar-reclamo.html" class="btn btn--primary">
+              Registrar reclamo
+            </a>
+
+            <a href="registrar-incidencia.html" class="btn btn--soft">
+              Reportar incidencia
+            </a>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar a ClaroBot
+            </button>
+          </div>
+
+          <div class="hero-mini-status">
+            <article>
+              <span>🟢</span>
+              <div>
+                <strong id="accountStatus">Cuenta activa</strong>
+                <small id="lastAccess">Último acceso: hoy</small>
+              </div>
+            </article>
+
+            <article>
+              <span>⏱️</span>
+              <div>
+                <strong id="nextSlaStatus">SLA bajo control</strong>
+                <small id="nextSlaText">Sin vencimientos críticos</small>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="client-hero__visual">
+          <img
+            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=80"
+            alt="Atención digital al cliente"
+          />
+
+          <div class="hero-glass-card hero-glass-card--top">
+            <span>🤖</span>
+            <div>
+              <strong>ClaroBot IA</strong>
+              <small>Resumen inteligente disponible</small>
+            </div>
+          </div>
+
+          <div class="hero-glass-card hero-glass-card--bottom">
+            <span>🎫</span>
+            <div>
+              <strong id="heroOpenCases">3 casos activos</strong>
+              <small>Con seguimiento actualizado</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="kpiGrid">
+        <!-- MOCK DATA desde cliente.js -->
+      </section>
+
+      <!-- ACCIONES RÁPIDAS -->
+      <section class="quick-actions-section panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow eyebrow--red">Acciones rápidas</span>
+            <h2>¿Qué necesitas hacer hoy?</h2>
+          </div>
+
+          <button type="button" class="panel-action" id="quickActionAiBtn">
+            Recomendar acción
+          </button>
+        </div>
+
+        <div class="quick-action-grid">
+          <a href="registrar-reclamo.html" class="quick-action-card">
+            <span>📝</span>
+            <div>
+              <strong>Presentar reclamo</strong>
+              <p>Disconformidad por cobro, facturación, atención o servicio.</p>
+            </div>
+          </a>
+
+          <a href="registrar-incidencia.html" class="quick-action-card">
+            <span>⚠️</span>
+            <div>
+              <strong>Reportar falla técnica</strong>
+              <p>Problemas de internet, señal, acceso, lentitud o interrupción.</p>
+            </div>
+          </a>
+
+          <a href="mis-casos.html" class="quick-action-card">
+            <span>🎫</span>
+            <div>
+              <strong>Ver mis casos</strong>
+              <p>Consulta estados, SLA, respuestas y acciones pendientes.</p>
+            </div>
+          </a>
+
+          <a href="servicios-contratados.html" class="quick-action-card">
+            <span>📡</span>
+            <div>
+              <strong>Revisar servicios</strong>
+              <p>Consulta líneas, planes, servicios hogar o servicios empresa.</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- CASOS + IA -->
+      <section class="dashboard-grid">
+        <article class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow eyebrow--red">Casos recientes</span>
+              <h2>Últimos reclamos e incidencias</h2>
+            </div>
+
+            <a href="mis-casos.html" class="panel-link">
+              Ver todos
+            </a>
+          </div>
+
+          <div class="cases-list" id="recentCasesList">
+            <!-- MOCK DATA desde cliente.js -->
+          </div>
+
+          <div class="empty-state hidden" id="emptyCasesState">
+            <span>🎫</span>
+            <h3>Aún no tienes casos registrados</h3>
+            <p>Cuando registres un reclamo o incidencia, aparecerá aquí.</p>
+          </div>
+        </article>
+
+        <aside class="panel-card ai-panel">
+          <div class="ai-panel__header">
+            <span>🤖</span>
+            <div>
+              <h2>Resumen IA</h2>
+              <p>Lectura rápida de tu situación actual.</p>
+            </div>
+          </div>
+
+          <div class="ai-summary" id="aiSummary">
+            <!-- MOCK DATA desde cliente.js -->
+          </div>
+
+          <div class="ai-insight-box">
+            <span>✨</span>
+            <p>
+              La IA puede priorizar tus casos, detectar si falta evidencia y explicar el
+              siguiente paso de atención.
+            </p>
+          </div>
+
+          <button type="button" class="btn btn--primary btn--full" id="askAiAboutCases">
+            Analizar mis casos
+          </button>
+        </aside>
+      </section>
+
+      <!-- ACTIVIDAD + NOTIFICACIONES -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <article class="panel-card timeline-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow eyebrow--red">Actividad</span>
+              <h2>Últimos movimientos</h2>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshActivityBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="activity-timeline" id="activityTimeline">
+            <!-- MOCK DATA desde cliente.js -->
+          </div>
+        </article>
+
+        <article class="panel-card notifications-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow eyebrow--red">Notificaciones</span>
+              <h2>Alertas recientes</h2>
+            </div>
+
+            <a href="notificaciones.html" class="panel-link">
+              Ver todas
+            </a>
+          </div>
+
+          <div class="notifications-list" id="notificationsList">
+            <!-- MOCK DATA desde cliente.js -->
+          </div>
+        </article>
+      </section>
+
+      <!-- SERVICIOS ASOCIADOS -->
+      <section class="services-section">
+        <div class="section-heading section-heading--split">
+          <div>
+            <span class="eyebrow eyebrow--red">Servicios asociados</span>
+            <h2>Servicios vinculados a tu cuenta</h2>
+            <p>
+              Consulta tus servicios activos y reporta directamente un problema asociado.
+            </p>
+          </div>
+
+          <a href="servicios-contratados.html" class="btn btn--soft">
+            Ver servicios
+          </a>
+        </div>
+
+        <div class="services-grid" id="servicesGrid">
+          <!-- MOCK DATA desde cliente.js -->
+        </div>
+      </section>
+
+      <!-- BLOQUE VISUAL / SOPORTE -->
+      <section class="support-banner">
+        <div class="support-banner__image">
+          <img
+            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80"
+            alt="Soporte digital"
+          />
+        </div>
+
+        <div class="support-banner__content">
+          <span class="eyebrow eyebrow--red">Soporte inteligente</span>
+          <h2>Atención guiada para resolver más rápido</h2>
+          <p>
+            Antes de registrar un caso, ClaroBot puede sugerir si corresponde reclamo,
+            incidencia técnica o consulta rápida, según el servicio y el problema reportado.
+          </p>
+
+          <div class="support-banner__actions">
+            <button type="button" class="btn btn--primary" id="supportAskBotBtn">
+              Pedir orientación
+            </button>
+
+            <a href="../centro-ayuda.html" class="btn btn--ghost-dark">
+              Ir al centro de ayuda
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>ClaroBot IA</strong>
+        <small>Asistente del cliente</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Hola. Puedo ayudarte a revisar tus casos, explicar estados, sugerir evidencias o guiarte para registrar un reclamo.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Resume mis casos">
+        Resumir casos
+      </button>
+
+      <button type="button" data-bot-prompt="Qué caso requiere mi atención">
+        Caso pendiente
+      </button>
+
+      <button type="button" data-bot-prompt="Qué evidencia debo adjuntar">
+        Evidencias
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>🔎</span>
+
+        <input
+          type="text"
+          id="globalSearchInput"
+          placeholder="Buscar caso, servicio, notificación o ayuda..."
+        />
+
+        <button type="button" id="closeSearchBtn">
+          Esc
+        </button>
+      </div>
+
+      <div class="search-results" id="searchResults">
+        <!-- Resultados desde cliente.js -->
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <!-- MODAL ESPECÍFICO: VISTA RÁPIDA DE CASO -->
+  <section class="modal" id="caseQuickViewModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="caseQuickViewIcon">
+        🎫
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Vista rápida del caso
+      </span>
+
+      <h3 id="caseQuickViewTitle">
+        Detalle del caso seleccionado
+      </h3>
+
+      <p id="caseQuickViewText">
+        Revisa el estado general del caso y accede al seguimiento completo.
+      </p>
+
+      <div class="case-modal-summary" id="caseQuickViewSummary">
+        <div>
+          <span>Código</span>
+          <strong id="quickCaseCode">-</strong>
+        </div>
+
+        <div>
+          <span>Tipo</span>
+          <strong id="quickCaseType">-</strong>
+        </div>
+
+        <div>
+          <span>Servicio</span>
+          <strong id="quickCaseService">-</strong>
+        </div>
+
+        <div>
+          <span>Estado</span>
+          <strong id="quickCaseStatus">-</strong>
+        </div>
+
+        <div>
+          <span>Prioridad</span>
+          <strong id="quickCasePriority">-</strong>
+        </div>
+
+        <div>
+          <span>SLA</span>
+          <strong id="quickCaseSla">-</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <a href="detalle-caso.html" class="btn btn--primary">
+          Ver seguimiento completo
+        </a>
+
+        <a href="mis-casos.html" class="btn btn--soft">
+          Ir a mis casos
+        </a>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ESPECÍFICO: VISTA RÁPIDA DE SERVICIO -->
+  <section class="modal" id="serviceQuickViewModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">
+        📡
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Servicio contratado
+      </span>
+
+      <h3 id="serviceQuickViewTitle">
+        Detalle del servicio
+      </h3>
+
+      <p id="serviceQuickViewText">
+        Consulta información del servicio y reporta un problema asociado si lo necesitas.
+      </p>
+
+      <div class="case-modal-summary" id="serviceQuickViewSummary">
+        <div>
+          <span>Servicio</span>
+          <strong id="quickServiceName">-</strong>
+        </div>
+
+        <div>
+          <span>Plan</span>
+          <strong id="quickServicePlan">-</strong>
+        </div>
+
+        <div>
+          <span>Estado</span>
+          <strong id="quickServiceStatus">-</strong>
+        </div>
+
+        <div>
+          <span>Código</span>
+          <strong id="quickServiceCode">-</strong>
+        </div>
+
+        <div>
+          <span>Última atención</span>
+          <strong id="quickServiceLastCase">-</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <a href="registrar-incidencia.html" class="btn btn--primary">
+          Reportar incidencia
+        </a>
+
+        <a href="servicios-contratados.html" class="btn btn--soft">
+          Ver todos los servicios
+        </a>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO SOLO PARA MENSAJES SIMPLES -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">
+        ℹ
+      </div>
+
+      <h3 id="genericModalTitle">
+        Información
+      </h3>
+
+      <p id="genericModalText">
+        Mensaje del sistema.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/cliente.js"></script>
+</body>
+</html>

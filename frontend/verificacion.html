@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Verificación de cuenta | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="assets/css/verificacion.css" />
+</head>
+
+<body data-page="verificacion">
+  <main class="verification-page">
+    <section class="verification-shell">
+      <article class="verification-brand-panel">
+        <a href="index.html" class="brand">
+          <span class="brand__name">Claro</span>
+          <span class="brand__spark">✦</span>
+        </a>
+
+        <div class="brand-content">
+          <span class="eyebrow">Seguridad de acceso</span>
+
+          <h1>Verifica tu cuenta</h1>
+
+          <p>
+            Ingresa el código enviado a tu correo o celular para confirmar tu identidad
+            y continuar usando Claro Atención 360.
+          </p>
+
+          <div class="security-list">
+            <article>
+              <span>🔐</span>
+              <div>
+                <strong>Validación segura</strong>
+                <small>Código temporal de un solo uso.</small>
+              </div>
+            </article>
+
+            <article>
+              <span>⏱️</span>
+              <div>
+                <strong>Tiempo limitado</strong>
+                <small>El código vence en pocos minutos.</small>
+              </div>
+            </article>
+
+            <article>
+              <span>📩</span>
+              <div>
+                <strong>Canal verificado</strong>
+                <small>Correo, SMS o WhatsApp según disponibilidad.</small>
+              </div>
+            </article>
+          </div>
+        </div>
+      </article>
+
+      <article class="verification-card">
+        <div class="verification-card__header">
+          <span class="verification-icon">✅</span>
+
+          <span class="eyebrow eyebrow--red">Verificación</span>
+
+          <h2>Ingresa el código</h2>
+
+          <p>
+            Hemos enviado un código de 6 dígitos al medio registrado.
+          </p>
+        </div>
+
+        <form id="verificationForm" class="verification-form" novalidate>
+          <div class="verification-code" id="verificationCodeGroup">
+            <input type="text" maxlength="1" inputmode="numeric" class="verification-input" aria-label="Dígito 1" />
+            <input type="text" maxlength="1" inputmode="numeric" class="verification-input" aria-label="Dígito 2" />
+            <input type="text" maxlength="1" inputmode="numeric" class="verification-input" aria-label="Dígito 3" />
+            <input type="text" maxlength="1" inputmode="numeric" class="verification-input" aria-label="Dígito 4" />
+            <input type="text" maxlength="1" inputmode="numeric" class="verification-input" aria-label="Dígito 5" />
+            <input type="text" maxlength="1" inputmode="numeric" class="verification-input" aria-label="Dígito 6" />
+          </div>
+
+          <small class="form-error" id="verificationCodeError"></small>
+
+          <div class="verification-info">
+            <span>⏳</span>
+            <p>
+              Código válido por <strong id="verificationTimer">03:00</strong>.
+            </p>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--full" id="verifyAccountBtn">
+            <span class="btn-text">Verificar cuenta</span>
+            <span class="btn-loader"></span>
+          </button>
+
+          <div class="divider">
+            <span>¿No recibiste el código?</span>
+          </div>
+
+          <button type="button" class="btn btn--soft btn--full" id="resendCodeBtn">
+            Reenviar código
+          </button>
+
+          <div class="verification-hint">
+            <span>💡</span>
+            <p>
+              Para probar el flujo en frontend, usa el código demo:
+              <strong>123456</strong>.
+            </p>
+          </div>
+
+          <div class="verification-links">
+            <a href="login.html">Volver al inicio de sesión</a>
+            <a href="centro-ayuda.html">Necesito ayuda</a>
+          </div>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <section class="modal" id="verificationSuccessModal" aria-hidden="true">
+    <div class="modal__content">
+      <div class="modal__icon modal__icon--success">✓</div>
+
+      <h3>Cuenta verificada</h3>
+
+      <p>
+        Tu cuenta fue verificada correctamente. Ahora puedes iniciar sesión en la plataforma.
+      </p>
+
+      <div class="modal__actions">
+        <a href="login.html" class="btn btn--primary">
+          Ir al login
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="verificationErrorModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon modal__icon--warning">!</div>
+
+      <h3>Código incorrecto</h3>
+
+      <p>
+        Revisa el código ingresado o solicita uno nuevo.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Intentar nuevamente
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="assets/js/verificacion.js"></script>
+</body>
+</html>

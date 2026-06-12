@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Mis casos | Claro Atención 360</title>
+
+  <meta
+    name="description"
+    content="Listado de reclamos e incidencias del cliente con filtros, seguimiento, SLA, prioridad, acciones rápidas y análisis IA."
+  />
+
+  <link rel="stylesheet" href="../assets/css/cliente.css" />
+</head>
+
+<body data-page="mis-casos">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR CLIENTE -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="../index.html" class="brand">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">✦</span>
+      </a>
+      <span class="brand__tag">Atención 360</span>
+    </div>
+
+    <nav class="sidebar__nav">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="registrar-reclamo.html" class="sidebar-link">
+        <span>📝</span>
+        Registrar reclamo
+      </a>
+
+      <a href="registrar-incidencia.html" class="sidebar-link">
+        <span>⚠️</span>
+        Registrar incidencia
+      </a>
+
+      <a href="mis-casos.html" class="sidebar-link active">
+        <span>🎫</span>
+        Mis casos
+      </a>
+
+      <a href="servicios-contratados.html" class="sidebar-link">
+        <span>📡</span>
+        Servicios contratados
+      </a>
+
+      <a href="notificaciones.html" class="sidebar-link">
+        <span>🔔</span>
+        Notificaciones
+        <small id="sidebarNotificationCount"></small>
+      </a>
+
+      <a href="perfil.html" class="sidebar-link">
+        <span>👤</span>
+        Perfil
+      </a>
+
+      <a href="../centro-ayuda.html" class="sidebar-link">
+        <span>❓</span>
+        Centro de ayuda
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        ClaroBot IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>🚪</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow">Seguimiento y trazabilidad</span>
+          <h1 id="pageTitle">Mis casos</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          🔎
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <button type="button" class="notification-btn" id="notificationBtn" aria-label="Notificaciones">
+          🔔
+          <span id="notificationBadge"></span>
+        </button>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">CD</span>
+            <div>
+              <strong id="userNameTop">Cliente Demo</strong>
+              <small id="userTypeTop">Cliente Persona</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="perfil.html">Mi perfil</a>
+            <a href="servicios-contratados.html">Mis servicios</a>
+            <a href="../seleccionar-rol.html">Cambiar perfil</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard-page">
+      <!-- HERO -->
+      <section class="cases-hero">
+        <div class="cases-hero__content">
+          <span class="eyebrow eyebrow--red">Historial de atención</span>
+
+          <h2>
+            Consulta, prioriza y da seguimiento a todos tus casos
+          </h2>
+
+          <p>
+            Desde esta vista puedes revisar reclamos e incidencias, filtrar por estado,
+            identificar pendientes, ver SLA, abrir el detalle completo o consultar a ClaroBot IA.
+          </p>
+
+          <div class="welcome-actions">
+            <a href="registrar-reclamo.html" class="btn btn--primary">
+              Nuevo reclamo
+            </a>
+
+            <a href="registrar-incidencia.html" class="btn btn--soft">
+              Nueva incidencia
+            </a>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Resumen IA
+            </button>
+          </div>
+        </div>
+
+        <div class="cases-hero__visual">
+          <img
+            src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=900&q=80"
+            alt="Gestión de casos digitales"
+          />
+
+          <div class="hero-glass-card hero-glass-card--top">
+            <span>🎫</span>
+            <div>
+              <strong id="casesHeroTotal">Casos activos</strong>
+              <small>Seguimiento centralizado</small>
+            </div>
+          </div>
+
+          <div class="hero-glass-card hero-glass-card--bottom">
+            <span>⏱️</span>
+            <div>
+              <strong id="casesHeroSla">SLA monitoreado</strong>
+              <small>Alertas preventivas</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESUMEN -->
+      <section class="case-summary-grid" id="casesSummaryGrid">
+        <article class="case-summary-card">
+          <span>🎫</span>
+          <div>
+            <strong id="summaryTotalCases">0</strong>
+            <p>Total de casos</p>
+          </div>
+        </article>
+
+        <article class="case-summary-card">
+          <span>🟡</span>
+          <div>
+            <strong id="summaryInProgress">0</strong>
+            <p>En atención</p>
+          </div>
+        </article>
+
+        <article class="case-summary-card">
+          <span>🔴</span>
+          <div>
+            <strong id="summaryPendingClient">0</strong>
+            <p>Pendientes por cliente</p>
+          </div>
+        </article>
+
+        <article class="case-summary-card">
+          <span>🟢</span>
+          <div>
+            <strong id="summaryResolved">0</strong>
+            <p>Resueltos</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- BARRA DE FILTROS -->
+      <section class="cases-toolbar panel-card">
+        <div class="cases-toolbar__top">
+          <div class="search-box-large">
+            <span>🔎</span>
+            <input
+              id="casesSearchInput"
+              type="text"
+              placeholder="Buscar por código, título, servicio, estado o prioridad..."
+            />
+          </div>
+
+          <div class="view-toggle">
+            <button type="button" class="view-toggle__btn active" id="casesCardViewBtn" data-view="cards">
+              Cards
+            </button>
+
+            <button type="button" class="view-toggle__btn" id="casesTableViewBtn" data-view="table">
+              Tabla
+            </button>
+          </div>
+        </div>
+
+        <div class="case-filters">
+          <button type="button" class="filter-chip active" data-case-filter="todos">
+            Todos
+          </button>
+
+          <button type="button" class="filter-chip" data-case-filter="Reclamo">
+            Reclamos
+          </button>
+
+          <button type="button" class="filter-chip" data-case-filter="Incidencia">
+            Incidencias
+          </button>
+
+          <button type="button" class="filter-chip" data-case-filter="En atención">
+            En atención
+          </button>
+
+          <button type="button" class="filter-chip" data-case-filter="Pendiente por cliente">
+            Pendiente por cliente
+          </button>
+
+          <button type="button" class="filter-chip" data-case-filter="Resuelto">
+            Resueltos
+          </button>
+
+          <button type="button" class="filter-chip" data-case-filter="SLA crítico">
+            SLA crítico
+          </button>
+        </div>
+
+        <div class="advanced-filter-row">
+          <div class="form-group">
+            <label for="casesTypeFilter">Tipo</label>
+            <select id="casesTypeFilter">
+              <option value="todos">Todos</option>
+              <option value="Reclamo">Reclamo</option>
+              <option value="Incidencia">Incidencia</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="casesStatusFilter">Estado</label>
+            <select id="casesStatusFilter">
+              <option value="todos">Todos</option>
+              <option value="Registrado">Registrado</option>
+              <option value="En atención">En atención</option>
+              <option value="Pendiente por cliente">Pendiente por cliente</option>
+              <option value="Resuelto">Resuelto</option>
+              <option value="Cerrado">Cerrado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="casesPriorityFilter">Prioridad</label>
+            <select id="casesPriorityFilter">
+              <option value="todos">Todas</option>
+              <option value="Baja">Baja</option>
+              <option value="Media">Media</option>
+              <option value="Alta">Alta</option>
+              <option value="Crítica">Crítica</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="casesSortSelect">Ordenar por</label>
+            <select id="casesSortSelect">
+              <option value="reciente">Más recientes</option>
+              <option value="sla">SLA más cercano</option>
+              <option value="prioridad">Mayor prioridad</option>
+              <option value="estado">Estado</option>
+            </select>
+          </div>
+
+          <div class="form-group advanced-filter-action">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn--primary btn--full" id="applyAdvancedCasesFilter">
+              Aplicar
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTENIDO PRINCIPAL -->
+      <section class="cases-page-layout cases-page-layout--enhanced">
+        <article class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow eyebrow--red">Listado</span>
+              <h2>Casos registrados</h2>
+            </div>
+
+            <div class="panel-actions-group">
+              <button type="button" class="panel-action" id="exportCasesBtn">
+                Exportar
+              </button>
+
+              <button type="button" class="panel-action" id="refreshCasesBtn">
+                Actualizar
+              </button>
+            </div>
+          </div>
+
+          <!-- Vista de cards -->
+          <div class="cases-list cases-list--cards" id="allCasesList">
+            <!-- MOCK DATA desde cliente.js -->
+          </div>
+
+          <!-- Vista de tabla -->
+          <div class="cases-table-wrap hidden" id="casesTableWrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Tipo</th>
+                  <th>Servicio</th>
+                  <th>Estado</th>
+                  <th>Prioridad</th>
+                  <th>SLA</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="casesTableBody">
+                <!-- MOCK DATA desde cliente.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="empty-state hidden" id="emptyAllCasesState">
+            <span>🎫</span>
+            <h3>No se encontraron casos</h3>
+            <p>Cambia los filtros o registra un nuevo reclamo o incidencia.</p>
+          </div>
+        </article>
+
+        <aside class="form-side-stack">
+          <article class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>Análisis IA</h2>
+                <p>Resumen automático de tus casos.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="casesAiSummary">
+              <!-- MOCK DATA desde cliente.js -->
+            </div>
+
+            <div class="ai-insight-box">
+              <span>✨</span>
+              <p>
+                La IA puede detectar casos con riesgo de vencimiento, pendientes por cliente
+                o reclamos que requieren evidencia adicional.
+              </p>
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeAllCasesBtn">
+              Analizar lista
+            </button>
+          </article>
+
+          <article class="panel-card priority-panel">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow eyebrow--red">Prioridad</span>
+                <h2>Acciones sugeridas</h2>
+              </div>
+            </div>
+
+            <div class="suggestion-list" id="caseSuggestionList">
+              <article>
+                <span>📎</span>
+                <div>
+                  <strong>Adjuntar evidencia pendiente</strong>
+                  <p>Un caso podría requerir información adicional.</p>
+                </div>
+              </article>
+
+              <article>
+                <span>⏱️</span>
+                <div>
+                  <strong>Revisar SLA próximo</strong>
+                  <p>Prioriza los casos con menor tiempo restante.</p>
+                </div>
+              </article>
+
+              <article>
+                <span>🔔</span>
+                <div>
+                  <strong>Responder solicitudes</strong>
+                  <p>Atiende los mensajes del asesor para evitar retrasos.</p>
+                </div>
+              </article>
+            </div>
+          </article>
+
+          <article class="mini-image-card">
+            <img
+              src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=700&q=80"
+              alt="Seguimiento digital de casos"
+            />
+
+            <div>
+              <span class="eyebrow eyebrow--red">Seguimiento 360</span>
+              <h3>Todo el caso en una sola vista</h3>
+              <p>Abre el detalle para ver historial, evidencias, solicitudes y encuesta de cierre.</p>
+            </div>
+          </article>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>ClaroBot IA</strong>
+        <small>Asistente de casos</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">
+        ×
+      </button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Hola. Puedo resumir tus casos, identificar pendientes, ordenar por prioridad o explicar los estados.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Resume mis casos">
+        Resumen
+      </button>
+
+      <button type="button" data-bot-prompt="Qué caso requiere mi atención">
+        Pendiente
+      </button>
+
+      <button type="button" data-bot-prompt="Explica los estados">
+        Estados
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>🔎</span>
+
+        <input
+          type="text"
+          id="globalSearchInput"
+          placeholder="Buscar caso, servicio, ayuda, notificación o estado..."
+        />
+
+        <button type="button" id="closeSearchBtn">
+          Esc
+        </button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <!-- MODAL ESPECÍFICO: VISTA RÁPIDA DE CASO -->
+  <section class="modal" id="caseQuickViewModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>
+        ×
+      </button>
+
+      <div class="modal__icon" id="caseQuickViewIcon">
+        🎫
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Vista rápida del caso
+      </span>
+
+      <h3 id="caseQuickViewTitle">
+        Detalle del caso seleccionado
+      </h3>
+
+      <p id="caseQuickViewText">
+        Revisa el estado general del caso y accede al seguimiento completo.
+      </p>
+
+      <div class="case-modal-summary case-modal-summary--grid" id="caseQuickViewSummary">
+        <div>
+          <span>Código</span>
+          <strong id="quickCaseCode">-</strong>
+        </div>
+
+        <div>
+          <span>Tipo</span>
+          <strong id="quickCaseType">-</strong>
+        </div>
+
+        <div>
+          <span>Servicio</span>
+          <strong id="quickCaseService">-</strong>
+        </div>
+
+        <div>
+          <span>Estado</span>
+          <strong id="quickCaseStatus">-</strong>
+        </div>
+
+        <div>
+          <span>Prioridad</span>
+          <strong id="quickCasePriority">-</strong>
+        </div>
+
+        <div>
+          <span>SLA</span>
+          <strong id="quickCaseSla">-</strong>
+        </div>
+
+        <div>
+          <span>Última actualización</span>
+          <strong id="quickCaseLastUpdate">-</strong>
+        </div>
+
+        <div>
+          <span>Acción pendiente</span>
+          <strong id="quickCasePendingAction">-</strong>
+        </div>
+
+        <div class="summary-full">
+          <span>Descripción</span>
+          <strong id="quickCaseDescription">-</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <a href="detalle-caso.html" class="btn btn--primary">
+          Ver seguimiento completo
+        </a>
+
+        <button type="button" class="btn btn--soft" id="quickCaseAskAiBtn">
+          Analizar con IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ESPECÍFICO: FILTROS APLICADOS / EXPORTACIÓN -->
+  <section class="modal" id="casesExportModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>
+        ×
+      </button>
+
+      <div class="modal__icon">
+        📄
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Exportación preparada
+      </span>
+
+      <h3>
+        Tus casos están listos para exportarse
+      </h3>
+
+      <p>
+        Cuando se conecte el backend, esta acción generará un reporte con los filtros aplicados.
+      </p>
+
+      <div class="case-modal-summary">
+        <div>
+          <span>Formato</span>
+          <strong>Excel / PDF</strong>
+        </div>
+
+        <div>
+          <span>Origen</span>
+          <strong>Mis casos</strong>
+        </div>
+
+        <div>
+          <span>Estado</span>
+          <strong>Preparado para backend</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO SOLO PARA MENSAJES SIMPLES -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>
+        ×
+      </button>
+
+      <div class="modal__icon" id="genericModalIcon">
+        ℹ
+      </div>
+
+      <h3 id="genericModalTitle">
+        Información
+      </h3>
+
+      <p id="genericModalText">
+        Mensaje del sistema.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/cliente.js"></script>
+</body>
+</html>

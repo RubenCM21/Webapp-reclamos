@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Integraciones | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+
+<body data-page="admin-integraciones">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Administrador</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación administrador">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="usuarios.html" class="sidebar-link">
+        <span>👤</span>
+        Usuarios
+        <small id="sidebarUserCount">0</small>
+      </a>
+
+      <a href="roles-permisos.html" class="sidebar-link">
+        <span>🔐</span>
+        Roles y permisos
+      </a>
+
+      <a href="catalogos.html" class="sidebar-link">
+        <span>🧩</span>
+        Catálogos
+      </a>
+
+      <a href="reglas-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Reglas SLA
+      </a>
+
+      <a href="indicadores-reportes.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores y reportes
+      </a>
+
+      <a href="integraciones.html" class="sidebar-link active">
+        <span>🔌</span>
+        Integraciones
+        <small id="sidebarIntegrationAlerts">0</small>
+      </a>
+
+      <a href="auditoria.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="respaldo.html" class="sidebar-link">
+        <span>💾</span>
+        Respaldo
+      </a>
+
+      <a href="configuracion-sistema.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Conectividad del sistema</span>
+          <h1>Integraciones</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="auditoria.html" class="notification-btn" aria-label="Alertas administrativas">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AD</span>
+            <div>
+              <strong id="userNameTop">Administrador Demo</strong>
+              <small id="userRoleTop">Administrador del sistema</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores-reportes.html">Indicadores y reportes</a>
+            <a href="auditoria.html">Auditoría</a>
+            <a href="configuracion-sistema.html">Configuración</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="integrationsHeroEyebrow">
+            Servicios conectados
+          </span>
+
+          <h2 id="integrationsHeroTitle">
+            Administra APIs, correo, autenticación, CRM, webhooks y notificaciones
+          </h2>
+
+          <p id="integrationsHeroText">
+            Controla el estado de las integraciones externas, última sincronización,
+            credenciales, errores, servicios activos, webhooks y trazabilidad técnica.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="openCreateIntegrationBtn">
+              Nueva integración
+            </button>
+
+            <button type="button" class="btn btn--soft" id="testAllIntegrationsBtn">
+              Probar conexiones
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="integrationsSummaryTitle">Integraciones dinámicas</strong>
+            <small id="integrationsSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="integrationsKpiGrid" aria-label="Indicadores de integraciones"></section>
+
+      <!-- GRÁFICOS -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Estado general</span>
+              <h2>Integraciones por estado</h2>
+              <p>
+                Distribución de integraciones activas, con alerta, en error o deshabilitadas.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshIntegrationStatusBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="donut-layout">
+            <div class="donut-card" id="integrationStatusDonut"></div>
+            <div class="donut-legend" id="integrationStatusLegend"></div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Sincronización</span>
+              <h2>Últimas ejecuciones</h2>
+              <p>
+                Registro visual de sincronizaciones correctas, pendientes y fallidas.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshIntegrationSyncBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="bar-chart" id="integrationSyncChart"></div>
+        </section>
+      </section>
+
+      <!-- INTEGRACIONES + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Directorio técnico</span>
+              <h2>Integraciones configuradas</h2>
+              <p>
+                Filtra servicios externos por tipo, estado, criticidad, última sincronización o responsable.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshIntegrationsBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="toggleIntegrationsViewBtn">
+                Vista tabla
+              </button>
+
+              <button type="button" class="panel-action" id="exportIntegrationsBtn">
+                Exportar
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="integrationSearch"
+                type="search"
+                placeholder="Buscar integración, tipo, estado, endpoint, responsable o última sincronización..."
+              />
+            </div>
+
+            <div class="case-filters" id="integrationFilters">
+              <button type="button" class="filter-chip active" data-integration-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-integration-filter="activas">
+                Activas
+              </button>
+
+              <button type="button" class="filter-chip" data-integration-filter="alerta">
+                Con alerta
+              </button>
+
+              <button type="button" class="filter-chip" data-integration-filter="error">
+                Error
+              </button>
+
+              <button type="button" class="filter-chip" data-integration-filter="api">
+                API
+              </button>
+
+              <button type="button" class="filter-chip" data-integration-filter="webhook">
+                Webhooks
+              </button>
+
+              <button type="button" class="filter-chip" data-integration-filter="seguridad">
+                Seguridad
+              </button>
+            </div>
+          </div>
+
+          <!-- VISTA CARDS -->
+          <div class="integration-card-grid" id="integrationCardList"></div>
+
+          <!-- VISTA TABLA -->
+          <div class="cases-table-wrap hidden" id="integrationTableWrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>Integración</th>
+                  <th>Tipo</th>
+                  <th>Estado</th>
+                  <th>Última sincronización</th>
+                  <th>Responsable</th>
+                  <th>Criticidad</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="integrationTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="empty-state hidden" id="emptyIntegrationsState">
+            <span>🔌</span>
+            <h3>No hay integraciones con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de integraciones</h2>
+                <p>Revisión de errores, alertas, servicios críticos y sincronización.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="integrationsAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeIntegrationsBtn">
+              Analizar integraciones
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Plan técnico</span>
+                <h2>Acciones sugeridas</h2>
+                <p>Secuencia recomendada para mantener conectividad estable.</p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="integrationsActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- WEBHOOKS Y EVENTOS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Eventos técnicos</span>
+            <h2>Webhooks y eventos recientes</h2>
+            <p>
+              Últimas llamadas, respuestas, errores y eventos recibidos desde servicios conectados.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="refreshWebhookEventsBtn">
+              Actualizar
+            </button>
+
+            <button type="button" class="panel-action" id="exportWebhookEventsBtn">
+              Exportar eventos
+            </button>
+          </div>
+        </div>
+
+        <div class="activity-timeline" id="webhookEventsTimeline"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar usuario, rol, catálogo, SLA, integración, reporte o evento..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Integraciones</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a revisar integraciones con error, alertas de sincronización, webhooks fallidos o servicios críticos.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Qué integraciones tienen error">
+        Errores
+      </button>
+
+      <button type="button" data-bot-prompt="Qué integraciones críticas debo revisar">
+        Críticas
+      </button>
+
+      <button type="button" data-bot-prompt="Resume últimas sincronizaciones">
+        Sincronización
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE INTEGRACIÓN -->
+  <section class="modal" id="integrationDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="integrationDetailIcon">🔌</div>
+      <span class="eyebrow eyebrow--red">Detalle de integración</span>
+      <h3 id="integrationDetailTitle">Integración seleccionada</h3>
+      <p id="integrationDetailText">Información técnica de la integración.</p>
+
+      <div class="case-modal-summary" id="integrationDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="integrationEditBtn">
+          Editar integración
+        </button>
+
+        <button type="button" class="btn btn--soft" id="integrationTestBtn">
+          Probar conexión
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="integrationLogsBtn">
+          Ver logs
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CREAR / EDITAR INTEGRACIÓN -->
+  <section class="modal" id="integrationFormModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔌</div>
+      <span class="eyebrow eyebrow--red" id="integrationFormEyebrow">Integración</span>
+      <h3 id="integrationFormTitle">Nueva integración</h3>
+      <p id="integrationFormText">
+        Registra un servicio externo, API, webhook, autenticación o canal de notificación.
+      </p>
+
+      <form class="admin-form" id="integrationForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="integrationName">Nombre de integración</label>
+            <input id="integrationName" type="text" placeholder="Ej. Servicio de correo transaccional" />
+          </div>
+
+          <div class="form-group">
+            <label for="integrationType">Tipo</label>
+            <select id="integrationType">
+              <option value="">Seleccionar</option>
+              <option value="API">API</option>
+              <option value="Webhook">Webhook</option>
+              <option value="Correo">Correo</option>
+              <option value="Autenticación">Autenticación</option>
+              <option value="CRM">CRM</option>
+              <option value="Notificaciones">Notificaciones</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="integrationStatus">Estado</label>
+            <select id="integrationStatus">
+              <option value="">Seleccionar</option>
+              <option value="Activa">Activa</option>
+              <option value="Con alerta">Con alerta</option>
+              <option value="Error">Error</option>
+              <option value="Deshabilitada">Deshabilitada</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="integrationCriticality">Criticidad</label>
+            <select id="integrationCriticality">
+              <option value="">Seleccionar</option>
+              <option value="Alta">Alta</option>
+              <option value="Media">Media</option>
+              <option value="Baja">Baja</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="integrationEndpoint">Endpoint / URL</label>
+          <input id="integrationEndpoint" type="text" placeholder="https://api.servicio.com/v1/..." />
+        </div>
+
+        <div class="form-group">
+          <label for="integrationDescription">Descripción</label>
+          <textarea id="integrationDescription" placeholder="Describe el uso, dependencia y alcance de la integración."></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="integrationDeclaration" />
+          <span>Confirmo que la integración fue revisada y no expone credenciales visibles.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="saveIntegrationBtn">
+          Guardar integración
+        </button>
+
+        <button type="button" class="btn btn--soft" id="suggestIntegrationBtn">
+          Validar IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL LOGS INTEGRACIÓN -->
+  <section class="modal" id="integrationLogsModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📄</div>
+      <span class="eyebrow eyebrow--red">Logs técnicos</span>
+      <h3 id="integrationLogsTitle">Eventos de integración</h3>
+      <p>Últimos eventos registrados para el servicio seleccionado.</p>
+
+      <div class="activity-timeline" id="integrationLogsTimeline"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="exportIntegrationLogsBtn">
+          Exportar logs
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>

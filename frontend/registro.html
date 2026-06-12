@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Crear cuenta | Claro Atención 360</title>
+
+  <meta
+    name="description"
+    content="Registro de clientes personas y empresas para acceder a Claro Atención 360."
+  />
+
+  <link rel="stylesheet" href="assets/css/registro.css" />
+</head>
+
+<body>
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <header class="register-header">
+    <div class="register-header__inner">
+      <a href="index.html" class="brand">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">✦</span>
+        <span class="brand__tag">Atención 360</span>
+      </a>
+
+      <nav class="register-header__nav">
+        <a href="index.html">Inicio</a>
+        <a href="consulta-rapida.html">Consulta rápida</a>
+        <a href="centro-ayuda.html">Centro de ayuda</a>
+        <button type="button" id="themeToggle" class="theme-toggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+        <a href="login.html" class="login-link">Iniciar sesión</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="register-page">
+    <section class="register-hero">
+      <div class="register-hero__content">
+        <span class="eyebrow">Registro inteligente</span>
+        <h1>Crea tu cuenta y gestiona tus casos en tiempo real</h1>
+        <p>
+          Accede a reclamos, incidencias, historial, evidencias, notificaciones y asistencia IA
+          desde una sola plataforma.
+        </p>
+
+        <div class="hero-benefits">
+          <article>
+            <span>📝</span>
+            <div>
+              <strong>Registro guiado</strong>
+              <p>Completa tus datos con validaciones inteligentes.</p>
+            </div>
+          </article>
+
+          <article>
+            <span>🔔</span>
+            <div>
+              <strong>Alertas y seguimiento</strong>
+              <p>Recibe actualizaciones sobre tus casos.</p>
+            </div>
+          </article>
+
+          <article>
+            <span>🤖</span>
+            <div>
+              <strong>ClaroBot IA</strong>
+              <p>Obtén ayuda para crear tu cuenta y usar la plataforma.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="register-hero__visual">
+        <div class="visual-card visual-card--main">
+          <div class="visual-card__top">
+            <span class="pulse-dot"></span>
+            <strong>Validación segura</strong>
+          </div>
+
+          <div class="identity-preview">
+            <div class="avatar-preview">👤</div>
+            <div>
+              <span>Cliente verificado</span>
+              <strong id="previewClientType">Persona natural</strong>
+            </div>
+          </div>
+
+          <div class="mini-progress">
+            <span style="width: 68%"></span>
+          </div>
+
+          <small>Tu cuenta estará lista en pocos pasos.</small>
+        </div>
+
+        <div class="visual-card visual-card--floating">
+          <span>🔐</span>
+          <strong>OTP activo</strong>
+          <small>Confirmación por correo o celular</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="register-panel">
+      <div class="register-card">
+        <div class="register-card__header">
+          <span class="register-icon">✨</span>
+          <h2>Crear cuenta</h2>
+          <p>Selecciona el tipo de cliente y completa la información requerida.</p>
+        </div>
+
+        <div class="account-tabs" id="accountTabs">
+          <button type="button" class="account-tab active" data-account-type="persona">
+            👤 Persona
+          </button>
+          <button type="button" class="account-tab" data-account-type="empresa">
+            🏢 Empresa
+          </button>
+        </div>
+
+        <div class="stepper" aria-label="Progreso de registro">
+          <div class="stepper__item active" data-step-indicator="1">
+            <span>1</span>
+            Identidad
+          </div>
+          <div class="stepper__item" data-step-indicator="2">
+            <span>2</span>
+            Contacto
+          </div>
+          <div class="stepper__item" data-step-indicator="3">
+            <span>3</span>
+            Servicio
+          </div>
+          <div class="stepper__item" data-step-indicator="4">
+            <span>4</span>
+            Seguridad
+          </div>
+        </div>
+
+        <form
+          id="registerForm"
+          class="register-form"
+          data-endpoint="/api/auth/register"
+          data-method="POST"
+          novalidate
+        >
+          <input type="hidden" id="accountType" name="accountType" value="persona" />
+
+          <!-- STEP 1 -->
+          <section class="form-step active" data-step="1">
+            <div class="step-heading">
+              <h3>Datos de identidad</h3>
+              <p>Usaremos esta información para validar tu cuenta.</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="documentType" id="documentTypeLabel">Tipo de documento</label>
+                <select id="documentType" name="documentType">
+                  <option value="">Seleccionar</option>
+                  <option value="DNI">DNI</option>
+                  <option value="CE">Carné de extranjería</option>
+                  <option value="RUC">RUC</option>
+                </select>
+                <small class="form-error" id="documentTypeError"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="documentNumber" id="documentNumberLabel">Número de documento</label>
+                <div class="input-wrapper">
+                  <span>🪪</span>
+                  <input
+                    id="documentNumber"
+                    name="documentNumber"
+                    type="text"
+                    placeholder="Ejemplo: 76543210"
+                  />
+                  <button type="button" id="verifyDocumentBtn" class="mini-btn">
+                    Validar
+                  </button>
+                </div>
+                <small class="form-error" id="documentNumberError"></small>
+              </div>
+            </div>
+
+            <div class="form-grid persona-fields">
+              <div class="form-group">
+                <label for="firstName">Nombres</label>
+                <input id="firstName" name="firstName" type="text" placeholder="Ingresa tus nombres" />
+                <small class="form-error" id="firstNameError"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="lastName">Apellidos</label>
+                <input id="lastName" name="lastName" type="text" placeholder="Ingresa tus apellidos" />
+                <small class="form-error" id="lastNameError"></small>
+              </div>
+            </div>
+
+            <div class="empresa-fields hidden">
+              <div class="form-group">
+                <label for="businessName">Razón social</label>
+                <input
+                  id="businessName"
+                  name="businessName"
+                  type="text"
+                  placeholder="Ejemplo: Empresa Demo S.A.C."
+                />
+                <small class="form-error" id="businessNameError"></small>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="representativeName">Representante</label>
+                  <input
+                    id="representativeName"
+                    name="representativeName"
+                    type="text"
+                    placeholder="Nombre del representante"
+                  />
+                  <small class="form-error" id="representativeNameError"></small>
+                </div>
+
+                <div class="form-group">
+                  <label for="businessArea">Área solicitante</label>
+                  <select id="businessArea" name="businessArea">
+                    <option value="">Seleccionar</option>
+                    <option value="TI">TI</option>
+                    <option value="Administración">Administración</option>
+                    <option value="Operaciones">Operaciones</option>
+                    <option value="Comercial">Comercial</option>
+                  </select>
+                  <small class="form-error" id="businessAreaError"></small>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- STEP 2 -->
+          <section class="form-step" data-step="2">
+            <div class="step-heading">
+              <h3>Datos de contacto</h3>
+              <p>Recibirás notificaciones y códigos de validación en estos medios.</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="email">Correo electrónico</label>
+                <div class="input-wrapper">
+                  <span>✉️</span>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="usuario@correo.com"
+                    autocomplete="email"
+                  />
+                </div>
+                <small class="form-error" id="emailError"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Celular</label>
+                <div class="input-wrapper">
+                  <span>📱</span>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="text"
+                    placeholder="Ejemplo: 987654321"
+                  />
+                </div>
+                <small class="form-error" id="phoneError"></small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="address">Dirección</label>
+              <input
+                id="address"
+                name="address"
+                type="text"
+                placeholder="Av., calle, distrito, provincia"
+              />
+              <small class="form-error" id="addressError"></small>
+            </div>
+
+            <div class="notification-box">
+              <div>
+                <strong>Preferencias de notificación</strong>
+                <p>Selecciona cómo deseas recibir avisos sobre tus casos.</p>
+              </div>
+
+              <label>
+                <input type="checkbox" name="notifyEmail" checked />
+                Correo
+              </label>
+
+              <label>
+                <input type="checkbox" name="notifySms" checked />
+                SMS
+              </label>
+
+              <label>
+                <input type="checkbox" name="notifyWhatsApp" />
+                WhatsApp
+              </label>
+            </div>
+          </section>
+
+          <!-- STEP 3 -->
+          <section class="form-step" data-step="3">
+            <div class="step-heading">
+              <h3>Servicio asociado</h3>
+              <p>Relaciona tu cuenta con un servicio para facilitar reclamos e incidencias.</p>
+            </div>
+
+            <div class="service-selector">
+              <button type="button" class="service-option active" data-service-type="movil">
+                <span>📱</span>
+                Móvil
+              </button>
+
+              <button type="button" class="service-option" data-service-type="hogar">
+                <span>🏠</span>
+                Hogar
+              </button>
+
+              <button type="button" class="service-option" data-service-type="tv">
+                <span>📺</span>
+                TV
+              </button>
+
+              <button type="button" class="service-option" data-service-type="empresa">
+                <span>🏢</span>
+                Empresa
+              </button>
+            </div>
+
+            <input type="hidden" id="serviceType" name="serviceType" value="movil" />
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="serviceNumber">Número o código de servicio</label>
+                <input
+                  id="serviceNumber"
+                  name="serviceNumber"
+                  type="text"
+                  placeholder="Ejemplo: 987654321 / SRV-EMP-001"
+                />
+                <small class="form-error" id="serviceNumberError"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="planType">Tipo de plan</label>
+                <select id="planType" name="planType">
+                  <option value="">Seleccionar</option>
+                  <option value="Postpago">Postpago</option>
+                  <option value="Prepago">Prepago</option>
+                  <option value="Internet Hogar">Internet Hogar</option>
+                  <option value="Claro TV+">Claro TV+</option>
+                  <option value="Corporativo">Corporativo</option>
+                  <option value="Cloud">Cloud</option>
+                </select>
+                <small class="form-error" id="planTypeError"></small>
+              </div>
+            </div>
+
+            <div class="diagnostic-card">
+              <div>
+                <span>🤖</span>
+              </div>
+              <div>
+                <strong>Validación inteligente de servicio</strong>
+                <p id="serviceDiagnosticText">
+                  Al conectar backend, se verificará automáticamente si el servicio existe y está activo.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- STEP 4 -->
+          <section class="form-step" data-step="4">
+            <div class="step-heading">
+              <h3>Seguridad de cuenta</h3>
+              <p>Crea una contraseña segura y confirma la validación de identidad.</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="password">Contraseña</label>
+                <div class="input-wrapper">
+                  <span>🔒</span>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="Crea una contraseña"
+                    autocomplete="new-password"
+                  />
+                  <button type="button" class="mini-btn" id="togglePassword">
+                    Ver
+                  </button>
+                </div>
+                <small class="form-error" id="passwordError"></small>
+
+                <div class="password-meter">
+                  <span id="passwordMeterBar"></span>
+                </div>
+                <small class="password-meter-text" id="passwordMeterText">
+                  Seguridad: pendiente
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword">Confirmar contraseña</label>
+                <div class="input-wrapper">
+                  <span>🔒</span>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="Repite la contraseña"
+                    autocomplete="new-password"
+                  />
+                </div>
+                <small class="form-error" id="confirmPasswordError"></small>
+              </div>
+            </div>
+
+            <div class="terms-box">
+              <label>
+                <input type="checkbox" id="acceptTerms" name="acceptTerms" />
+                <span>
+                  Acepto los términos de uso, política de privacidad y tratamiento de datos
+                  para la gestión de reclamos e incidencias.
+                </span>
+              </label>
+              <small class="form-error" id="acceptTermsError"></small>
+            </div>
+
+            <div class="otp-box">
+              <div>
+                <strong>Validación OTP</strong>
+                <p>Antes de finalizar se enviará un código simulado al correo o celular registrado.</p>
+              </div>
+
+              <button type="button" class="btn btn--soft" id="sendOtpBtn">
+                Enviar OTP
+              </button>
+            </div>
+          </section>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn--ghost" id="prevStepBtn" disabled>
+              Anterior
+            </button>
+
+            <button type="button" class="btn btn--primary" id="nextStepBtn">
+              Siguiente
+            </button>
+
+            <button type="submit" class="btn btn--primary hidden" id="submitRegisterBtn">
+              <span class="btn-text">Crear cuenta</span>
+              <span class="btn-loader"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="register-side-panel">
+        <div class="side-panel-card">
+          <div class="side-panel-card__header">
+            <span>🤖</span>
+            <strong>Asistente de registro</strong>
+          </div>
+
+          <p id="sideAssistantText">
+            Completa los datos de identidad. Puedo ayudarte a validar el tipo de cuenta y detectar campos faltantes.
+          </p>
+
+          <button type="button" class="btn btn--soft btn--full" id="openAssistantFromPanel">
+            Abrir ClaroBot IA
+          </button>
+        </div>
+
+        <div class="side-panel-card">
+          <div class="side-panel-card__header">
+            <span>🛡️</span>
+            <strong>Cuenta protegida</strong>
+          </div>
+
+          <ul>
+            <li>Validación por documento</li>
+            <li>Confirmación OTP simulada</li>
+            <li>Contraseña segura</li>
+            <li>Registro preparado para auditoría</li>
+          </ul>
+        </div>
+
+        <div class="side-panel-card side-panel-card--red">
+          <strong>¿Ya tienes cuenta?</strong>
+          <p>Ingresa a tu panel para consultar reclamos, incidencias y notificaciones.</p>
+          <a href="login.html" class="btn btn--light btn--full">Iniciar sesión</a>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- ASISTENTE IA -->
+  <aside class="ai-drawer" id="aiDrawer" aria-hidden="true">
+    <div class="ai-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>ClaroBot IA</strong>
+        <small>Asistente de registro</small>
+      </div>
+
+      <button type="button" id="closeAiDrawer">×</button>
+    </div>
+
+    <div class="ai-drawer__messages" id="aiMessages">
+      <div class="message message--bot">
+        Hola. Te puedo ayudar a crear tu cuenta, elegir tipo de cliente o validar datos.
+      </div>
+    </div>
+
+    <div class="ai-drawer__quick">
+      <button type="button" data-ai-prompt="Soy persona natural">
+        Soy persona
+      </button>
+      <button type="button" data-ai-prompt="Soy empresa">
+        Soy empresa
+      </button>
+      <button type="button" data-ai-prompt="Qué datos necesito">
+        Datos necesarios
+      </button>
+      <button type="button" data-ai-prompt="Ayúdame con la contraseña">
+        Contraseña segura
+      </button>
+    </div>
+
+    <form class="ai-drawer__form" id="aiForm">
+      <input id="aiInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <button class="floating-ai" id="openAiDrawer" type="button">
+    <span>🤖</span>
+    Ayuda IA
+  </button>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODALES -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <section class="modal" id="otpModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔐</div>
+      <h3>Validación OTP</h3>
+      <p>
+        Ingresa el código de 6 dígitos enviado de forma simulada a tu correo o celular.
+      </p>
+
+      <div class="otp-inputs" id="otpInputs">
+        <input maxlength="1" inputmode="numeric" />
+        <input maxlength="1" inputmode="numeric" />
+        <input maxlength="1" inputmode="numeric" />
+        <input maxlength="1" inputmode="numeric" />
+        <input maxlength="1" inputmode="numeric" />
+        <input maxlength="1" inputmode="numeric" />
+      </div>
+
+      <small class="otp-hint">
+        Código demo: <strong>123456</strong>
+      </small>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="validateOtpBtn">
+          Validar OTP
+        </button>
+        <button type="button" class="btn btn--ghost" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="successModal" aria-hidden="true">
+    <div class="modal__content">
+      <div class="modal__icon modal__icon--success">✓</div>
+      <h3>Cuenta creada correctamente</h3>
+      <p id="successModalText">
+        Tu cuenta fue registrada. Ahora podrás acceder a Claro Atención 360.
+      </p>
+
+      <div class="success-summary" id="successSummary"></div>
+
+      <div class="modal__actions">
+        <a href="login.html" class="btn btn--primary">
+          Ir a iniciar sesión
+        </a>
+        <a href="index.html" class="btn btn--ghost">
+          Volver al inicio
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="assets/js/registro.js"></script>
+</body>
+</html>

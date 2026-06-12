@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Estado de servicios | Claro Atención 360</title>
+
+  <meta
+    name="description"
+    content="Consulta el estado de servicios móviles, hogar, TV, cloud y empresariales en Claro Atención 360."
+  />
+
+  <link rel="stylesheet" href="assets/css/estado-servicios.css" />
+</head>
+
+<body>
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a href="index.html" class="brand">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">✦</span>
+        <span class="brand__tag">Atención 360</span>
+      </a>
+
+      <nav class="topbar__nav">
+        <a href="index.html">Inicio</a>
+        <a href="consulta-rapida.html">Consulta rápida</a>
+        <a href="centro-ayuda.html">Centro de ayuda</a>
+        <a href="cliente/registrar-incidencia.html">Reportar incidencia</a>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+        <a href="login.html" class="login-btn">Mi Claro</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="status-page">
+    <section class="status-hero">
+      <div class="status-hero__bg">
+        <div class="status-hero__grid"></div>
+      </div>
+
+      <div class="status-hero__content">
+        <div class="hero-copy">
+          <span class="eyebrow">Monitoreo de servicios</span>
+          <h1>Consulta el estado de tus servicios en tiempo real</h1>
+          <p>
+            Revisa disponibilidad, intermitencias, mantenimientos e incidencias activas
+            para servicios de Personas y Empresas.
+          </p>
+
+          <div class="segment-switch" id="segmentSwitch">
+            <button type="button" class="segment-btn active" data-segment="personas">
+              👤 Personas
+            </button>
+            <button type="button" class="segment-btn" data-segment="empresas">
+              🏢 Empresas
+            </button>
+          </div>
+        </div>
+
+        <aside class="status-control-card">
+          <div class="status-control-card__header">
+            <span>📡</span>
+            <div>
+              <h2>Consulta por ubicación</h2>
+              <p>Filtra servicios por zona o tipo de servicio.</p>
+            </div>
+          </div>
+
+          <form
+            id="statusFilterForm"
+            class="status-filter-form"
+            data-endpoint="/api/public/service-status"
+            data-method="GET"
+          >
+            <div class="form-group">
+              <label for="district">Distrito / zona</label>
+              <select id="district" name="district">
+                <option value="todos">Todos</option>
+                <option value="lima">Lima Metropolitana</option>
+                <option value="callao">Callao</option>
+                <option value="norte">Lima Norte</option>
+                <option value="sur">Lima Sur</option>
+                <option value="este">Lima Este</option>
+                <option value="provincias">Provincias</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="serviceType">Tipo de servicio</label>
+              <select id="serviceType" name="serviceType">
+                <option value="todos">Todos</option>
+                <option value="movil">Red móvil</option>
+                <option value="internet">Internet hogar</option>
+                <option value="tv">TV</option>
+                <option value="cloud">Cloud</option>
+                <option value="correo">Correo empresas</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full">
+              Consultar estado
+            </button>
+          </form>
+
+          <div class="status-mini-summary">
+            <div>
+              <span>Disponibilidad general</span>
+              <strong id="availabilityScore">94%</strong>
+            </div>
+
+            <span class="status-pill status-pill--ok" id="generalStatus">Operativo</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="status-dashboard">
+      <div class="section-heading">
+        <span class="eyebrow eyebrow--red">Panel operativo</span>
+        <h2 id="dashboardTitle">Estado de servicios para Personas</h2>
+        <p id="dashboardSubtitle">
+          Servicios móviles, hogar y TV monitoreados con alertas simuladas.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <article class="kpi-card">
+          <span class="kpi-card__icon">✅</span>
+          <div>
+            <strong id="kpiOperational">4</strong>
+            <p>Servicios operativos</p>
+          </div>
+        </article>
+
+        <article class="kpi-card">
+          <span class="kpi-card__icon">⚠️</span>
+          <div>
+            <strong id="kpiWarnings">1</strong>
+            <p>Intermitencias</p>
+          </div>
+        </article>
+
+        <article class="kpi-card">
+          <span class="kpi-card__icon">🛠️</span>
+          <div>
+            <strong id="kpiMaintenance">1</strong>
+            <p>Mantenimientos</p>
+          </div>
+        </article>
+
+        <article class="kpi-card">
+          <span class="kpi-card__icon">🚨</span>
+          <div>
+            <strong id="kpiIncidents">1</strong>
+            <p>Incidencias activas</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="services-grid" id="servicesGrid"></div>
+    </section>
+
+    <section class="map-section">
+      <div class="map-layout">
+        <article class="map-card">
+          <div class="map-card__header">
+            <div>
+              <span class="eyebrow eyebrow--red">Mapa de cobertura</span>
+              <h2>Vista geográfica simulada</h2>
+            </div>
+
+            <button type="button" class="btn btn--ghost-dark" id="refreshMapBtn">
+              Actualizar mapa
+            </button>
+          </div>
+
+          <div class="coverage-map" id="coverageMap">
+            <div class="map-zone zone-ok" style="top: 18%; left: 18%;">
+              <span>Lima Norte</span>
+            </div>
+
+            <div class="map-zone zone-warning" style="top: 38%; left: 48%;">
+              <span>Lima Centro</span>
+            </div>
+
+            <div class="map-zone zone-ok" style="top: 64%; left: 32%;">
+              <span>Lima Sur</span>
+            </div>
+
+            <div class="map-zone zone-danger" style="top: 48%; left: 72%;">
+              <span>Lima Este</span>
+            </div>
+
+            <div class="map-zone zone-maintenance" style="top: 75%; left: 70%;">
+              <span>Provincias</span>
+            </div>
+
+            <div class="map-radar"></div>
+          </div>
+
+          <div class="map-legend">
+            <span><i class="legend-dot legend-ok"></i> Operativo</span>
+            <span><i class="legend-dot legend-warning"></i> Intermitencia</span>
+            <span><i class="legend-dot legend-danger"></i> Incidencia</span>
+            <span><i class="legend-dot legend-maintenance"></i> Mantenimiento</span>
+          </div>
+        </article>
+
+        <aside class="alerts-card">
+          <div class="alerts-card__header">
+            <span>🔔</span>
+            <div>
+              <h2>Alertas activas</h2>
+              <p>Eventos detectados en la red.</p>
+            </div>
+          </div>
+
+          <div class="alerts-list" id="alertsList"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="incidents-section">
+      <div class="section-heading">
+        <span class="eyebrow eyebrow--red">Incidencias y mantenimiento</span>
+        <h2>Eventos activos reportados</h2>
+        <p>
+          Revisa incidencias masivas, mantenimientos programados y afectaciones por servicio.
+        </p>
+      </div>
+
+      <div class="incident-toolbar">
+        <div class="search-box">
+          <span>🔎</span>
+          <input
+            id="incidentSearch"
+            type="text"
+            placeholder="Buscar por servicio, zona o estado..."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="toolbar-actions">
+          <button type="button" class="filter-chip active" data-incident-filter="todos">
+            Todos
+          </button>
+          <button type="button" class="filter-chip" data-incident-filter="incidencia">
+            Incidencias
+          </button>
+          <button type="button" class="filter-chip" data-incident-filter="mantenimiento">
+            Mantenimiento
+          </button>
+          <button type="button" class="filter-chip" data-incident-filter="resuelto">
+            Resueltos
+          </button>
+        </div>
+      </div>
+
+      <div class="incidents-table-wrapper">
+        <table class="incidents-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Servicio</th>
+              <th>Zona</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Inicio</th>
+              <th>Estimación</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="incidentsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="diagnostic-section">
+      <div class="diagnostic-card">
+        <div>
+          <span class="eyebrow">Diagnóstico rápido</span>
+          <h2>¿Tu servicio presenta problemas?</h2>
+          <p>
+            Ejecuta un diagnóstico simulado para determinar si debes esperar,
+            revisar ayuda o registrar una incidencia.
+          </p>
+        </div>
+
+        <form
+          id="diagnosticForm"
+          class="diagnostic-form"
+          data-endpoint="/api/public/service-status/diagnostic"
+          data-method="POST"
+        >
+          <select id="diagnosticService" name="service">
+            <option value="">Servicio afectado</option>
+            <option value="movil">Red móvil</option>
+            <option value="internet">Internet hogar</option>
+            <option value="tv">TV</option>
+            <option value="cloud">Cloud empresa</option>
+            <option value="correo">Correo empresa</option>
+          </select>
+
+          <select id="diagnosticSymptom" name="symptom">
+            <option value="">Síntoma</option>
+            <option value="lento">Lentitud</option>
+            <option value="sin-servicio">Sin servicio</option>
+            <option value="intermitente">Intermitencia</option>
+            <option value="error-acceso">Error de acceso</option>
+          </select>
+
+          <button type="submit" class="btn btn--light">
+            Analizar
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>ClaroBot IA</strong>
+        <small>Asistente de servicios</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Hola. Puedo ayudarte a interpretar el estado de servicios, revisar alertas o sugerir si debes reportar una incidencia.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Explica el estado operativo">
+        Estado operativo
+      </button>
+      <button type="button" data-bot-prompt="Tengo internet lento">
+        Internet lento
+      </button>
+      <button type="button" data-bot-prompt="Debo reportar incidencia">
+        Reportar incidencia
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <button type="button" class="floating-bot" id="floatingBot">
+    <span>🤖</span>
+    ClaroBot IA
+  </button>
+
+  <button type="button" class="accessibility-btn" aria-label="Accesibilidad">
+    ♿
+  </button>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <section class="modal" id="incidentModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="incidentModalIcon">📡</div>
+      <h3 id="incidentModalTitle">Detalle del evento</h3>
+      <p id="incidentModalText">Información del evento.</p>
+
+      <div class="incident-detail-box" id="incidentDetailBox"></div>
+
+      <div class="modal__actions">
+        <a href="cliente/registrar-incidencia.html" class="btn btn--primary">
+          Reportar incidencia
+        </a>
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="assets/js/estado-servicios.js"></script>
+</body>
+</html>

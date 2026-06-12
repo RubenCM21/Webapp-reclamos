@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Reglas SLA | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+
+<body data-page="admin-reglas-sla">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Administrador</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación administrador">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="usuarios.html" class="sidebar-link">
+        <span>👤</span>
+        Usuarios
+        <small id="sidebarUserCount">0</small>
+      </a>
+
+      <a href="roles-permisos.html" class="sidebar-link">
+        <span>🔐</span>
+        Roles y permisos
+      </a>
+
+      <a href="catalogos.html" class="sidebar-link">
+        <span>🧩</span>
+        Catálogos
+      </a>
+
+      <a href="reglas-sla.html" class="sidebar-link active">
+        <span>⏱️</span>
+        Reglas SLA
+      </a>
+
+      <a href="indicadores-reportes.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores y reportes
+      </a>
+
+      <a href="integraciones.html" class="sidebar-link">
+        <span>🔌</span>
+        Integraciones
+        <small id="sidebarIntegrationAlerts">0</small>
+      </a>
+
+      <a href="auditoria.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="respaldo.html" class="sidebar-link">
+        <span>💾</span>
+        Respaldo
+      </a>
+
+      <a href="configuracion-sistema.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Configuración de tiempos</span>
+          <h1>Reglas SLA</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="auditoria.html" class="notification-btn" aria-label="Alertas administrativas">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AD</span>
+            <div>
+              <strong id="userNameTop">Administrador Demo</strong>
+              <small id="userRoleTop">Administrador del sistema</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="catalogos.html">Catálogos</a>
+            <a href="indicadores-reportes.html">Indicadores y reportes</a>
+            <a href="auditoria.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="slaRulesHeroEyebrow">
+            Parámetros de atención
+          </span>
+
+          <h2 id="slaRulesHeroTitle">
+            Configura SLA por tipo de caso, prioridad, canal y área responsable
+          </h2>
+
+          <p id="slaRulesHeroText">
+            Define tiempos de atención, umbrales de alerta, reglas de vencimiento,
+            condiciones de escalamiento y responsables internos para reclamos e incidencias.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="openCreateSlaRuleBtn">
+              Nueva regla SLA
+            </button>
+
+            <button type="button" class="btn btn--soft" id="validateSlaRulesBtn">
+              Validar reglas
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="slaRulesSummaryTitle">Reglas SLA dinámicas</strong>
+            <small id="slaRulesSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="slaRulesKpiGrid" aria-label="Indicadores de reglas SLA"></section>
+
+      <!-- GRÁFICOS -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Comparativo</span>
+              <h2>SLA configurado por prioridad</h2>
+              <p>
+                Tiempo máximo de atención definido para cada nivel de prioridad.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshSlaPriorityChartBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="bar-chart" id="slaPriorityChart"></div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Estado</span>
+              <h2>Reglas activas, inactivas y en revisión</h2>
+              <p>
+                Distribución del estado administrativo de las reglas SLA.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshSlaStatusChartBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="donut-layout">
+            <div class="donut-card" id="slaStatusDonut"></div>
+            <div class="donut-legend" id="slaStatusLegend"></div>
+          </div>
+        </section>
+      </section>
+
+      <!-- REGLAS + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Matriz SLA</span>
+              <h2>Reglas configuradas</h2>
+              <p>
+                Filtra reglas por tipo de caso, prioridad, canal, cliente, categoría o área destino.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshSlaRulesBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="toggleSlaRulesViewBtn">
+                Vista tabla
+              </button>
+
+              <button type="button" class="panel-action" id="exportSlaRulesBtn">
+                Exportar
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="slaRuleSearch"
+                type="search"
+                placeholder="Buscar por tipo, prioridad, canal, categoría, área o estado..."
+              />
+            </div>
+
+            <div class="case-filters" id="slaRuleFilters">
+              <button type="button" class="filter-chip active" data-sla-rule-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-rule-filter="reclamos">
+                Reclamos
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-rule-filter="incidencias">
+                Incidencias
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-rule-filter="criticas">
+                Críticas
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-rule-filter="activas">
+                Activas
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-rule-filter="revision">
+                En revisión
+              </button>
+            </div>
+          </div>
+
+          <!-- VISTA CARDS -->
+          <div class="sla-rule-grid" id="slaRuleCardList"></div>
+
+          <!-- VISTA TABLA -->
+          <div class="cases-table-wrap hidden" id="slaRuleTableWrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>Regla</th>
+                  <th>Tipo</th>
+                  <th>Prioridad</th>
+                  <th>Canal</th>
+                  <th>Tiempo SLA</th>
+                  <th>Alerta</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="slaRuleTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="empty-state hidden" id="emptySlaRulesState">
+            <span>⏱️</span>
+            <h3>No hay reglas SLA con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de SLA</h2>
+                <p>Revisión de reglas inconsistentes, tiempos críticos y alertas tardías.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="slaRulesAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeSlaRulesBtn">
+              Analizar SLA
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Control recomendado</span>
+                <h2>Checklist SLA</h2>
+                <p>Validación previa a cambios de reglas de atención.</p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="slaRulesActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar usuario, rol, catálogo, SLA, integración, reporte o evento..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Reglas SLA</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a detectar reglas duplicadas, umbrales tardíos, SLA inconsistentes o rutas de escalamiento incompletas.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Valida inconsistencias SLA">
+        Validar SLA
+      </button>
+
+      <button type="button" data-bot-prompt="Detecta reglas SLA críticas">
+        Críticas
+      </button>
+
+      <button type="button" data-bot-prompt="Recomienda umbrales de alerta">
+        Umbrales
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE SLA -->
+  <section class="modal" id="slaRuleDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="slaRuleDetailIcon">⏱️</div>
+      <span class="eyebrow eyebrow--red">Detalle de regla SLA</span>
+      <h3 id="slaRuleDetailTitle">Regla seleccionada</h3>
+      <p id="slaRuleDetailText">Información funcional de la regla SLA.</p>
+
+      <div class="case-modal-summary" id="slaRuleDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="slaRuleEditBtn">
+          Editar regla
+        </button>
+
+        <button type="button" class="btn btn--soft" id="slaRuleDuplicateBtn">
+          Duplicar regla
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="slaRuleAuditBtn">
+          Ver auditoría
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CREAR / EDITAR REGLA SLA -->
+  <section class="modal" id="slaRuleFormModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">⏱️</div>
+      <span class="eyebrow eyebrow--red" id="slaRuleFormEyebrow">Regla SLA</span>
+      <h3 id="slaRuleFormTitle">Nueva regla SLA</h3>
+      <p id="slaRuleFormText">
+        Define las condiciones y tiempos de atención para la regla SLA.
+      </p>
+
+      <form class="admin-form" id="slaRuleForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="slaRuleName">Nombre de regla</label>
+            <input id="slaRuleName" type="text" placeholder="Ej. Incidencia crítica técnica" />
+          </div>
+
+          <div class="form-group">
+            <label for="slaRuleCaseType">Tipo de caso</label>
+            <select id="slaRuleCaseType">
+              <option value="">Seleccionar</option>
+              <option value="Reclamo">Reclamo</option>
+              <option value="Incidencia">Incidencia</option>
+              <option value="Solicitud">Solicitud</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaRulePriority">Prioridad</label>
+            <select id="slaRulePriority">
+              <option value="">Seleccionar</option>
+              <option value="Crítica">Crítica</option>
+              <option value="Alta">Alta</option>
+              <option value="Media">Media</option>
+              <option value="Baja">Baja</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaRuleChannel">Canal</label>
+            <select id="slaRuleChannel">
+              <option value="">Seleccionar</option>
+              <option value="Portal cliente">Portal cliente</option>
+              <option value="Call center">Call center</option>
+              <option value="App">App</option>
+              <option value="Correo">Correo</option>
+              <option value="Todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaRuleTime">Tiempo SLA</label>
+            <select id="slaRuleTime">
+              <option value="">Seleccionar</option>
+              <option value="4 horas">4 horas</option>
+              <option value="8 horas">8 horas</option>
+              <option value="24 horas">24 horas</option>
+              <option value="48 horas">48 horas</option>
+              <option value="72 horas">72 horas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaRuleAlert">Alerta preventiva</label>
+            <select id="slaRuleAlert">
+              <option value="">Seleccionar</option>
+              <option value="1 hora antes">1 hora antes</option>
+              <option value="2 horas antes">2 horas antes</option>
+              <option value="4 horas antes">4 horas antes</option>
+              <option value="8 horas antes">8 horas antes</option>
+              <option value="24 horas antes">24 horas antes</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaRuleArea">Área responsable</label>
+            <select id="slaRuleArea">
+              <option value="">Seleccionar</option>
+              <option value="Atención al cliente">Atención al cliente</option>
+              <option value="Soporte técnico">Soporte técnico</option>
+              <option value="Facturación">Facturación</option>
+              <option value="Backoffice">Backoffice</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaRuleStatus">Estado</label>
+            <select id="slaRuleStatus">
+              <option value="">Seleccionar</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+              <option value="En revisión">En revisión</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="slaRuleDescription">Descripción</label>
+          <textarea id="slaRuleDescription" placeholder="Describe cuándo se aplica la regla SLA."></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="slaRuleDeclaration" />
+          <span>Confirmo que la regla SLA fue revisada y no duplica otra configuración.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="saveSlaRuleBtn">
+          Guardar regla
+        </button>
+
+        <button type="button" class="btn btn--soft" id="suggestSlaRuleBtn">
+          Sugerir IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>

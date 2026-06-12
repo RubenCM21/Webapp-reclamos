@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Centro de ayuda | Claro Atención 360</title>
+
+  <meta
+    name="description"
+    content="Centro de ayuda inteligente para clientes Personas y Empresas de Claro Atención 360."
+  />
+
+  <link rel="stylesheet" href="assets/css/centro-ayuda.css" />
+</head>
+
+<body>
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a href="index.html" class="brand">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">✦</span>
+        <span class="brand__tag">Atención 360</span>
+      </a>
+
+      <nav class="topbar__nav">
+        <a href="index.html">Inicio</a>
+        <a href="consulta-rapida.html">Consulta rápida</a>
+        <a href="cliente/registrar-reclamo.html">Registrar reclamo</a>
+        <a href="estado-servicios.html">Estado de servicios</a>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+        <a href="login.html" class="login-btn">Mi Claro</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="help-page">
+    <section class="help-hero">
+      <div class="help-hero__bg">
+        <div class="help-hero__grid"></div>
+      </div>
+
+      <div class="help-hero__content">
+        <div class="help-copy">
+          <span class="eyebrow">Centro de ayuda inteligente</span>
+          <h1>Encuentra respuestas, guía tu reclamo o resuelve una incidencia</h1>
+          <p>
+            Busca soluciones para servicios móviles, hogar, TV, empresas, cloud,
+            facturación, reclamos e incidencias con apoyo de ClaroBot IA.
+          </p>
+
+          <div class="segment-switch" id="segmentSwitch">
+            <button type="button" class="segment-btn active" data-segment="personas">
+              👤 Personas
+            </button>
+            <button type="button" class="segment-btn" data-segment="empresas">
+              🏢 Empresas
+            </button>
+          </div>
+        </div>
+
+        <section class="smart-search-card">
+          <div class="smart-search-card__header">
+            <span>🤖</span>
+            <div>
+              <h2>Hola, soy ClaroBot IA</h2>
+              <p>Describe tu problema y te sugeriré la mejor ruta de atención.</p>
+            </div>
+          </div>
+
+          <div class="smart-search">
+            <input
+              id="helpSearchInput"
+              type="text"
+              placeholder="Ejemplo: mi internet está lento, cobro indebido, correo empresa no funciona..."
+              autocomplete="off"
+            />
+            <button type="button" id="helpSearchBtn">Buscar</button>
+          </div>
+
+          <div class="prompt-list">
+            <button type="button" data-prompt="Mi internet está lento">
+              Internet lento
+            </button>
+            <button type="button" data-prompt="Tengo un cobro indebido">
+              Cobro indebido
+            </button>
+            <button type="button" data-prompt="Quiero consultar un reclamo">
+              Consultar reclamo
+            </button>
+            <button type="button" data-prompt="El correo de mi empresa no funciona">
+              Soporte empresa
+            </button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="quick-help-section">
+      <div class="section-heading">
+        <span class="eyebrow eyebrow--red">Accesos rápidos</span>
+        <h2 id="quickTitle">¿Qué necesitas hacer?</h2>
+        <p id="quickSubtitle">
+          Selecciona una acción común para resolver tu consulta rápidamente.
+        </p>
+      </div>
+
+      <div class="quick-grid" id="quickGrid"></div>
+    </section>
+
+    <section class="categories-section">
+      <div class="section-heading section-heading--center">
+        <span class="eyebrow eyebrow--red">Categorías</span>
+        <h2 id="categoriesTitle">Temas frecuentes para Personas</h2>
+        <p>
+          Encuentra artículos, pasos de solución y recomendaciones según el tipo de servicio.
+        </p>
+      </div>
+
+      <div class="categories-grid" id="categoriesGrid"></div>
+    </section>
+
+    <section class="diagnostic-section">
+      <div class="diagnostic-layout">
+        <article class="diagnostic-card">
+          <span class="eyebrow eyebrow--red">Diagnóstico guiado</span>
+          <h2>Responde unas preguntas y detectaremos la mejor acción</h2>
+          <p>
+            El asistente puede sugerir si corresponde registrar un reclamo, una incidencia,
+            consultar un caso o revisar artículos de ayuda.
+          </p>
+
+          <form
+            id="diagnosticForm"
+            class="diagnostic-form"
+            data-endpoint="/api/help/diagnostic"
+            data-method="POST"
+          >
+            <div class="form-group">
+              <label for="diagnosticService">Servicio afectado</label>
+              <select id="diagnosticService" name="service">
+                <option value="">Seleccionar</option>
+                <option value="movil">Móvil</option>
+                <option value="hogar">Internet hogar</option>
+                <option value="tv">TV</option>
+                <option value="cloud">Cloud empresa</option>
+                <option value="correo">Correo empresa</option>
+                <option value="facturacion">Facturación</option>
+              </select>
+              <small class="form-error" id="diagnosticServiceError"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="diagnosticProblem">Describe el problema</label>
+              <textarea
+                id="diagnosticProblem"
+                name="problem"
+                placeholder="Describe brevemente qué está ocurriendo..."
+              ></textarea>
+              <small class="form-error" id="diagnosticProblemError"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="diagnosticUrgency">Nivel de urgencia</label>
+              <select id="diagnosticUrgency" name="urgency">
+                <option value="">Seleccionar</option>
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+                <option value="critica">Crítica</option>
+              </select>
+              <small class="form-error" id="diagnosticUrgencyError"></small>
+            </div>
+
+            <button type="submit" class="btn btn--primary">
+              Analizar con IA
+            </button>
+          </form>
+        </article>
+
+        <aside class="diagnostic-result" id="diagnosticResult">
+          <div class="empty-diagnostic">
+            <span>🧭</span>
+            <h3>Resultado del diagnóstico</h3>
+            <p>
+              Completa el formulario para recibir una recomendación inteligente.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <div class="faq-layout">
+        <div class="faq-copy">
+          <span class="eyebrow eyebrow--red">Preguntas frecuentes</span>
+          <h2>Respuestas rápidas para las dudas más comunes</h2>
+          <p>
+            Filtra por categoría o consulta a ClaroBot IA si necesitas una explicación más simple.
+          </p>
+
+          <div class="faq-filters" id="faqFilters">
+            <button type="button" class="faq-filter active" data-filter="todos">
+              Todos
+            </button>
+            <button type="button" class="faq-filter" data-filter="reclamos">
+              Reclamos
+            </button>
+            <button type="button" class="faq-filter" data-filter="incidencias">
+              Incidencias
+            </button>
+            <button type="button" class="faq-filter" data-filter="facturacion">
+              Facturación
+            </button>
+            <button type="button" class="faq-filter" data-filter="empresas">
+              Empresas
+            </button>
+          </div>
+        </div>
+
+        <div class="faq-list" id="faqList"></div>
+      </div>
+    </section>
+
+    <section class="articles-section">
+      <div class="section-heading">
+        <span class="eyebrow eyebrow--red">Artículos recomendados</span>
+        <h2 id="articlesTitle">Guías útiles para resolver tus consultas</h2>
+      </div>
+
+      <div class="articles-grid" id="articlesGrid"></div>
+    </section>
+
+    <section class="contact-section">
+      <div class="contact-card">
+        <div>
+          <span class="eyebrow">¿No encontraste lo que buscabas?</span>
+          <h2>Te ayudamos a encontrar la ruta correcta</h2>
+          <p>
+            Puedes registrar un caso, consultar un ticket existente o iniciar sesión
+            para ver atención personalizada.
+          </p>
+        </div>
+
+        <div class="contact-actions">
+          <a href="cliente/registrar-reclamo.html" class="btn btn--light">
+            Registrar reclamo
+          </a>
+          <a href="consulta-rapida.html" class="btn btn--ghost">
+            Consultar caso
+          </a>
+          <button type="button" class="btn btn--soft" id="openBotContact">
+            Preguntar a ClaroBot
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>ClaroBot IA</strong>
+        <small>Asistente de ayuda</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Hola. Puedo ayudarte a encontrar artículos, sugerir si debes registrar reclamo o incidencia, o explicar estados de atención.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Dime si debo registrar reclamo o incidencia">
+        Reclamo o incidencia
+      </button>
+      <button type="button" data-bot-prompt="Explica pendiente por cliente">
+        Explicar estado
+      </button>
+      <button type="button" data-bot-prompt="Qué evidencia debo adjuntar">
+        Evidencias
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <button type="button" class="floating-bot" id="floatingBot">
+    <span>🤖</span>
+    ClaroBot IA
+  </button>
+
+  <button type="button" class="accessibility-btn" aria-label="Accesibilidad">
+    ♿
+  </button>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <section class="modal" id="articleModal" aria-hidden="true">
+    <div class="modal__content modal__content--large">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📘</div>
+      <h3 id="articleModalTitle">Artículo de ayuda</h3>
+      <p id="articleModalText">Contenido del artículo.</p>
+
+      <div class="article-steps" id="articleSteps"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="articleAskBot">
+          Preguntar a ClaroBot
+        </button>
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="assets/js/centro-ayuda.js"></script>
+</body>
+</html>

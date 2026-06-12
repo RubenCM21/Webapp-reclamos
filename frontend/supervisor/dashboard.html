@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Dashboard Supervisor | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/supervisor.css" />
+</head>
+
+<body data-page="supervisor-dashboard">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Supervisor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación supervisor">
+      <a href="dashboard.html" class="sidebar-link active">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="casos-pendientes.html" class="sidebar-link">
+        <span>📋</span>
+        Casos pendientes
+        <small id="sidebarPendingCount">0</small>
+      </a>
+
+      <a href="asignaciones.html" class="sidebar-link">
+        <span>👥</span>
+        Asignaciones
+      </a>
+
+      <a href="carga-asesores.html" class="sidebar-link">
+        <span>⚖️</span>
+        Carga de asesores
+      </a>
+
+      <a href="monitoreo-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Monitoreo SLA
+        <small id="sidebarSlaCount">0</small>
+      </a>
+
+      <a href="indicadores.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores
+      </a>
+
+      <a href="reportes.html" class="sidebar-link">
+        <span>📊</span>
+        Reportes
+      </a>
+
+      <a href="auditoria-casos.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="configuracion-supervision.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Centro de supervisión</span>
+          <h1>Dashboard del supervisor</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="monitoreo-sla.html" class="notification-btn" aria-label="Alertas SLA">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">SD</span>
+            <div>
+              <strong id="userNameTop">Supervisor Demo</strong>
+              <small id="userRoleTop">Supervisor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores.html">Indicadores</a>
+            <a href="auditoria-casos.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="supervisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="dashboardHeroEyebrow">
+            Supervisión operativa
+          </span>
+
+          <h2 id="dashboardHeroTitle">
+            Panel integral de control
+          </h2>
+
+          <p id="dashboardHeroText">
+            Controla casos pendientes, asignaciones, carga de asesores, vencimientos SLA,
+            indicadores operativos y alertas críticas desde una sola vista.
+          </p>
+
+          <div class="welcome-actions">
+            <a href="casos-pendientes.html" class="btn btn--primary">
+              Revisar pendientes
+            </a>
+
+            <a href="monitoreo-sla.html" class="btn btn--soft">
+              Monitorear SLA
+            </a>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span id="supervisorStatusDot"></span>
+          </div>
+
+          <div>
+            <strong id="supervisorStatus">Supervisión activa</strong>
+            <small id="supervisorLastUpdate">Última actualización pendiente</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="supervisorKpiGrid" aria-label="Indicadores generales"></section>
+
+      <!-- ALERTAS CRÍTICAS + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Prioridad operativa</span>
+              <h2>Casos críticos y decisiones pendientes</h2>
+              <p>
+                Casos que requieren intervención del supervisor por SLA, carga, clasificación o asignación.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshCriticalCasesBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="prioritizeCriticalCasesBtn">
+                Priorizar IA
+              </button>
+
+              <a href="casos-pendientes.html" class="panel-link">
+                Ver pendientes
+              </a>
+            </div>
+          </div>
+
+          <div class="case-list" id="criticalCasesList"></div>
+
+          <div class="empty-state hidden" id="emptyCriticalCasesState">
+            <span>✅</span>
+            <h3>Sin casos críticos</h3>
+            <p>Cuando existan casos críticos o pendientes de decisión aparecerán aquí.</p>
+          </div>
+        </section>
+
+        <aside class="panel-card ai-panel">
+          <div class="ai-panel__header">
+            <span>🤖</span>
+            <div>
+              <h2>Resumen IA de supervisión</h2>
+              <p>Lectura ejecutiva para priorizar decisiones.</p>
+            </div>
+          </div>
+
+          <div class="ai-summary" id="supervisorAiSummary"></div>
+
+          <button type="button" class="btn btn--primary btn--full" id="analyzeSupervisorWorkBtn">
+            Analizar operación
+          </button>
+        </aside>
+      </section>
+
+      <!-- CARGA + SLA -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Carga del equipo</span>
+              <h2>Distribución por asesor</h2>
+              <p>
+                Visualiza carga, casos críticos, disponibilidad y posibles desbalances.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshAdvisorLoadBtn">
+                Refrescar
+              </button>
+
+              <a href="carga-asesores.html" class="panel-link">
+                Ver detalle
+              </a>
+            </div>
+          </div>
+
+          <div class="advisor-load-list" id="advisorLoadSummary"></div>
+
+          <div class="empty-state hidden" id="emptyAdvisorLoadState">
+            <span>👥</span>
+            <h3>Sin asesores cargados</h3>
+            <p>La distribución aparecerá cuando se cargue la información del equipo.</p>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">SLA</span>
+              <h2>Alertas de vencimiento</h2>
+              <p>
+                Casos próximos a vencer, vencidos o con riesgo alto.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshDashboardSlaBtn">
+                Actualizar
+              </button>
+
+              <a href="monitoreo-sla.html" class="panel-link">
+                Monitorear
+              </a>
+            </div>
+          </div>
+
+          <div class="sla-list" id="dashboardSlaList"></div>
+
+          <div class="empty-state hidden" id="emptyDashboardSlaState">
+            <span>✅</span>
+            <h3>Sin alertas SLA</h3>
+            <p>No existen vencimientos críticos en este momento.</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- INDICADORES RESUMIDOS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Indicadores clave</span>
+            <h2>Vista rápida de desempeño</h2>
+            <p>
+              Métricas operativas para evaluar cumplimiento, eficiencia y calidad del equipo.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="refreshDashboardIndicatorsBtn">
+              Actualizar
+            </button>
+
+            <a href="indicadores.html" class="panel-link">
+              Ver indicadores
+            </a>
+          </div>
+        </div>
+
+        <div class="indicator-grid" id="dashboardIndicatorGrid"></div>
+      </section>
+
+      <!-- ACTIVIDAD DE SUPERVISIÓN -->
+      <section class="panel-card timeline-panel">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Trazabilidad</span>
+            <h2>Últimas acciones de supervisión</h2>
+            <p>
+              Registro reciente de asignaciones, reasignaciones, clasificaciones, derivaciones y cierres supervisados.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="refreshSupervisorActivityBtn">
+              Refrescar
+            </button>
+
+            <a href="auditoria-casos.html" class="panel-link">
+              Ver auditoría
+            </a>
+          </div>
+        </div>
+
+        <div class="activity-timeline" id="supervisorActivityTimeline"></div>
+
+        <div class="empty-state hidden" id="emptySupervisorActivityState">
+          <span>🕘</span>
+          <h3>Sin actividad reciente</h3>
+          <p>Las acciones de supervisión aparecerán en esta sección.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, asesor, indicador, SLA o reporte..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Soporte de supervisión</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a priorizar casos, balancear carga, revisar SLA, explicar indicadores o preparar reportes.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Prioriza los casos críticos">
+        Priorizar casos
+      </button>
+
+      <button type="button" data-bot-prompt="Analiza la carga de asesores">
+        Carga asesores
+      </button>
+
+      <button type="button" data-bot-prompt="Qué SLA están en riesgo">
+        Riesgo SLA
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE DE CASO -->
+  <section class="modal" id="caseQuickViewModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="caseQuickViewIcon">🎫</div>
+      <span class="eyebrow eyebrow--red">Vista rápida</span>
+      <h3 id="caseQuickViewTitle">Caso seleccionado</h3>
+      <p id="caseQuickViewText">Detalle operativo del caso.</p>
+
+      <div class="case-modal-summary" id="caseQuickViewSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="caseQuickViewAssignBtn">
+          Asignar / Reasignar
+        </button>
+
+        <button type="button" class="btn btn--soft" id="caseQuickViewClassifyBtn">
+          Clasificar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="caseQuickViewEscalateBtn">
+          Escalar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Volver
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DETALLE INDICADOR -->
+  <section class="modal" id="indicatorDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="indicatorDetailIcon">📈</div>
+      <span class="eyebrow eyebrow--red">Detalle de indicador</span>
+      <h3 id="indicatorDetailTitle">Indicador seleccionado</h3>
+      <p id="indicatorDetailText">Análisis del indicador operativo.</p>
+
+      <div class="case-modal-summary" id="indicatorDetailSummary"></div>
+
+      <div class="modal__actions">
+        <a href="indicadores.html" class="btn btn--primary">
+          Ver indicadores
+        </a>
+
+        <button type="button" class="btn btn--soft" id="indicatorDetailAiBtn">
+          Analizar con IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ACCIÓN SUPERVISOR -->
+  <section class="modal" id="supervisorActionModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="supervisorActionIcon">⚙️</div>
+      <span class="eyebrow eyebrow--red" id="supervisorActionEyebrow">Acción supervisor</span>
+      <h3 id="supervisorActionTitle">Confirmar acción</h3>
+      <p id="supervisorActionText">Revisa la información antes de continuar.</p>
+
+      <div class="case-modal-summary" id="supervisorActionSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="supervisorActionConfirmBtn">
+          Confirmar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/supervisor.js"></script>
+</body>
+</html>

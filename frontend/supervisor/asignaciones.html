@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Asignaciones | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/supervisor.css" />
+</head>
+
+<body data-page="supervisor-asignaciones">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Supervisor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación supervisor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="casos-pendientes.html" class="sidebar-link">
+        <span>📋</span>
+        Casos pendientes
+        <small id="sidebarPendingCount">0</small>
+      </a>
+
+      <a href="asignaciones.html" class="sidebar-link active">
+        <span>👥</span>
+        Asignaciones
+      </a>
+
+      <a href="carga-asesores.html" class="sidebar-link">
+        <span>⚖️</span>
+        Carga de asesores
+      </a>
+
+      <a href="monitoreo-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Monitoreo SLA
+        <small id="sidebarSlaCount">0</small>
+      </a>
+
+      <a href="indicadores.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores
+      </a>
+
+      <a href="reportes.html" class="sidebar-link">
+        <span>📊</span>
+        Reportes
+      </a>
+
+      <a href="auditoria-casos.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="configuracion-supervision.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Gestión de responsables</span>
+          <h1>Asignaciones</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="monitoreo-sla.html" class="notification-btn" aria-label="Alertas SLA">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">SD</span>
+            <div>
+              <strong id="userNameTop">Supervisor Demo</strong>
+              <small id="userRoleTop">Supervisor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores.html">Indicadores</a>
+            <a href="auditoria-casos.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="supervisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="assignmentsHeroEyebrow">
+            Flujo de asignación
+          </span>
+
+          <h2 id="assignmentsHeroTitle">
+            Asigna, reasigna, deriva y escala casos
+          </h2>
+
+          <p id="assignmentsHeroText">
+            Gestiona la responsabilidad operativa de cada caso. Desde esta pantalla puedes asignar asesores,
+            reasignar carga, derivar a un área interna o escalar casos críticos.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="smartAssignBtn">
+              Asignar con IA
+            </button>
+
+            <button type="button" class="btn btn--soft" id="openMassAssignmentBtn">
+              Asignación masiva
+            </button>
+
+            <a href="carga-asesores.html" class="btn btn--ghost-dark">
+              Ver carga
+            </a>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="assignmentsSummaryTitle">Asignaciones dinámicas</strong>
+            <small id="assignmentsSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="assignmentsKpiGrid" aria-label="Indicadores de asignaciones"></section>
+
+      <!-- LISTA + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Bandeja de asignación</span>
+              <h2>Casos para gestionar responsable</h2>
+              <p>
+                Filtra casos sin asesor, reasignaciones, derivaciones, escalamientos o carga observada.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshAssignmentsBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="toggleAssignmentsViewBtn">
+                Vista tabla
+              </button>
+
+              <button type="button" class="panel-action" id="exportAssignmentsBtn">
+                Exportar
+              </button>
+            </div>
+          </div>
+
+          <div class="supervisor-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="assignmentsSearch"
+                type="search"
+                placeholder="Buscar por código, cliente, asesor, área, prioridad o estado..."
+              />
+            </div>
+
+            <div class="case-filters" id="assignmentsFilters">
+              <button type="button" class="filter-chip active" data-assignment-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-assignment-filter="sin_asesor">
+                Sin asesor
+              </button>
+
+              <button type="button" class="filter-chip" data-assignment-filter="reasignar">
+                Reasignar
+              </button>
+
+              <button type="button" class="filter-chip" data-assignment-filter="derivados">
+                Derivados
+              </button>
+
+              <button type="button" class="filter-chip" data-assignment-filter="escalados">
+                Escalados
+              </button>
+
+              <button type="button" class="filter-chip" data-assignment-filter="criticos">
+                Críticos
+              </button>
+            </div>
+          </div>
+
+          <!-- VISTA CARDS -->
+          <div class="case-list" id="assignmentsCaseList"></div>
+
+          <!-- VISTA TABLA -->
+          <div class="cases-table-wrap hidden" id="assignmentsTableWrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Cliente</th>
+                  <th>Tipo</th>
+                  <th>Responsable</th>
+                  <th>Prioridad</th>
+                  <th>SLA</th>
+                  <th>Flujo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="assignmentsTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="empty-state hidden" id="emptyAssignmentsState">
+            <span>👥</span>
+            <h3>No hay casos con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de asignación</h2>
+                <p>Recomendaciones según carga, especialidad y SLA.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="assignmentsAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeAssignmentsBtn">
+              Analizar asignaciones
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Acción recomendada</span>
+                <h2>Plan de movimiento</h2>
+                <p>Secuencia sugerida para ordenar la carga operativa.</p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="assignmentsActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, asesor, indicador, SLA o reporte..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Asignaciones y carga</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo sugerir asesor, detectar sobrecarga, priorizar reasignaciones o escalar casos críticos.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Sugiere asignación para casos sin asesor">
+        Asignar
+      </button>
+
+      <button type="button" data-bot-prompt="Qué asesor tiene menor carga">
+        Menor carga
+      </button>
+
+      <button type="button" data-bot-prompt="Qué casos debo escalar">
+        Escalar
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL VISTA RÁPIDA -->
+  <section class="modal" id="assignmentCaseModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="assignmentCaseModalIcon">🎫</div>
+      <span class="eyebrow eyebrow--red">Caso en asignación</span>
+      <h3 id="assignmentCaseModalTitle">Caso seleccionado</h3>
+      <p id="assignmentCaseModalText">Información del caso antes de definir responsable o ruta.</p>
+
+      <div class="case-modal-summary" id="assignmentCaseModalSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="assignmentCaseAssignBtn">
+          Asignar
+        </button>
+
+        <button type="button" class="btn btn--soft" id="assignmentCaseReassignBtn">
+          Reasignar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="assignmentCaseDeriveBtn">
+          Derivar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="assignmentCaseEscalateBtn">
+          Escalar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Volver
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ASIGNAR ASESOR -->
+  <section class="modal" id="assignAdvisorModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">👤</div>
+      <span class="eyebrow eyebrow--red">Asignación</span>
+      <h3>Asignar asesor responsable</h3>
+      <p>Selecciona asesor, cola destino y criterio de asignación.</p>
+
+      <div class="case-modal-summary" id="assignAdvisorContext"></div>
+
+      <form class="supervisor-form" id="assignAdvisorForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="assignAdvisorSelect">Asesor responsable</label>
+            <select id="assignAdvisorSelect">
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="assignQueueSelect">Cola destino</label>
+            <select id="assignQueueSelect">
+              <option value="">Seleccionar</option>
+              <option value="Cola comercial">Cola comercial</option>
+              <option value="Cola técnica">Cola técnica</option>
+              <option value="Cola backoffice">Cola backoffice</option>
+              <option value="Cola crítica">Cola crítica</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="assignCriterion">Criterio</label>
+            <select id="assignCriterion">
+              <option value="">Seleccionar</option>
+              <option value="Menor carga">Menor carga</option>
+              <option value="Especialidad">Especialidad</option>
+              <option value="Prioridad SLA">Prioridad SLA</option>
+              <option value="Asignación manual">Asignación manual</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="assignVisibility">Visibilidad</label>
+            <select id="assignVisibility">
+              <option value="">Seleccionar</option>
+              <option value="Interna">Interna</option>
+              <option value="Visible para asesor">Visible para asesor</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="assignComment">Comentario</label>
+          <textarea id="assignComment" placeholder="Sustenta brevemente la asignación."></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="assignDeclaration" />
+          <span>Confirmo que la asignación considera carga, especialidad y prioridad del caso.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmAssignAdvisorBtn">
+          Confirmar asignación
+        </button>
+
+        <button type="button" class="btn btn--soft" id="assignAdvisorAiBtn">
+          Sugerir asesor IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL REASIGNAR CASO -->
+  <section class="modal" id="reassignCaseModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔁</div>
+      <span class="eyebrow eyebrow--red">Reasignación</span>
+      <h3>Reasignar caso</h3>
+      <p>Usa esta acción cuando exista sobrecarga, ausencia, especialidad distinta o riesgo SLA.</p>
+
+      <div class="case-modal-summary" id="reassignCaseContext"></div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="reassignFromAdvisor">Asesor actual</label>
+          <input id="reassignFromAdvisor" type="text" readonly placeholder="Se cargará automáticamente" />
+        </div>
+
+        <div class="form-group">
+          <label for="reassignToAdvisor">Nuevo asesor</label>
+          <select id="reassignToAdvisor">
+            <option value="">Seleccionar</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="reassignReason">Motivo</label>
+          <select id="reassignReason">
+            <option value="">Seleccionar</option>
+            <option value="Sobrecarga">Sobrecarga</option>
+            <option value="Riesgo SLA">Riesgo SLA</option>
+            <option value="Especialidad requerida">Especialidad requerida</option>
+            <option value="Ausencia del asesor">Ausencia del asesor</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="reassignPriority">Prioridad del movimiento</label>
+          <select id="reassignPriority">
+            <option value="">Seleccionar</option>
+            <option value="Alta">Alta</option>
+            <option value="Media">Media</option>
+            <option value="Baja">Baja</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="reassignComment">Comentario de reasignación</label>
+        <textarea id="reassignComment" placeholder="Explica por qué corresponde reasignar el caso."></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="reassignDeclaration" />
+        <span>Confirmo que la reasignación quedará registrada en auditoría.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmReassignCaseBtn">
+          Confirmar reasignación
+        </button>
+
+        <button type="button" class="btn btn--soft" id="reassignAiBtn">
+          Sugerir destino IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DERIVAR ÁREA -->
+  <section class="modal" id="deriveAreaModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🏢</div>
+      <span class="eyebrow eyebrow--red">Derivación</span>
+      <h3>Derivar caso a área responsable</h3>
+      <p>Deriva cuando el caso requiere validación técnica, comercial, facturación o backoffice.</p>
+
+      <div class="case-modal-summary" id="deriveAreaContext"></div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="deriveAreaSelect">Área destino</label>
+          <select id="deriveAreaSelect">
+            <option value="">Seleccionar</option>
+            <option value="Soporte técnico">Soporte técnico</option>
+            <option value="Facturación">Facturación</option>
+            <option value="Backoffice comercial">Backoffice comercial</option>
+            <option value="Retenciones">Retenciones</option>
+            <option value="Mesa especializada">Mesa especializada</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="deriveAreaSla">SLA interno</label>
+          <select id="deriveAreaSla">
+            <option value="">Seleccionar</option>
+            <option value="4 horas">4 horas</option>
+            <option value="8 horas">8 horas</option>
+            <option value="24 horas">24 horas</option>
+            <option value="48 horas">48 horas</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="deriveAreaReason">Motivo de derivación</label>
+        <textarea id="deriveAreaReason" placeholder="Explica la validación requerida por el área destino."></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="deriveAreaDeclaration" />
+        <span>Confirmo que la derivación contiene información suficiente para el área destino.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmDeriveAreaBtn">
+          Confirmar derivación
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ESCALAR CASO -->
+  <section class="modal" id="escalateCaseModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🚨</div>
+      <span class="eyebrow eyebrow--red">Escalamiento</span>
+      <h3>Escalar caso crítico</h3>
+      <p>Usa esta acción para casos con impacto alto, vencimiento crítico o bloqueo operativo.</p>
+
+      <div class="case-modal-summary" id="escalateCaseContext"></div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="escalateLevel">Nivel de escalamiento</label>
+          <select id="escalateLevel">
+            <option value="">Seleccionar</option>
+            <option value="Supervisor senior">Supervisor senior</option>
+            <option value="Jefatura de atención">Jefatura de atención</option>
+            <option value="Mesa crítica">Mesa crítica</option>
+            <option value="Área especializada">Área especializada</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="escalateReason">Motivo</label>
+          <select id="escalateReason">
+            <option value="">Seleccionar</option>
+            <option value="SLA crítico">SLA crítico</option>
+            <option value="Cliente crítico">Cliente crítico</option>
+            <option value="Bloqueo operativo">Bloqueo operativo</option>
+            <option value="Impacto masivo">Impacto masivo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="escalateComment">Comentario de escalamiento</label>
+        <textarea id="escalateComment" placeholder="Describe el motivo y la acción esperada del escalamiento."></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="escalateDeclaration" />
+        <span>Confirmo que el escalamiento se justifica por criticidad o riesgo operativo.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmEscalateCaseBtn">
+          Confirmar escalamiento
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ASIGNACIÓN MASIVA -->
+  <section class="modal" id="massAssignmentModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🧩</div>
+      <span class="eyebrow eyebrow--red">Asignación masiva</span>
+      <h3>Configurar asignación masiva</h3>
+      <p>Define criterios para distribuir varios casos de manera equilibrada.</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="massAssignmentCriteria">Criterio principal</label>
+          <select id="massAssignmentCriteria">
+            <option value="">Seleccionar</option>
+            <option value="Menor carga">Menor carga</option>
+            <option value="Especialidad">Especialidad</option>
+            <option value="SLA más próximo">SLA más próximo</option>
+            <option value="Distribución equitativa">Distribución equitativa</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="massAssignmentScope">Alcance</label>
+          <select id="massAssignmentScope">
+            <option value="">Seleccionar</option>
+            <option value="Casos sin asesor">Casos sin asesor</option>
+            <option value="Casos críticos">Casos críticos</option>
+            <option value="Casos filtrados">Casos filtrados</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="massAssignmentDeclaration" />
+        <span>Confirmo que la distribución será revisada antes de aplicarse.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmMassAssignmentBtn">
+          Preparar asignación
+        </button>
+
+        <button type="button" class="btn btn--soft" id="massAssignmentAiBtn">
+          Recomendar IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/supervisor.js"></script>
+</body>
+</html>

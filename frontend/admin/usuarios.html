@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Usuarios | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+
+<body data-page="admin-usuarios">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Administrador</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación administrador">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="usuarios.html" class="sidebar-link active">
+        <span>👤</span>
+        Usuarios
+        <small id="sidebarUserCount">0</small>
+      </a>
+
+      <a href="roles-permisos.html" class="sidebar-link">
+        <span>🔐</span>
+        Roles y permisos
+      </a>
+
+      <a href="catalogos.html" class="sidebar-link">
+        <span>🧩</span>
+        Catálogos
+      </a>
+
+      <a href="reglas-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Reglas SLA
+      </a>
+
+      <a href="indicadores-reportes.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores y reportes
+      </a>
+
+      <a href="integraciones.html" class="sidebar-link">
+        <span>🔌</span>
+        Integraciones
+        <small id="sidebarIntegrationAlerts">0</small>
+      </a>
+
+      <a href="auditoria.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="respaldo.html" class="sidebar-link">
+        <span>💾</span>
+        Respaldo
+      </a>
+
+      <a href="configuracion-sistema.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Gestión de accesos</span>
+          <h1>Usuarios</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="auditoria.html" class="notification-btn" aria-label="Alertas administrativas">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AD</span>
+            <div>
+              <strong id="userNameTop">Administrador Demo</strong>
+              <small id="userRoleTop">Administrador del sistema</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="roles-permisos.html">Roles y permisos</a>
+            <a href="auditoria.html">Auditoría</a>
+            <a href="configuracion-sistema.html">Configuración</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="usersHeroEyebrow">
+            Administración de usuarios
+          </span>
+
+          <h2 id="usersHeroTitle">
+            Crea, edita, bloquea y controla accesos por rol
+          </h2>
+
+          <p id="usersHeroText">
+            Gestiona cuentas de clientes internos, asesores, supervisores y administradores.
+            Controla estado, rol, área, último acceso, bloqueo, actividad y trazabilidad.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="openCreateUserBtn">
+              Nuevo usuario
+            </button>
+
+            <button type="button" class="btn btn--soft" id="exportUsersBtn">
+              Exportar usuarios
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="usersSummaryTitle">Usuarios dinámicos</strong>
+            <small id="usersSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="usersKpiGrid" aria-label="Indicadores de usuarios"></section>
+
+      <!-- GRÁFICOS DE USUARIOS -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Distribución</span>
+              <h2>Usuarios por rol</h2>
+              <p>
+                Vista general de cuentas registradas por perfil funcional.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshUsersByRoleBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="donut-layout">
+            <div class="donut-card" id="usersByRoleDonut"></div>
+            <div class="donut-legend" id="usersByRoleLegend"></div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Estado de cuentas</span>
+              <h2>Activos, bloqueados e inactivos</h2>
+              <p>
+                Control visual del estado de acceso de los usuarios.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshUserStatusChartBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="bar-chart" id="userStatusChart"></div>
+        </section>
+      </section>
+
+      <!-- BANDEJA DE USUARIOS + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Directorio administrativo</span>
+              <h2>Listado de usuarios</h2>
+              <p>
+                Filtra usuarios por rol, estado, área, actividad o condición de bloqueo.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshUsersBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="toggleUsersViewBtn">
+                Vista tabla
+              </button>
+
+              <button type="button" class="panel-action" id="bulkUserActionBtn">
+                Acción masiva
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="userSearch"
+                type="search"
+                placeholder="Buscar por nombre, correo, rol, área, estado o último acceso..."
+              />
+            </div>
+
+            <div class="case-filters" id="userFilters">
+              <button type="button" class="filter-chip active" data-user-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-user-filter="activos">
+                Activos
+              </button>
+
+              <button type="button" class="filter-chip" data-user-filter="bloqueados">
+                Bloqueados
+              </button>
+
+              <button type="button" class="filter-chip" data-user-filter="inactivos">
+                Inactivos
+              </button>
+
+              <button type="button" class="filter-chip" data-user-filter="asesores">
+                Asesores
+              </button>
+
+              <button type="button" class="filter-chip" data-user-filter="supervisores">
+                Supervisores
+              </button>
+
+              <button type="button" class="filter-chip" data-user-filter="admins">
+                Admins
+              </button>
+            </div>
+          </div>
+
+          <!-- VISTA CARDS -->
+          <div class="user-card-grid" id="usersCardList"></div>
+
+          <!-- VISTA TABLA -->
+          <div class="cases-table-wrap hidden" id="usersTableWrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Correo</th>
+                  <th>Rol</th>
+                  <th>Área</th>
+                  <th>Estado</th>
+                  <th>Último acceso</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="empty-state hidden" id="emptyUsersState">
+            <span>👤</span>
+            <h3>No hay usuarios con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de usuarios</h2>
+                <p>Recomendaciones para seguridad, acceso y actividad.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="usersAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeUsersBtn">
+              Analizar usuarios
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Control de acceso</span>
+                <h2>Plan recomendado</h2>
+                <p>Acciones sugeridas para mantener cuentas seguras.</p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="usersActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar usuario, rol, catálogo, SLA, integración, reporte o evento..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Gestión de usuarios</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a revisar usuarios bloqueados, roles mal asignados, actividad inusual o cuentas inactivas.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Qué usuarios debo revisar primero">
+        Revisar usuarios
+      </button>
+
+      <button type="button" data-bot-prompt="Detecta usuarios bloqueados o inactivos">
+        Bloqueados
+      </button>
+
+      <button type="button" data-bot-prompt="Recomienda acciones de seguridad">
+        Seguridad
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE USUARIO -->
+  <section class="modal" id="userDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="userDetailIcon">👤</div>
+      <span class="eyebrow eyebrow--red">Detalle de usuario</span>
+      <h3 id="userDetailTitle">Usuario seleccionado</h3>
+      <p id="userDetailText">Resumen administrativo de la cuenta.</p>
+
+      <div class="case-modal-summary" id="userDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="userEditBtn">
+          Editar usuario
+        </button>
+
+        <button type="button" class="btn btn--soft" id="userResetAccessBtn">
+          Restablecer acceso
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="userToggleStatusBtn">
+          Cambiar estado
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="userAuditBtn">
+          Ver auditoría
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CREAR / EDITAR USUARIO -->
+  <section class="modal" id="userFormModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">👤</div>
+      <span class="eyebrow eyebrow--red" id="userFormEyebrow">Usuario</span>
+      <h3 id="userFormTitle">Crear usuario</h3>
+      <p id="userFormText">
+        Completa la información de la cuenta, rol, área y estado de acceso.
+      </p>
+
+      <form class="admin-form" id="userForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="userFullName">Nombre completo</label>
+            <input id="userFullName" type="text" placeholder="Ej. Usuario Demo" />
+          </div>
+
+          <div class="form-group">
+            <label for="userEmail">Correo</label>
+            <input id="userEmail" type="email" placeholder="usuario@empresa.com" />
+          </div>
+
+          <div class="form-group">
+            <label for="userRole">Rol</label>
+            <select id="userRole">
+              <option value="">Seleccionar</option>
+              <option value="Cliente">Cliente</option>
+              <option value="Asesor">Asesor</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Administrador">Administrador</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="userArea">Área</label>
+            <select id="userArea">
+              <option value="">Seleccionar</option>
+              <option value="Atención al cliente">Atención al cliente</option>
+              <option value="Soporte técnico">Soporte técnico</option>
+              <option value="Supervisión">Supervisión</option>
+              <option value="Administración">Administración</option>
+              <option value="Backoffice">Backoffice</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="userStatus">Estado</label>
+            <select id="userStatus">
+              <option value="">Seleccionar</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+              <option value="Bloqueado">Bloqueado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="userAccessType">Tipo de acceso</label>
+            <select id="userAccessType">
+              <option value="">Seleccionar</option>
+              <option value="Acceso estándar">Acceso estándar</option>
+              <option value="Acceso restringido">Acceso restringido</option>
+              <option value="Acceso administrativo">Acceso administrativo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="userComment">Comentario administrativo</label>
+          <textarea id="userComment" placeholder="Agrega una nota o sustento del alta/modificación."></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="userFormDeclaration" />
+          <span>Confirmo que los datos del usuario y el rol asignado son correctos.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="saveUserBtn">
+          Guardar usuario
+        </button>
+
+        <button type="button" class="btn btn--soft" id="suggestUserRoleBtn">
+          Sugerir rol IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL RESTABLECER ACCESO -->
+  <section class="modal" id="resetAccessModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔑</div>
+      <span class="eyebrow eyebrow--red">Restablecimiento</span>
+      <h3>Restablecer acceso</h3>
+      <p>
+        Esta acción generará un restablecimiento de acceso para el usuario seleccionado.
+      </p>
+
+      <div class="case-modal-summary" id="resetAccessSummary"></div>
+
+      <label class="form-check">
+        <input type="checkbox" id="resetAccessDeclaration" />
+        <span>Confirmo que deseo restablecer el acceso del usuario.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmResetAccessBtn">
+          Confirmar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CAMBIAR ESTADO -->
+  <section class="modal" id="changeUserStatusModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔒</div>
+      <span class="eyebrow eyebrow--red">Estado de usuario</span>
+      <h3>Cambiar estado de cuenta</h3>
+      <p>
+        Actualiza si el usuario estará activo, inactivo o bloqueado.
+      </p>
+
+      <div class="case-modal-summary" id="changeUserStatusSummary"></div>
+
+      <div class="form-group">
+        <label for="newUserStatus">Nuevo estado</label>
+        <select id="newUserStatus">
+          <option value="">Seleccionar</option>
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
+          <option value="Bloqueado">Bloqueado</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="changeUserStatusReason">Motivo</label>
+        <textarea id="changeUserStatusReason" placeholder="Sustenta el cambio de estado."></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="changeUserStatusDeclaration" />
+        <span>Confirmo que el cambio quedará registrado en auditoría.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmChangeUserStatusBtn">
+          Guardar estado
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ACCIÓN MASIVA -->
+  <section class="modal" id="bulkUserActionModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🧩</div>
+      <span class="eyebrow eyebrow--red">Acción masiva</span>
+      <h3>Aplicar acción sobre usuarios</h3>
+      <p>Selecciona un grupo de usuarios y la acción administrativa a ejecutar.</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="bulkUserScope">Alcance</label>
+          <select id="bulkUserScope">
+            <option value="">Seleccionar</option>
+            <option value="Usuarios filtrados">Usuarios filtrados</option>
+            <option value="Usuarios inactivos">Usuarios inactivos</option>
+            <option value="Usuarios bloqueados">Usuarios bloqueados</option>
+            <option value="Usuarios por rol">Usuarios por rol</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="bulkUserAction">Acción</label>
+          <select id="bulkUserAction">
+            <option value="">Seleccionar</option>
+            <option value="Activar">Activar</option>
+            <option value="Inactivar">Inactivar</option>
+            <option value="Bloquear">Bloquear</option>
+            <option value="Solicitar actualización">Solicitar actualización</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="bulkUserDeclaration" />
+        <span>Confirmo que la acción masiva será revisada antes de ejecutarse.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmBulkUserActionBtn">
+          Preparar acción
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>

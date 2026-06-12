@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Configuración de supervisión | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/supervisor.css" />
+</head>
+
+<body data-page="supervisor-configuracion-supervision">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Supervisor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación supervisor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="casos-pendientes.html" class="sidebar-link">
+        <span>📋</span>
+        Casos pendientes
+        <small id="sidebarPendingCount">0</small>
+      </a>
+
+      <a href="asignaciones.html" class="sidebar-link">
+        <span>👥</span>
+        Asignaciones
+      </a>
+
+      <a href="carga-asesores.html" class="sidebar-link">
+        <span>⚖️</span>
+        Carga de asesores
+      </a>
+
+      <a href="monitoreo-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Monitoreo SLA
+        <small id="sidebarSlaCount">0</small>
+      </a>
+
+      <a href="indicadores.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores
+      </a>
+
+      <a href="reportes.html" class="sidebar-link">
+        <span>📊</span>
+        Reportes
+      </a>
+
+      <a href="auditoria-casos.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="configuracion-supervision.html" class="sidebar-link active">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Reglas operativas</span>
+          <h1>Configuración de supervisión</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="monitoreo-sla.html" class="notification-btn" aria-label="Alertas SLA">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">SD</span>
+            <div>
+              <strong id="userNameTop">Supervisor Demo</strong>
+              <small id="userRoleTop">Supervisor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores.html">Indicadores</a>
+            <a href="auditoria-casos.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="supervisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="configHeroEyebrow">
+            Parámetros de supervisión
+          </span>
+
+          <h2 id="configHeroTitle">
+            Administra reglas de asignación, SLA, prioridad y escalamiento
+          </h2>
+
+          <p id="configHeroText">
+            Configura criterios operativos usados por el supervisor para clasificar casos,
+            distribuir carga, controlar vencimientos, activar alertas y escalar situaciones críticas.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="saveSupervisorConfigBtn">
+              Guardar cambios
+            </button>
+
+            <button type="button" class="btn btn--soft" id="restoreSupervisorConfigBtn">
+              Restaurar valores
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="configSummaryTitle">Configuración activa</strong>
+            <small id="configSummaryText">Parámetros operativos listos para revisión.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="configKpiGrid" aria-label="Indicadores de configuración"></section>
+
+      <!-- CONFIGURACIÓN + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Reglas configurables</span>
+              <h2>Parámetros operativos</h2>
+              <p>
+                Revisa reglas activas, umbrales y criterios de control aplicados en la operación.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshSupervisorConfigBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="exportSupervisorConfigBtn">
+                Exportar
+              </button>
+            </div>
+          </div>
+
+          <div class="supervisor-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="configSearch"
+                type="search"
+                placeholder="Buscar regla, umbral, prioridad, SLA, asignación o escalamiento..."
+              />
+            </div>
+
+            <div class="case-filters" id="configFilters">
+              <button type="button" class="filter-chip active" data-config-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-config-filter="asignacion">
+                Asignación
+              </button>
+
+              <button type="button" class="filter-chip" data-config-filter="sla">
+                SLA
+              </button>
+
+              <button type="button" class="filter-chip" data-config-filter="prioridad">
+                Prioridad
+              </button>
+
+              <button type="button" class="filter-chip" data-config-filter="escalamiento">
+                Escalamiento
+              </button>
+
+              <button type="button" class="filter-chip" data-config-filter="capacidad">
+                Capacidad
+              </button>
+            </div>
+          </div>
+
+          <div class="config-rule-grid" id="configRuleGrid"></div>
+
+          <div class="empty-state hidden" id="emptyConfigState">
+            <span>⚙️</span>
+            <h3>No hay reglas con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría de configuración.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de configuración</h2>
+                <p>Recomendaciones para ajustar reglas operativas.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="configAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeConfigBtn">
+              Analizar configuración
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Validación</span>
+                <h2>Checklist operativo</h2>
+                <p>Revisión mínima antes de guardar cambios.</p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="configChecklist"></div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- MATRIZ DE PRIORIDAD -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Prioridad</span>
+            <h2>Matriz de criterios</h2>
+            <p>
+              Define cómo se combinan impacto, urgencia, SLA y tipo de cliente para sugerir prioridad.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="editPriorityMatrixBtn">
+              Editar matriz
+            </button>
+
+            <button type="button" class="panel-action" id="simulatePriorityBtn">
+              Simular caso
+            </button>
+          </div>
+        </div>
+
+        <div class="priority-matrix-grid" id="priorityMatrixGrid"></div>
+      </section>
+
+      <!-- RUTAS DE DERIVACIÓN -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Derivación y escalamiento</span>
+            <h2>Rutas operativas</h2>
+            <p>
+              Configura áreas destino, niveles de escalamiento y condiciones para activar alertas.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="addRouteRuleBtn">
+              Nueva ruta
+            </button>
+
+            <button type="button" class="panel-action" id="validateRoutesBtn">
+              Validar rutas
+            </button>
+          </div>
+        </div>
+
+        <div class="cases-table-wrap">
+          <table class="cases-table">
+            <thead>
+              <tr>
+                <th>Ruta</th>
+                <th>Condición</th>
+                <th>Área destino</th>
+                <th>SLA interno</th>
+                <th>Escalamiento</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody id="routeRulesTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, asesor, indicador, SLA o reporte..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Configuración de supervisión</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a revisar reglas, detectar inconsistencias, sugerir umbrales SLA o validar rutas de escalamiento.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Revisa mis reglas de supervisión">
+        Revisar reglas
+      </button>
+
+      <button type="button" data-bot-prompt="Sugiere umbrales SLA">
+        Umbrales SLA
+      </button>
+
+      <button type="button" data-bot-prompt="Valida rutas de escalamiento">
+        Validar rutas
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL EDITAR REGLA -->
+  <section class="modal" id="editConfigRuleModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="editConfigRuleIcon">⚙️</div>
+      <span class="eyebrow eyebrow--red">Editar regla</span>
+      <h3 id="editConfigRuleTitle">Regla seleccionada</h3>
+      <p id="editConfigRuleText">Ajusta el valor y sustenta el cambio operativo.</p>
+
+      <div class="case-modal-summary" id="editConfigRuleSummary"></div>
+
+      <form class="supervisor-form" id="editConfigRuleForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="configRuleValue">Nuevo valor</label>
+            <input id="configRuleValue" type="text" placeholder="Ej. 8 horas, 12 casos, prioridad alta..." />
+          </div>
+
+          <div class="form-group">
+            <label for="configRuleStatus">Estado</label>
+            <select id="configRuleStatus">
+              <option value="">Seleccionar</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+              <option value="En revisión">En revisión</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="configRuleReason">Sustento del cambio</label>
+          <textarea id="configRuleReason" placeholder="Explica por qué se requiere modificar esta regla."></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="configRuleDeclaration" />
+          <span>Confirmo que el cambio fue revisado y puede aplicarse a la operación.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmEditConfigRuleBtn">
+          Guardar regla
+        </button>
+
+        <button type="button" class="btn btn--soft" id="configRuleAiBtn">
+          Sugerir valor IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL EDITAR MATRIZ PRIORIDAD -->
+  <section class="modal" id="priorityMatrixModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📌</div>
+      <span class="eyebrow eyebrow--red">Matriz de prioridad</span>
+      <h3>Editar criterios de prioridad</h3>
+      <p>Configura cómo se calcula la prioridad sugerida del caso.</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="priorityImpactWeight">Peso de impacto</label>
+          <select id="priorityImpactWeight">
+            <option value="">Seleccionar</option>
+            <option value="Alto">Alto</option>
+            <option value="Medio">Medio</option>
+            <option value="Bajo">Bajo</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="priorityUrgencyWeight">Peso de urgencia</label>
+          <select id="priorityUrgencyWeight">
+            <option value="">Seleccionar</option>
+            <option value="Alto">Alto</option>
+            <option value="Medio">Medio</option>
+            <option value="Bajo">Bajo</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="prioritySlaWeight">Peso de SLA</label>
+          <select id="prioritySlaWeight">
+            <option value="">Seleccionar</option>
+            <option value="Alto">Alto</option>
+            <option value="Medio">Medio</option>
+            <option value="Bajo">Bajo</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="priorityClientWeight">Peso de tipo de cliente</label>
+          <select id="priorityClientWeight">
+            <option value="">Seleccionar</option>
+            <option value="Alto">Alto</option>
+            <option value="Medio">Medio</option>
+            <option value="Bajo">Bajo</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="priorityMatrixDeclaration" />
+        <span>Confirmo que la matriz será aplicada para sugerir prioridades operativas.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmPriorityMatrixBtn">
+          Guardar matriz
+        </button>
+
+        <button type="button" class="btn btn--soft" id="priorityMatrixAiBtn">
+          Recomendar IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL SIMULAR PRIORIDAD -->
+  <section class="modal" id="simulatePriorityModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🧪</div>
+      <span class="eyebrow eyebrow--red">Simulación</span>
+      <h3>Simular prioridad de caso</h3>
+      <p>Prueba cómo se clasificaría un caso según los criterios actuales.</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="simulateImpact">Impacto</label>
+          <select id="simulateImpact">
+            <option value="">Seleccionar</option>
+            <option value="Alto">Alto</option>
+            <option value="Medio">Medio</option>
+            <option value="Bajo">Bajo</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="simulateUrgency">Urgencia</label>
+          <select id="simulateUrgency">
+            <option value="">Seleccionar</option>
+            <option value="Alta">Alta</option>
+            <option value="Media">Media</option>
+            <option value="Baja">Baja</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="simulateSla">SLA restante</label>
+          <select id="simulateSla">
+            <option value="">Seleccionar</option>
+            <option value="Menos de 4 horas">Menos de 4 horas</option>
+            <option value="Entre 4 y 12 horas">Entre 4 y 12 horas</option>
+            <option value="Más de 12 horas">Más de 12 horas</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="simulateClientType">Tipo de cliente</label>
+          <select id="simulateClientType">
+            <option value="">Seleccionar</option>
+            <option value="Cliente crítico">Cliente crítico</option>
+            <option value="Empresa">Empresa</option>
+            <option value="Persona">Persona</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="case-modal-summary" id="simulatePriorityResult"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSimulatePriorityBtn">
+          Simular prioridad
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL NUEVA RUTA -->
+  <section class="modal" id="routeRuleModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🛣️</div>
+      <span class="eyebrow eyebrow--red">Ruta operativa</span>
+      <h3>Crear o editar ruta de derivación</h3>
+      <p>Define condición, área destino, SLA interno y nivel de escalamiento.</p>
+
+      <form class="supervisor-form" id="routeRuleForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="routeRuleName">Nombre de ruta</label>
+            <input id="routeRuleName" type="text" placeholder="Ej. Incidencia técnica crítica" />
+          </div>
+
+          <div class="form-group">
+            <label for="routeRuleCondition">Condición</label>
+            <select id="routeRuleCondition">
+              <option value="">Seleccionar</option>
+              <option value="SLA crítico">SLA crítico</option>
+              <option value="Tipo incidencia">Tipo incidencia</option>
+              <option value="Cliente crítico">Cliente crítico</option>
+              <option value="Bloqueo operativo">Bloqueo operativo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="routeRuleArea">Área destino</label>
+            <select id="routeRuleArea">
+              <option value="">Seleccionar</option>
+              <option value="Soporte técnico">Soporte técnico</option>
+              <option value="Facturación">Facturación</option>
+              <option value="Backoffice comercial">Backoffice comercial</option>
+              <option value="Mesa crítica">Mesa crítica</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="routeRuleSla">SLA interno</label>
+            <select id="routeRuleSla">
+              <option value="">Seleccionar</option>
+              <option value="2 horas">2 horas</option>
+              <option value="4 horas">4 horas</option>
+              <option value="8 horas">8 horas</option>
+              <option value="24 horas">24 horas</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="routeRuleDeclaration" />
+          <span>Confirmo que la ruta es coherente con el flujo operativo.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmRouteRuleBtn">
+          Guardar ruta
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CONFIRMAR GUARDADO -->
+  <section class="modal" id="confirmConfigSaveModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">✅</div>
+      <span class="eyebrow eyebrow--red">Confirmar cambios</span>
+      <h3>Guardar configuración de supervisión</h3>
+      <p>
+        Los parámetros modificados afectarán reglas de asignación, prioridad, SLA y escalamiento operativo.
+      </p>
+
+      <label class="form-check">
+        <input type="checkbox" id="confirmConfigSaveDeclaration" />
+        <span>Confirmo que revisé los cambios antes de aplicarlos.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSaveSupervisorConfigBtn">
+          Guardar configuración
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/supervisor.js"></script>
+</body>
+</html>
