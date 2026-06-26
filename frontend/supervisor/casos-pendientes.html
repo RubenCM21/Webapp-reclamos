@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Casos pendientes | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/supervisor.css" />
+</head>
+
+<body data-page="supervisor-casos-pendientes">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- CONFIGURACIÓN DE PÁGINA PARA SUPERVISOR.JS -->
+  <script type="application/json" id="supervisorPageConfig">
+    {
+      "page": "supervisor-casos-pendientes",
+      "module": "SUPERVISOR_CASOS_PENDIENTES",
+      "title": "Casos pendientes",
+      "mainEndpoint": "/supervisor/casos-pendientes",
+      "catalogEndpoint": "/supervisor/catalogos",
+      "exportEndpoint": "/supervisor/exportar/casos-pendientes",
+      "auditModule": "CASOS_PENDIENTES_SUPERVISOR",
+      "requiresCatalogs": [
+        "tipos_caso",
+        "categorias_caso",
+        "prioridades_caso",
+        "rutas_operativas",
+        "motivos_cambio_prioridad",
+        "motivos_observacion",
+        "colas_operativas",
+        "criterios_envio_asignacion",
+        "canales_atencion",
+        "estados_caso_supervisor",
+        "tipos_cliente",
+        "formatos_exportacion_supervisor",
+        "alcances_exportacion_supervisor"
+      ],
+      "permissions": [
+        "SUPERVISOR_VIEW_PENDING_CASES",
+        "SUPERVISOR_CLASSIFY_CASE",
+        "SUPERVISOR_CHANGE_PRIORITY",
+        "SUPERVISOR_OBSERVE_CASE",
+        "SUPERVISOR_SEND_TO_ASSIGNMENT",
+        "SUPERVISOR_EXPORT_PENDING_CASES"
+      ]
+    }
+  </script>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Supervisor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación supervisor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="casos-pendientes.html" class="sidebar-link active">
+        <span>📋</span>
+        Casos pendientes
+        <small id="sidebarPendingCount">0</small>
+      </a>
+
+      <a href="asignaciones.html" class="sidebar-link">
+        <span>👥</span>
+        Asignaciones
+      </a>
+
+      <a href="carga-asesores.html" class="sidebar-link">
+        <span>⚖️</span>
+        Carga de asesores
+      </a>
+
+      <a href="monitoreo-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Monitoreo SLA
+        <small id="sidebarSlaCount">0</small>
+      </a>
+
+      <a href="indicadores.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores
+      </a>
+
+      <a href="reportes.html" class="sidebar-link">
+        <span>📊</span>
+        Reportes
+      </a>
+
+      <a href="auditoria-casos.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="configuracion-supervision.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Decisiones pendientes</span>
+          <h1>Casos pendientes</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="monitoreo-sla.html" class="notification-btn" aria-label="Alertas SLA">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">SD</span>
+            <div>
+              <strong id="userNameTop">Supervisor</strong>
+              <small id="userRoleTop">Supervisor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores.html">Indicadores</a>
+            <a href="auditoria-casos.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="supervisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="pendingHeroEyebrow">
+            Gestión de entrada
+          </span>
+
+          <h2 id="pendingHeroTitle">
+            Clasifica, valida y prepara casos para asignación
+          </h2>
+
+          <p id="pendingHeroText">
+            Revisa casos nuevos, sin clasificar, observados o pendientes de decisión.
+            Desde esta pantalla puedes clasificar, cambiar prioridad, observar o enviar a asignación.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="prioritizePendingBtn">
+              Priorizar pendientes
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--soft"
+              id="openBulkPendingActionsBtn"
+              data-permission="SUPERVISOR_SEND_TO_ASSIGNMENT"
+            >
+              Acciones masivas
+            </button>
+
+            <a href="asignaciones.html" class="btn btn--ghost-dark">
+              Ir a asignaciones
+            </a>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="pendingSummaryTitle">Pendientes dinámicos</strong>
+            <small id="pendingSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="pendingKpiGrid" aria-label="Indicadores de casos pendientes"></section>
+
+      <!-- FILTROS AVANZADOS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Filtros avanzados</span>
+            <h2>Segmentación operativa</h2>
+            <p>
+              Filtra casos pendientes usando criterios de BD: canal, prioridad, estado, cliente, SLA y fechas.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="applyPendingAdvancedFiltersBtn">
+              Aplicar filtros
+            </button>
+
+            <button type="button" class="panel-action" id="resetPendingAdvancedFiltersBtn">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        <div class="supervisor-filter-grid">
+          <div class="form-group">
+            <label for="pendingDateFrom">Desde</label>
+            <input id="pendingDateFrom" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label for="pendingDateTo">Hasta</label>
+            <input id="pendingDateTo" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label for="pendingChannelFilter">Canal</label>
+            <select id="pendingChannelFilter" data-catalog="canales_atencion">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pendingTypeFilter">Tipo de caso</label>
+            <select id="pendingTypeFilter" data-catalog="tipos_caso">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pendingPriorityFilter">Prioridad</label>
+            <select id="pendingPriorityFilter" data-catalog="prioridades_caso">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pendingStatusFilter">Estado</label>
+            <select id="pendingStatusFilter" data-catalog="estados_caso_supervisor">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pendingClientTypeFilter">Tipo de cliente</label>
+            <select id="pendingClientTypeFilter" data-catalog="tipos_cliente">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pendingSlaFilter">SLA</label>
+            <select id="pendingSlaFilter" data-catalog="rangos_sla_supervisor">
+              <option value="todos">Todos</option>
+              <option value="vencido">Vencido</option>
+              <option value="menos_4h">Menos de 4 horas</option>
+              <option value="menos_8h">Menos de 8 horas</option>
+              <option value="menos_24h">Menos de 24 horas</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- BANDEJA + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Bandeja de decisión</span>
+              <h2>Casos pendientes de supervisión</h2>
+              <p>
+                Filtra casos por estado de clasificación, prioridad, canal, SLA o tipo de atención.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshPendingCasesBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="togglePendingViewBtn">
+                Vista tabla
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="exportPendingCasesBtn"
+                data-permission="SUPERVISOR_EXPORT_PENDING_CASES"
+              >
+                Exportar
+              </button>
+            </div>
+          </div>
+
+          <div class="supervisor-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="pendingCaseSearch"
+                type="search"
+                placeholder="Buscar por código, cliente, canal, tipo, prioridad, estado o servicio..."
+              />
+            </div>
+
+            <div class="case-filters" id="pendingCaseFilters">
+              <button type="button" class="filter-chip active" data-pending-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-pending-filter="sin_clasificar">
+                Sin clasificar
+              </button>
+
+              <button type="button" class="filter-chip" data-pending-filter="sin_asignar">
+                Sin asignar
+              </button>
+
+              <button type="button" class="filter-chip" data-pending-filter="observados">
+                Observados
+              </button>
+
+              <button type="button" class="filter-chip" data-pending-filter="criticos">
+                Críticos
+              </button>
+
+              <button type="button" class="filter-chip" data-pending-filter="sla_riesgo">
+                Riesgo SLA
+              </button>
+            </div>
+          </div>
+
+          <!-- BARRA DE SELECCIÓN MASIVA -->
+          <div class="bulk-action-bar hidden" id="pendingBulkBar">
+            <div>
+              <strong id="pendingSelectedCount">0</strong>
+              <span>casos seleccionados</span>
+            </div>
+
+            <div class="panel-header-actions">
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkClassifyPendingBtn"
+                data-permission="SUPERVISOR_CLASSIFY_CASE"
+              >
+                Clasificar lote
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkSendPendingAssignmentBtn"
+                data-permission="SUPERVISOR_SEND_TO_ASSIGNMENT"
+              >
+                Enviar a asignación
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkExportPendingBtn"
+                data-permission="SUPERVISOR_EXPORT_PENDING_CASES"
+              >
+                Exportar seleccionados
+              </button>
+
+              <button type="button" class="panel-action" id="clearPendingSelectionBtn">
+                Limpiar selección
+              </button>
+            </div>
+          </div>
+
+          <!-- VISTA CARDS -->
+          <div class="case-list" id="pendingCasesList"></div>
+
+          <!-- VISTA TABLA -->
+          <div class="cases-table-wrap hidden" id="pendingCasesTableWrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>
+                    <input type="checkbox" id="pendingSelectAll" aria-label="Seleccionar todos los casos pendientes" />
+                  </th>
+                  <th>Código</th>
+                  <th>Cliente</th>
+                  <th>Tipo</th>
+                  <th>Canal</th>
+                  <th>Prioridad</th>
+                  <th>Estado</th>
+                  <th>SLA</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="pendingCasesTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- PAGINACIÓN -->
+          <div class="pagination-bar" id="pendingPagination">
+            <div>
+              <span id="pendingPaginationSummary">Mostrando 0 de 0 registros</span>
+            </div>
+
+            <div class="pagination-actions">
+              <button type="button" class="panel-action" id="pendingPrevPageBtn">
+                Anterior
+              </button>
+
+              <span id="pendingCurrentPage">Página 1</span>
+
+              <button type="button" class="panel-action" id="pendingNextPageBtn">
+                Siguiente
+              </button>
+
+              <select id="pendingPageSize" aria-label="Registros por página">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="empty-state hidden" id="emptyPendingCasesState">
+            <span>📭</span>
+            <h3>No hay casos con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de clasificación</h2>
+                <p>Recomendaciones para ordenar la bandeja pendiente.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="pendingAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzePendingCasesBtn">
+              Analizar pendientes
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Acción recomendada</span>
+                <h2>Plan de decisión</h2>
+                <p>
+                  Secuencia sugerida para reducir casos detenidos.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="pendingActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, cliente, asesor, indicador, SLA, reporte o auditoría..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Clasificación y priorización</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a priorizar casos pendientes, sugerir clasificación, detectar SLA crítico o preparar asignaciones.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Qué casos pendientes debo revisar primero">
+        Priorizar
+      </button>
+
+      <button type="button" data-bot-prompt="Sugiere clasificación para los casos">
+        Clasificar
+      </button>
+
+      <button type="button" data-bot-prompt="Qué casos tienen riesgo SLA">
+        Riesgo SLA
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL VISTA RÁPIDA -->
+  <section class="modal" id="pendingCaseModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="pendingCaseModalIcon">🎫</div>
+      <span class="eyebrow eyebrow--red">Vista rápida</span>
+      <h3 id="pendingCaseModalTitle">Caso seleccionado</h3>
+      <p id="pendingCaseModalText">Detalle preliminar del caso pendiente.</p>
+
+      <div class="case-modal-summary" id="pendingCaseModalSummary"></div>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="pendingCaseClassifyBtn"
+          data-permission="SUPERVISOR_CLASSIFY_CASE"
+        >
+          Clasificar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn--soft"
+          id="pendingCaseSendAssignBtn"
+          data-permission="SUPERVISOR_SEND_TO_ASSIGNMENT"
+        >
+          Enviar a asignación
+        </button>
+
+        <button
+          type="button"
+          class="btn btn--ghost-dark"
+          id="pendingCasePriorityBtn"
+          data-permission="SUPERVISOR_CHANGE_PRIORITY"
+        >
+          Cambiar prioridad
+        </button>
+
+        <button
+          type="button"
+          class="btn btn--ghost-dark"
+          id="pendingCaseObserveBtn"
+          data-permission="SUPERVISOR_OBSERVE_CASE"
+        >
+          Observar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Volver
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CLASIFICAR CASO -->
+  <section class="modal" id="classifyCaseModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📋</div>
+      <span class="eyebrow eyebrow--red">Clasificación</span>
+      <h3>Clasificar caso pendiente</h3>
+      <p>Define categoría, tipo de atención, prioridad y ruta operativa antes de enviar a asignación.</p>
+
+      <div class="case-modal-summary" id="classifyCaseContext"></div>
+
+      <form class="supervisor-form" id="classifyCaseForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="classifyCaseType">Tipo de caso</label>
+            <select id="classifyCaseType" data-catalog="tipos_caso" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="classifyCaseCategory">Categoría</label>
+            <select id="classifyCaseCategory" data-catalog="categorias_caso" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="classifyCasePriority">Prioridad</label>
+            <select id="classifyCasePriority" data-catalog="prioridades_caso" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="classifyCaseRoute">Ruta operativa</label>
+            <select id="classifyCaseRoute" data-catalog="rutas_operativas" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="classifyCaseInternalSla">SLA sugerido</label>
+            <select id="classifyCaseInternalSla" data-catalog="reglas_sla_disponibles">
+              <option value="">Calcular desde regla de BD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="classifyCaseVisibility">Visibilidad</label>
+            <select id="classifyCaseVisibility" data-catalog="visibilidades_trazabilidad">
+              <option value="interna">Interna</option>
+              <option value="asesor">Visible para asesor</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="classifyCaseReason">Criterio de clasificación</label>
+          <textarea
+            id="classifyCaseReason"
+            placeholder="Explica brevemente por qué el caso se clasifica de esta manera."
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="classifyCaseEvidence">Evidencia opcional</label>
+          <input
+            id="classifyCaseEvidence"
+            type="file"
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+          />
+          <small>Adjunta sustento si la clasificación requiere validación documental.</small>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="classifyCaseDeclaration" />
+          <span>Confirmo que la clasificación corresponde a la información revisada.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmClassifyCaseBtn">
+          Confirmar clasificación
+        </button>
+
+        <button type="button" class="btn btn--soft" id="classifyCaseAiBtn">
+          Sugerir con IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CAMBIAR PRIORIDAD -->
+  <section class="modal" id="changePriorityModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">⚠️</div>
+      <span class="eyebrow eyebrow--red">Prioridad</span>
+      <h3>Cambiar prioridad del caso</h3>
+      <p>Actualiza la prioridad cuando exista impacto operativo, riesgo SLA o criticidad del cliente.</p>
+
+      <div class="case-modal-summary" id="changePriorityContext"></div>
+
+      <form class="supervisor-form" id="changePriorityForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="newPriority">Nueva prioridad</label>
+            <select id="newPriority" data-catalog="prioridades_caso" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="priorityReasonType">Motivo</label>
+            <select id="priorityReasonType" data-catalog="motivos_cambio_prioridad" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="priorityComment">Comentario</label>
+          <textarea id="priorityComment" placeholder="Sustenta el cambio de prioridad." required></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="priorityDeclaration" />
+          <span>Confirmo que el cambio de prioridad está sustentado y quedará auditado.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmChangePriorityBtn">
+          Cambiar prioridad
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL OBSERVAR CASO -->
+  <section class="modal" id="observeCaseModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔎</div>
+      <span class="eyebrow eyebrow--red">Observación</span>
+      <h3>Observar caso pendiente</h3>
+      <p>Registra una observación cuando falta información, evidencia o validación previa.</p>
+
+      <div class="case-modal-summary" id="observeCaseContext"></div>
+
+      <form class="supervisor-form" id="observeCaseForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="observeReason">Motivo de observación</label>
+            <select id="observeReason" data-catalog="motivos_observacion" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="observeReturnTo">Retornar a</label>
+            <select id="observeReturnTo" data-catalog="colas_operativas" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="observeVisibility">Visibilidad</label>
+            <select id="observeVisibility" data-catalog="visibilidades_trazabilidad">
+              <option value="interna">Interna</option>
+              <option value="asesor">Visible para asesor</option>
+              <option value="cliente">Visible para cliente</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="observeDueDate">Fecha límite de subsanación</label>
+            <input id="observeDueDate" type="date" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="observeComment">Detalle de observación</label>
+          <textarea
+            id="observeComment"
+            placeholder="Describe qué debe corregirse o completarse."
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="observeEvidence">Evidencia / sustento</label>
+          <input
+            id="observeEvidence"
+            type="file"
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+          />
+          <small>Máximo recomendado: 10 MB. El backend debe validar tamaño y extensión.</small>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="observeDeclaration" />
+          <span>Confirmo que la observación será registrada en la trazabilidad del caso.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmObserveCaseBtn">
+          Registrar observación
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ENVIAR A ASIGNACIÓN -->
+  <section class="modal" id="sendToAssignmentModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">👥</div>
+      <span class="eyebrow eyebrow--red">Asignación</span>
+      <h3>Enviar caso a asignación</h3>
+      <p>Valida que el caso tenga clasificación suficiente antes de enviarlo a la cola de asignación.</p>
+
+      <div class="case-modal-summary" id="sendToAssignmentContext"></div>
+
+      <form class="supervisor-form" id="sendToAssignmentForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="assignmentSuggestion">Criterio de asignación</label>
+            <select id="assignmentSuggestion" data-catalog="criterios_envio_asignacion" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="assignmentQueue">Cola destino</label>
+            <select id="assignmentQueue" data-catalog="colas_operativas" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="assignmentPriority">Prioridad final</label>
+            <select id="assignmentPriority" data-catalog="prioridades_caso">
+              <option value="">Mantener prioridad actual</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="assignmentMode">Modo</label>
+            <select id="assignmentMode" data-catalog="modos_asignacion">
+              <option value="manual">Manual por supervisor</option>
+              <option value="automatica">Automática según reglas</option>
+              <option value="recomendada">Usar recomendación IA</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="assignmentComment">Comentario para asignación</label>
+          <textarea
+            id="assignmentComment"
+            placeholder="Indica contexto útil para el asesor o cola destino."
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="assignmentDeclaration" />
+          <span>Confirmo que el caso puede pasar a asignación y que la clasificación fue revisada.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSendToAssignmentBtn">
+          Enviar a asignación
+        </button>
+
+        <a href="asignaciones.html" class="btn btn--soft">
+          Ir a asignaciones
+        </a>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ACCIONES MASIVAS -->
+  <section class="modal" id="bulkPendingActionsModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🧩</div>
+      <span class="eyebrow eyebrow--red">Acciones masivas</span>
+      <h3>Gestionar casos seleccionados</h3>
+      <p>
+        Aplica acciones por lote solo cuando los casos cumplan la misma condición operativa.
+      </p>
+
+      <div class="case-modal-summary" id="bulkPendingSummary"></div>
+
+      <form class="supervisor-form" id="bulkPendingActionsForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="bulkPendingActionType">Acción</label>
+            <select id="bulkPendingActionType">
+              <option value="">Seleccionar</option>
+              <option value="clasificar">Clasificar lote</option>
+              <option value="enviar_asignacion">Enviar a asignación</option>
+              <option value="exportar">Exportar seleccionados</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="bulkPendingQueue">Cola destino</label>
+            <select id="bulkPendingQueue" data-catalog="colas_operativas">
+              <option value="">No aplica</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="bulkPendingPriority">Prioridad</label>
+            <select id="bulkPendingPriority" data-catalog="prioridades_caso">
+              <option value="">Mantener</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="bulkPendingFormat">Formato si exporta</label>
+            <select id="bulkPendingFormat" data-catalog="formatos_exportacion_supervisor">
+              <option value="xlsx">Excel</option>
+              <option value="pdf">PDF</option>
+              <option value="csv">CSV</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bulkPendingComment">Sustento</label>
+          <textarea
+            id="bulkPendingComment"
+            placeholder="Explica por qué corresponde aplicar la acción masiva."
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="bulkPendingDeclaration" />
+          <span>Confirmo que revisé los casos seleccionados antes de aplicar la acción masiva.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmBulkPendingActionBtn">
+          Continuar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL EXPORTAR CASOS PENDIENTES -->
+  <section class="modal" id="pendingExportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📤</div>
+      <span class="eyebrow eyebrow--red">Exportación</span>
+      <h3>Exportar casos pendientes</h3>
+      <p>
+        Genera una salida profesional desde backend usando filtros, columnas y formato seleccionado.
+      </p>
+
+      <form class="supervisor-form" id="pendingExportForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="pendingExportFormat">Formato</label>
+            <select id="pendingExportFormat" data-catalog="formatos_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="pdf">PDF ejecutivo</option>
+              <option value="xlsx">Excel analítico</option>
+              <option value="csv">CSV datos</option>
+              <option value="docx">Word informe</option>
+              <option value="png">Imagen</option>
+              <option value="dashboard">Dashboard compartible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pendingExportScope">Alcance</label>
+            <select id="pendingExportScope" data-catalog="alcances_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="filtrados">Casos filtrados</option>
+              <option value="seleccionados">Casos seleccionados</option>
+              <option value="todos_pendientes">Todos los pendientes</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pendingExportDetail">Nivel de detalle</label>
+            <select id="pendingExportDetail" data-catalog="niveles_detalle_reporte">
+              <option value="operativo">Operativo</option>
+              <option value="ejecutivo">Ejecutivo</option>
+              <option value="auditable">Auditable</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pendingExportDestination">Destino</label>
+            <select id="pendingExportDestination" data-catalog="destinos_exportacion">
+              <option value="descarga_local">Descarga local</option>
+              <option value="historial_reportes">Guardar en historial</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="form-check">
+            <input type="checkbox" id="pendingExportIncludeClient" checked />
+            <span>Datos del cliente</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="pendingExportIncludeSla" checked />
+            <span>Detalle SLA</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="pendingExportIncludeHistory" />
+            <span>Trazabilidad</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="pendingExportIncludeComments" />
+            <span>Observaciones</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="pendingExportReason">Motivo de exportación</label>
+          <textarea
+            id="pendingExportReason"
+            placeholder="Ej. Revisión diaria de casos detenidos para comité operativo."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="pendingExportDeclaration" />
+          <span>Confirmo que la exportación tiene finalidad operativa y quedará registrada en auditoría.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmPendingExportBtn">
+          Exportar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CONFIRMACIÓN CENTRAL -->
+  <section class="modal" id="confirmActionModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="confirmActionIcon">⚠️</div>
+      <span class="eyebrow eyebrow--red" id="confirmActionEyebrow">Confirmación requerida</span>
+      <h3 id="confirmActionTitle">Confirmar acción</h3>
+      <p id="confirmActionText">Revisa la información antes de continuar.</p>
+
+      <div class="case-modal-summary" id="confirmActionSummary"></div>
+
+      <label class="form-check">
+        <input type="checkbox" id="confirmActionDeclaration" />
+        <span id="confirmActionDeclarationText">Confirmo que deseo ejecutar esta acción.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmActionAcceptBtn">
+          Confirmar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/supervisor.js"></script>
+</body>
+</html>

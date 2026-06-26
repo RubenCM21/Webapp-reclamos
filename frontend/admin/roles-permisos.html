@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Roles y Permisos | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+
+<body data-page="admin-roles-permisos">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Administrador</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación administrador">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="usuarios.html" class="sidebar-link">
+        <span>👤</span>
+        Usuarios
+        <small id="sidebarUserCount">0</small>
+      </a>
+
+      <a href="roles-permisos.html" class="sidebar-link active">
+        <span>🔐</span>
+        Roles y permisos
+      </a>
+
+      <a href="catalogos.html" class="sidebar-link">
+        <span>🧩</span>
+        Catálogos
+      </a>
+
+      <a href="reglas-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Reglas SLA
+      </a>
+
+      <a href="indicadores-reportes.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores y reportes
+      </a>
+
+      <a href="integraciones.html" class="sidebar-link">
+        <span>🔌</span>
+        Integraciones
+        <small id="sidebarIntegrationAlerts">0</small>
+      </a>
+
+      <a href="auditoria.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="respaldo.html" class="sidebar-link">
+        <span>💾</span>
+        Respaldo
+      </a>
+
+      <a href="configuracion-sistema.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Seguridad y privilegios</span>
+          <h1>Roles y permisos</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="auditoria.html" class="notification-btn" aria-label="Alertas administrativas">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AD</span>
+            <div>
+              <strong id="userNameTop">Administrador</strong>
+              <small id="userRoleTop">Administrador del sistema</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="usuarios.html">Usuarios</a>
+            <a href="auditoria.html">Auditoría</a>
+            <a href="configuracion-sistema.html">Configuración</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="rolesHeroEyebrow">
+            Gobierno de accesos
+          </span>
+
+          <h2 id="rolesHeroTitle">
+            Administra roles, permisos sensibles y matriz de privilegios
+          </h2>
+
+          <p id="rolesHeroText">
+            Controla perfiles funcionales, permisos por módulo, accesos críticos, usuarios asignados,
+            riesgos de privilegios excesivos y trazabilidad de cambios en la matriz.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="openCreateRoleBtn">
+              Nuevo rol
+            </button>
+
+            <button type="button" class="btn btn--soft" id="exportPermissionMatrixBtn">
+              Exportar matriz
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="rolesSummaryTitle">Roles dinámicos</strong>
+            <small id="rolesSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="rolesKpiGrid" aria-label="Indicadores de roles y permisos">
+        <article class="kpi-card">
+          <span class="kpi-card__icon">⏳</span>
+          <div>
+            <strong>...</strong>
+            <p>Cargando</p>
+            <small>Consultando roles y permisos desde la base de datos.</small>
+          </div>
+        </article>
+      </section>
+
+      <!-- GRÁFICOS / RIESGO -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Usuarios por rol</span>
+              <h2>Distribución de perfiles</h2>
+              <p>
+                Cantidad de usuarios asignados a cada rol funcional del sistema.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshRolesChartBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="bar-chart" id="rolesUsersChart">
+            <div class="loading-panel loading-panel--inline">
+              <span class="spinner"></span>
+              <strong>Cargando distribución por rol...</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Permisos sensibles</span>
+              <h2>Riesgos de acceso</h2>
+              <p>
+                Permisos críticos que deben ser revisados antes de habilitarse para un rol.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="analyzePermissionRiskBtn">
+                Analizar riesgo
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-alert-list" id="permissionRiskList">
+            <div class="loading-panel loading-panel--inline">
+              <span class="spinner"></span>
+              <strong>Cargando permisos sensibles...</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- MATRIZ + PANEL LATERAL -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Matriz de permisos</span>
+              <h2>Permisos por rol y módulo</h2>
+              <p>
+                Activa o desactiva permisos por rol. Los permisos sensibles exigen confirmación y motivo.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshPermissionMatrixBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="resetPermissionMatrixBtn">
+                Restaurar base
+              </button>
+
+              <button type="button" class="panel-action" id="savePermissionMatrixBtn">
+                Guardar matriz
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="permissionSearch"
+                type="search"
+                placeholder="Buscar por módulo, permiso, descripción o sensibilidad..."
+              />
+            </div>
+
+            <div class="case-filters" id="permissionFilters">
+              <button type="button" class="filter-chip active" data-permission-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-permission-filter="cliente">
+                Cliente
+              </button>
+
+              <button type="button" class="filter-chip" data-permission-filter="asesor">
+                Asesor
+              </button>
+
+              <button type="button" class="filter-chip" data-permission-filter="supervisor">
+                Supervisor
+              </button>
+
+              <button type="button" class="filter-chip" data-permission-filter="administrador">
+                Administrador
+              </button>
+
+              <button type="button" class="filter-chip" data-permission-filter="sensibles">
+                Sensibles
+              </button>
+            </div>
+          </div>
+
+          <div class="permission-matrix-wrap">
+            <table class="permission-matrix">
+              <thead>
+                <tr>
+                  <th>Módulo / permiso</th>
+                  <th>Cliente</th>
+                  <th>Asesor</th>
+                  <th>Supervisor</th>
+                  <th>Administrador</th>
+                  <th>Detalle</th>
+                </tr>
+              </thead>
+
+              <tbody id="permissionMatrixBody">
+                <tr>
+                  <td colspan="6">
+                    <div class="loading-panel loading-panel--inline">
+                      <span class="spinner"></span>
+                      <strong>Cargando matriz de permisos...</strong>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="empty-state hidden" id="emptyPermissionState">
+            <span>🔐</span>
+            <h3>No hay permisos con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría de permisos.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de permisos</h2>
+                <p>
+                  Analiza permisos excesivos, roles sensibles, accesos críticos y recomendaciones de mínimo privilegio.
+                </p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="rolesAiSummary">
+              <div class="ai-summary-item">
+                <strong>Esperando datos</strong>
+                <p>El análisis se cargará cuando el backend retorne información.</p>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeRolesBtn">
+              Analizar roles
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Buenas prácticas</span>
+                <h2>Plan de control</h2>
+                <p>
+                  Recomendaciones para mantener permisos seguros y trazables.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="rolesActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- ROLES CONFIGURADOS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Perfiles funcionales</span>
+            <h2>Roles configurados</h2>
+            <p>
+              Administra perfiles, alcance, nivel de acceso, usuarios asignados y estado del rol.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="refreshRoleCardsBtn">
+              Actualizar
+            </button>
+
+            <button type="button" class="panel-action" id="exportRolesBtn">
+              Exportar roles
+            </button>
+          </div>
+        </div>
+
+        <div class="role-card-grid" id="roleCardGrid">
+          <div class="loading-panel loading-panel--inline">
+            <span class="spinner"></span>
+            <strong>Cargando roles configurados...</strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar usuario, rol, catálogo, SLA, integración, reporte o evento..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Roles y permisos</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a revisar permisos sensibles, accesos excesivos y matriz de roles.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Analiza roles y permisos">
+        Analizar matriz
+      </button>
+
+      <button type="button" data-bot-prompt="Qué permisos sensibles debo revisar">
+        Sensibles
+      </button>
+
+      <button type="button" data-bot-prompt="Recomienda ajustes de mínimo privilegio">
+        Mínimo privilegio
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL CREAR / EDITAR ROL -->
+  <section class="modal" id="roleFormModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔐</div>
+      <span class="eyebrow eyebrow--red" id="roleFormEyebrow">Rol</span>
+      <h3 id="roleFormTitle">Crear rol</h3>
+      <p id="roleFormText">
+        Define el perfil funcional, alcance, nivel de acceso, estado y descripción del rol.
+      </p>
+
+      <form class="admin-form" id="roleForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="roleName">Nombre del rol</label>
+            <input id="roleName" type="text" placeholder="Ej. Coordinador de reclamos" />
+          </div>
+
+          <div class="form-group">
+            <label for="roleScope">Alcance funcional</label>
+            <select id="roleScope">
+              <option value="">Seleccionar alcance</option>
+              <option value="Cliente">Cliente</option>
+              <option value="Operación">Operación</option>
+              <option value="Supervisión">Supervisión</option>
+              <option value="Administración">Administración</option>
+              <option value="Sistema completo">Sistema completo</option>
+            </select>
+            <p class="form-help">Este campo será cargado desde la base de datos.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="roleAccessLevel">Nivel de acceso</label>
+            <select id="roleAccessLevel">
+              <option value="">Seleccionar nivel</option>
+              <option value="Básico">Básico</option>
+              <option value="Operativo">Operativo</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Administrador">Administrador</option>
+              <option value="Crítico">Crítico</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="roleStatus">Estado</label>
+            <select id="roleStatus">
+              <option value="">Seleccionar estado</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+              <option value="En revisión">En revisión</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="roleDescription">Descripción</label>
+          <textarea id="roleDescription" placeholder="Describe el propósito funcional del rol y sus responsabilidades."></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="roleFormDeclaration" />
+          <span>Confirmo que el rol fue revisado y corresponde a una necesidad funcional real.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="saveRoleBtn">
+          Guardar rol
+        </button>
+
+        <button type="button" class="btn btn--soft" id="suggestRolePermissionsBtn">
+          Sugerir permisos
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DETALLE PERMISO -->
+  <section class="modal" id="permissionDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="permissionDetailIcon">🔐</div>
+      <span class="eyebrow eyebrow--red">Detalle de permiso</span>
+      <h3 id="permissionDetailTitle">Permiso seleccionado</h3>
+      <p id="permissionDetailText">Descripción funcional del permiso seleccionado.</p>
+
+      <div class="case-modal-summary" id="permissionDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="editPermissionBtn">
+          Editar en matriz
+        </button>
+
+        <button type="button" class="btn btn--soft" id="permissionAuditBtn">
+          Ver auditoría
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GUARDAR MATRIZ -->
+  <section class="modal" id="savePermissionMatrixModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔐</div>
+      <span class="eyebrow eyebrow--red">Confirmación de matriz</span>
+      <h3>Guardar cambios de permisos</h3>
+      <p>
+        Antes de guardar, valida que los permisos activados correspondan al principio de mínimo privilegio.
+      </p>
+
+      <div class="form-group">
+        <label for="permissionMatrixReason">Motivo</label>
+        <textarea id="permissionMatrixReason" placeholder="Sustenta la modificación de matriz."></textarea>
+      </div>
+
+      <div class="confirm-warning-banner">
+        Los cambios en esta matriz pueden afectar usuarios, asesores, supervisores y administradores. 
+        La acción será registrada en auditoría.
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="permissionMatrixDeclaration" />
+        <span>Confirmo que revisé permisos sensibles, roles administrativos y alcance de cambios.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSavePermissionMatrixBtn">
+          Guardar matriz
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>

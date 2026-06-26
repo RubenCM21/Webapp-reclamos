@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Monitoreo SLA | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/supervisor.css" />
+</head>
+
+<body data-page="supervisor-monitoreo-sla">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- CONFIGURACIÓN DE PÁGINA PARA SUPERVISOR.JS -->
+  <script type="application/json" id="supervisorPageConfig">
+    {
+      "page": "supervisor-monitoreo-sla",
+      "module": "SUPERVISOR_MONITOREO_SLA",
+      "title": "Monitoreo SLA",
+      "mainEndpoint": "/supervisor/monitoreo-sla",
+      "catalogEndpoint": "/supervisor/catalogos",
+      "exportEndpoint": "/supervisor/exportar/monitoreo-sla",
+      "auditModule": "MONITOREO_SLA_SUPERVISOR",
+      "requiresCatalogs": [
+        "asesores",
+        "areas_operativas",
+        "colas_operativas",
+        "prioridades_caso",
+        "estados_caso_supervisor",
+        "tipos_caso",
+        "canales_atencion",
+        "rangos_sla_supervisor",
+        "niveles_riesgo_sla",
+        "destinatarios_alerta_sla",
+        "canales_alerta",
+        "plantillas_alerta_sla",
+        "acciones_seguimiento_sla",
+        "resultados_seguimiento_sla",
+        "niveles_escalamiento",
+        "motivos_escalamiento",
+        "formatos_exportacion_supervisor",
+        "alcances_exportacion_supervisor"
+      ],
+      "permissions": [
+        "SUPERVISOR_VIEW_SLA",
+        "SUPERVISOR_SEND_SLA_ALERT",
+        "SUPERVISOR_REGISTER_SLA_FOLLOWUP",
+        "SUPERVISOR_REASSIGN_CASE",
+        "SUPERVISOR_ESCALATE_CASE",
+        "SUPERVISOR_EXPORT_SLA"
+      ]
+    }
+  </script>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Supervisor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación supervisor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="casos-pendientes.html" class="sidebar-link">
+        <span>📋</span>
+        Casos pendientes
+        <small id="sidebarPendingCount">0</small>
+      </a>
+
+      <a href="asignaciones.html" class="sidebar-link">
+        <span>👥</span>
+        Asignaciones
+      </a>
+
+      <a href="carga-asesores.html" class="sidebar-link">
+        <span>⚖️</span>
+        Carga de asesores
+      </a>
+
+      <a href="monitoreo-sla.html" class="sidebar-link active">
+        <span>⏱️</span>
+        Monitoreo SLA
+        <small id="sidebarSlaCount">0</small>
+      </a>
+
+      <a href="indicadores.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores
+      </a>
+
+      <a href="reportes.html" class="sidebar-link">
+        <span>📊</span>
+        Reportes
+      </a>
+
+      <a href="auditoria-casos.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="configuracion-supervision.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Control de vencimientos</span>
+          <h1>Monitoreo SLA</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="monitoreo-sla.html" class="notification-btn" aria-label="Alertas SLA">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">SD</span>
+            <div>
+              <strong id="userNameTop">Supervisor</strong>
+              <small id="userRoleTop">Supervisor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores.html">Indicadores</a>
+            <a href="auditoria-casos.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="supervisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="slaMonitorHeroEyebrow">
+            Semáforo de cumplimiento
+          </span>
+
+          <h2 id="slaMonitorHeroTitle">
+            Detecta vencimientos, prioriza riesgos y escala casos críticos
+          </h2>
+
+          <p id="slaMonitorHeroText">
+            Monitorea casos próximos a vencer, vencidos, bloqueados, derivados y con impacto alto.
+            Desde aquí puedes enviar alertas, registrar seguimiento y derivar a asignaciones para reasignar o escalar.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="prioritizeSlaMonitorBtn">
+              Priorizar con IA
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--soft"
+              id="sendMassSlaAlertBtn"
+              data-permission="SUPERVISOR_SEND_SLA_ALERT"
+            >
+              Enviar alertas
+            </button>
+
+            <a href="asignaciones.html" class="btn btn--ghost-dark">
+              Reasignar casos
+            </a>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="slaMonitorSummaryTitle">Monitoreo dinámico</strong>
+            <small id="slaMonitorSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="slaMonitorKpiGrid" aria-label="Indicadores SLA"></section>
+
+      <!-- FILTROS AVANZADOS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Filtros avanzados</span>
+            <h2>Segmentación de riesgo SLA</h2>
+            <p>
+              Filtra casos por vencimiento, asesor, área, prioridad, canal, estado, tipo y seguimiento.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="applySlaAdvancedFiltersBtn">
+              Aplicar filtros
+            </button>
+
+            <button type="button" class="panel-action" id="resetSlaAdvancedFiltersBtn">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        <div class="supervisor-filter-grid">
+          <div class="form-group">
+            <label for="slaDeadlineFrom">Vence desde</label>
+            <input id="slaDeadlineFrom" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label for="slaDeadlineTo">Vence hasta</label>
+            <input id="slaDeadlineTo" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label for="slaAdvisorFilter">Asesor</label>
+            <select id="slaAdvisorFilter" data-catalog="asesores">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaAreaFilter">Área / cola</label>
+            <select id="slaAreaFilter" data-catalog="colas_operativas">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaPriorityFilter">Prioridad</label>
+            <select id="slaPriorityFilter" data-catalog="prioridades_caso">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaStatusFilter">Estado</label>
+            <select id="slaStatusFilter" data-catalog="estados_caso_supervisor">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaTypeFilter">Tipo de caso</label>
+            <select id="slaTypeFilter" data-catalog="tipos_caso">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaChannelFilter">Canal</label>
+            <select id="slaChannelFilter" data-catalog="canales_atencion">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaRiskFilter">Nivel de riesgo</label>
+            <select id="slaRiskFilter" data-catalog="niveles_riesgo_sla">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaFollowupFilter">Seguimiento</label>
+            <select id="slaFollowupFilter" data-catalog="estados_seguimiento_sla">
+              <option value="todos">Todos</option>
+              <option value="sin_seguimiento">Sin seguimiento</option>
+              <option value="con_alerta">Con alerta enviada</option>
+              <option value="con_seguimiento">Con seguimiento registrado</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- MONITOREO + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Alertas SLA</span>
+              <h2>Casos por nivel de riesgo</h2>
+              <p>
+                Filtra casos vencidos, próximos a vencer, bloqueados, críticos o derivados.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshSlaMonitorBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="toggleSlaMonitorViewBtn">
+                Vista tabla
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="exportSlaMonitorBtn"
+                data-permission="SUPERVISOR_EXPORT_SLA"
+              >
+                Exportar
+              </button>
+            </div>
+          </div>
+
+          <div class="supervisor-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="slaMonitorSearch"
+                type="search"
+                placeholder="Buscar por código, cliente, asesor, prioridad, SLA, estado o canal..."
+              />
+            </div>
+
+            <div class="case-filters" id="slaMonitorFilters">
+              <button type="button" class="filter-chip active" data-sla-monitor-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-monitor-filter="vencidos">
+                Vencidos
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-monitor-filter="riesgo_alto">
+                Riesgo alto
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-monitor-filter="vence_hoy">
+                Vence hoy
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-monitor-filter="bloqueados">
+                Bloqueados
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-monitor-filter="derivados">
+                Derivados
+              </button>
+            </div>
+          </div>
+
+          <!-- BARRA DE SELECCIÓN MASIVA -->
+          <div class="bulk-action-bar hidden" id="slaMonitorBulkBar">
+            <div>
+              <strong id="slaMonitorSelectedCount">0</strong>
+              <span>casos seleccionados</span>
+            </div>
+
+            <div class="panel-header-actions">
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkSendSlaAlertBtn"
+                data-permission="SUPERVISOR_SEND_SLA_ALERT"
+              >
+                Enviar alerta
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkSlaFollowupBtn"
+                data-permission="SUPERVISOR_REGISTER_SLA_FOLLOWUP"
+              >
+                Registrar seguimiento
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkSlaEscalateBtn"
+                data-permission="SUPERVISOR_ESCALATE_CASE"
+              >
+                Escalar en asignaciones
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkExportSlaBtn"
+                data-permission="SUPERVISOR_EXPORT_SLA"
+              >
+                Exportar seleccionados
+              </button>
+
+              <button type="button" class="panel-action" id="clearSlaSelectionBtn">
+                Limpiar selección
+              </button>
+            </div>
+          </div>
+
+          <!-- VISTA CARDS -->
+          <div class="case-list" id="slaMonitorCaseList"></div>
+
+          <!-- VISTA TABLA -->
+          <div class="cases-table-wrap hidden" id="slaMonitorTableWrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>
+                    <input type="checkbox" id="slaSelectAll" aria-label="Seleccionar todos los casos SLA" />
+                  </th>
+                  <th>Código</th>
+                  <th>Cliente</th>
+                  <th>Asesor</th>
+                  <th>Estado</th>
+                  <th>Prioridad</th>
+                  <th>SLA</th>
+                  <th>Riesgo</th>
+                  <th>Seguimiento</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="slaMonitorTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- PAGINACIÓN -->
+          <div class="pagination-bar" id="slaMonitorPagination">
+            <div>
+              <span id="slaMonitorPaginationSummary">Mostrando 0 de 0 casos</span>
+            </div>
+
+            <div class="pagination-actions">
+              <button type="button" class="panel-action" id="slaMonitorPrevPageBtn">
+                Anterior
+              </button>
+
+              <span id="slaMonitorCurrentPage">Página 1</span>
+
+              <button type="button" class="panel-action" id="slaMonitorNextPageBtn">
+                Siguiente
+              </button>
+
+              <select id="slaMonitorPageSize" aria-label="Casos SLA por página">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="empty-state hidden" id="emptySlaMonitorState">
+            <span>✅</span>
+            <h3>No hay casos con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría de riesgo.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de SLA</h2>
+                <p>Recomendaciones para evitar incumplimientos.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="slaMonitorAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeSlaMonitorBtn">
+              Analizar SLA
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Plan de contención</span>
+                <h2>Acciones recomendadas</h2>
+                <p>Secuencia sugerida para reducir riesgo de vencimiento.</p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="slaMonitorActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- MAPA DE PRIORIDADES -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Mapa de prioridades</span>
+            <h2>Semáforo operativo por criticidad</h2>
+            <p>
+              Vista resumida para ubicar casos según impacto, urgencia, bloqueo y tiempo restante.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="refreshPriorityMapBtn">
+              Refrescar mapa
+            </button>
+
+            <button type="button" class="panel-action" id="priorityMapAiBtn">
+              Interpretar IA
+            </button>
+          </div>
+        </div>
+
+        <div class="priority-map-grid" id="priorityMapGrid"></div>
+
+        <div class="empty-state hidden" id="emptyPriorityMapState">
+          <span>⏱️</span>
+          <h3>Sin datos para el semáforo</h3>
+          <p>El mapa se mostrará cuando existan casos con clasificación SLA.</p>
+        </div>
+      </section>
+
+      <!-- SLA POR ASESOR -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">SLA por asesor</span>
+            <h2>Riesgo distribuido en el equipo</h2>
+            <p>
+              Permite detectar si el riesgo se concentra en un asesor o cola específica.
+            </p>
+          </div>
+
+          <a href="carga-asesores.html" class="panel-link">
+            Ver carga
+          </a>
+        </div>
+
+        <div class="advisor-load-list" id="slaByAdvisorList"></div>
+
+        <div class="empty-state hidden" id="emptySlaByAdvisorState">
+          <span>👥</span>
+          <h3>Sin riesgo por asesor</h3>
+          <p>El detalle aparecerá cuando se carguen asesores y casos con SLA.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, cliente, asesor, indicador, SLA, reporte o auditoría..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Monitoreo SLA</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo identificar SLA en riesgo, sugerir reasignaciones, preparar alertas o recomendar escalamientos.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Qué SLA están en riesgo">
+        Riesgo SLA
+      </button>
+
+      <button type="button" data-bot-prompt="Qué casos debo escalar">
+        Escalar
+      </button>
+
+      <button type="button" data-bot-prompt="Qué asesor concentra más riesgo">
+        Riesgo por asesor
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE SLA -->
+  <section class="modal" id="slaCaseDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="slaCaseDetailIcon">⏱️</div>
+      <span class="eyebrow eyebrow--red">Detalle SLA</span>
+      <h3 id="slaCaseDetailTitle">Caso seleccionado</h3>
+      <p id="slaCaseDetailText">Detalle del riesgo SLA del caso.</p>
+
+      <div class="case-modal-summary" id="slaCaseDetailSummary"></div>
+
+      <div class="panel-card panel-card--inner">
+        <div class="panel-card__header panel-card__header--inner">
+          <div>
+            <span class="eyebrow">Trazabilidad SLA</span>
+            <h3>Alertas y seguimientos recientes</h3>
+            <p>Historial operativo para tomar una decisión sustentada.</p>
+          </div>
+        </div>
+
+        <div class="activity-timeline" id="slaCaseTraceTimeline"></div>
+
+        <div class="empty-state hidden" id="emptySlaCaseTraceState">
+          <span>🕘</span>
+          <h3>Sin seguimiento registrado</h3>
+          <p>Registra una alerta o seguimiento para dejar trazabilidad.</p>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="slaCaseReassignBtn"
+          data-permission="SUPERVISOR_REASSIGN_CASE"
+        >
+          Reasignar en asignaciones
+        </button>
+
+        <button
+          type="button"
+          class="btn btn--soft"
+          id="slaCaseEscalateBtn"
+          data-permission="SUPERVISOR_ESCALATE_CASE"
+        >
+          Escalar en asignaciones
+        </button>
+
+        <button
+          type="button"
+          class="btn btn--ghost-dark"
+          id="slaCaseAlertBtn"
+          data-permission="SUPERVISOR_SEND_SLA_ALERT"
+        >
+          Enviar alerta
+        </button>
+
+        <button
+          type="button"
+          class="btn btn--ghost-dark"
+          id="slaCaseFollowBtn"
+          data-permission="SUPERVISOR_REGISTER_SLA_FOLLOWUP"
+        >
+          Registrar seguimiento
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Volver
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ALERTA SLA -->
+  <section class="modal" id="sendSlaAlertModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📣</div>
+      <span class="eyebrow eyebrow--red">Alerta SLA</span>
+      <h3>Enviar alerta preventiva</h3>
+      <p>Confirma destinatario, canal y mensaje antes de registrar la alerta.</p>
+
+      <div class="case-modal-summary" id="sendSlaAlertContext"></div>
+
+      <form class="supervisor-form" id="sendSlaAlertForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="slaAlertTarget">Destinatario</label>
+            <select id="slaAlertTarget" data-catalog="destinatarios_alerta_sla" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaAlertChannel">Canal</label>
+            <select id="slaAlertChannel" data-catalog="canales_alerta" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaAlertTemplate">Plantilla</label>
+            <select id="slaAlertTemplate" data-catalog="plantillas_alerta_sla">
+              <option value="">Sin plantilla</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaAlertUrgency">Urgencia</label>
+            <select id="slaAlertUrgency" data-catalog="niveles_riesgo_sla">
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="slaAlertMessage">Mensaje</label>
+          <textarea id="slaAlertMessage" placeholder="Redacta la alerta preventiva o correctiva." required></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="slaAlertDeclaration" />
+          <span>Confirmo que la alerta corresponde al caso o alcance seleccionado.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSendSlaAlertBtn">
+          Enviar alerta
+        </button>
+
+        <button type="button" class="btn btn--soft" id="slaAlertAiBtn">
+          Generar texto IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL ALERTA MASIVA SLA -->
+  <section class="modal" id="massSlaAlertModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📣</div>
+      <span class="eyebrow eyebrow--red">Alerta masiva SLA</span>
+      <h3>Enviar alertas por lote</h3>
+      <p>
+        Usa esta opción para casos vencidos, en riesgo alto, seleccionados o filtrados.
+      </p>
+
+      <div class="case-modal-summary" id="massSlaAlertSummary"></div>
+
+      <form class="supervisor-form" id="massSlaAlertForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="massSlaAlertScope">Alcance</label>
+            <select id="massSlaAlertScope" data-catalog="alcances_alerta_sla" required>
+              <option value="">Seleccionar</option>
+              <option value="seleccionados">Casos seleccionados</option>
+              <option value="filtrados">Casos filtrados</option>
+              <option value="vencidos">Casos vencidos</option>
+              <option value="riesgo_alto">Riesgo alto</option>
+              <option value="vence_hoy">Vence hoy</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="massSlaAlertTarget">Destinatario</label>
+            <select id="massSlaAlertTarget" data-catalog="destinatarios_alerta_sla" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="massSlaAlertChannel">Canal</label>
+            <select id="massSlaAlertChannel" data-catalog="canales_alerta" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="massSlaAlertTemplate">Plantilla</label>
+            <select id="massSlaAlertTemplate" data-catalog="plantillas_alerta_sla">
+              <option value="">Sin plantilla</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="massSlaAlertMessage">Mensaje base</label>
+          <textarea
+            id="massSlaAlertMessage"
+            placeholder="Mensaje común para los casos incluidos en la alerta masiva."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="massSlaAlertDeclaration" />
+          <span>Confirmo que revisé el alcance de la alerta masiva y quedará registrado en auditoría.</span>
+        </label>
+      </form>
+
+      <div class="panel-card panel-card--inner hidden" id="massSlaAlertPreviewPanel">
+        <div class="panel-card__header panel-card__header--inner">
+          <div>
+            <span class="eyebrow">Vista previa</span>
+            <h3>Casos incluidos</h3>
+            <p id="massSlaAlertPreviewText">
+              La vista previa aparecerá antes de enviar la alerta.
+            </p>
+          </div>
+        </div>
+
+        <div class="cases-table-wrap">
+          <table class="cases-table">
+            <thead>
+              <tr>
+                <th>Caso</th>
+                <th>Cliente</th>
+                <th>Responsable</th>
+                <th>SLA</th>
+                <th>Riesgo</th>
+                <th>Destino</th>
+              </tr>
+            </thead>
+
+            <tbody id="massSlaAlertPreviewBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="previewMassSlaAlertBtn">
+          Preparar vista previa
+        </button>
+
+        <button type="button" class="btn btn--primary hidden" id="confirmMassSlaAlertBtn">
+          Enviar alertas
+        </button>
+
+        <button type="button" class="btn btn--soft" id="massSlaAlertAiBtn">
+          Generar texto IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL SEGUIMIENTO SLA -->
+  <section class="modal" id="slaSupervisorFollowModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔎</div>
+      <span class="eyebrow eyebrow--red">Seguimiento supervisor</span>
+      <h3>Registrar seguimiento SLA</h3>
+      <p>Deja trazabilidad de la acción preventiva o correctiva aplicada por supervisión.</p>
+
+      <div class="case-modal-summary" id="slaSupervisorFollowContext"></div>
+
+      <form class="supervisor-form" id="slaSupervisorFollowForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="slaFollowAction">Acción realizada</label>
+            <select id="slaFollowAction" data-catalog="acciones_seguimiento_sla" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaFollowResult">Resultado</label>
+            <select id="slaFollowResult" data-catalog="resultados_seguimiento_sla" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaFollowNextAction">Próxima acción</label>
+            <select id="slaFollowNextAction" data-catalog="acciones_seguimiento_sla">
+              <option value="">Sin próxima acción</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaFollowNextDate">Fecha próxima revisión</label>
+            <input id="slaFollowNextDate" type="datetime-local" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="slaFollowComment">Comentario</label>
+          <textarea id="slaFollowComment" placeholder="Describe el seguimiento realizado." required></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="slaFollowDeclaration" />
+          <span>Confirmo que el seguimiento quedará registrado en auditoría.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSlaSupervisorFollowBtn">
+          Registrar seguimiento
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL EXPORTAR SLA -->
+  <section class="modal" id="slaExportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📤</div>
+      <span class="eyebrow eyebrow--red">Exportación</span>
+      <h3>Exportar monitoreo SLA</h3>
+      <p>
+        Genera un reporte formal de vencimientos, riesgos, alertas y seguimiento.
+      </p>
+
+      <form class="supervisor-form" id="slaExportForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="slaExportFormat">Formato</label>
+            <select id="slaExportFormat" data-catalog="formatos_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="pdf">PDF ejecutivo</option>
+              <option value="xlsx">Excel analítico</option>
+              <option value="csv">CSV datos</option>
+              <option value="docx">Word informe</option>
+              <option value="png">Imagen</option>
+              <option value="dashboard">Dashboard compartible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaExportScope">Alcance</label>
+            <select id="slaExportScope" data-catalog="alcances_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="filtrados">Casos filtrados</option>
+              <option value="seleccionados">Casos seleccionados</option>
+              <option value="vencidos">Vencidos</option>
+              <option value="riesgo_alto">Riesgo alto</option>
+              <option value="todos">Todos los casos SLA</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaExportDetail">Nivel de detalle</label>
+            <select id="slaExportDetail" data-catalog="niveles_detalle_reporte">
+              <option value="operativo">Operativo</option>
+              <option value="ejecutivo">Ejecutivo</option>
+              <option value="auditable">Auditable</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slaExportDestination">Destino</label>
+            <select id="slaExportDestination" data-catalog="destinos_exportacion">
+              <option value="descarga_local">Descarga local</option>
+              <option value="historial_reportes">Guardar en historial</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="form-check">
+            <input type="checkbox" id="slaExportIncludeClient" checked />
+            <span>Datos del cliente</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="slaExportIncludeAdvisor" checked />
+            <span>Responsable</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="slaExportIncludeTrace" />
+            <span>Trazabilidad SLA</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="slaExportIncludeRecommendations" />
+            <span>Recomendaciones</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="slaExportReason">Motivo de exportación</label>
+          <textarea
+            id="slaExportReason"
+            placeholder="Ej. Seguimiento de casos vencidos y próximos a vencer."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="slaExportDeclaration" />
+          <span>Confirmo que la exportación tiene finalidad operativa y quedará registrada en auditoría.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSlaExportBtn">
+          Exportar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CONFIRMACIÓN CENTRAL -->
+  <section class="modal" id="confirmActionModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="confirmActionIcon">⚠️</div>
+      <span class="eyebrow eyebrow--red" id="confirmActionEyebrow">Confirmación requerida</span>
+      <h3 id="confirmActionTitle">Confirmar acción</h3>
+      <p id="confirmActionText">Revisa la información antes de continuar.</p>
+
+      <div class="case-modal-summary" id="confirmActionSummary"></div>
+
+      <label class="form-check">
+        <input type="checkbox" id="confirmActionDeclaration" />
+        <span id="confirmActionDeclarationText">Confirmo que deseo ejecutar esta acción.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmActionAcceptBtn">
+          Confirmar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/supervisor.js"></script>
+</body>
+</html>

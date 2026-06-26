@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Detalle de Atención | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/asesor.css" />
+</head>
+
+<body data-page="asesor-detalle-atencion">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+
+      <span class="brand__tag">Atención 360 | Asesor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación asesor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>📊</span>
+        Dashboard
+      </a>
+
+      <a href="bandeja.html" class="sidebar-link">
+        <span>📥</span>
+        Bandeja
+        <small id="sidebarAssignedCount">0</small>
+      </a>
+
+      <a href="detalle-atencion.html" class="sidebar-link active">
+        <span>🧾</span>
+        Detalle de atención
+      </a>
+
+      <a href="cola-trabajo.html" class="sidebar-link">
+        <span>🗂️</span>
+        Cola de trabajo
+      </a>
+
+      <a href="calendario-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Calendario SLA
+      </a>
+
+      <a href="plantillas-respuesta.html" class="sidebar-link">
+        <span>💬</span>
+        Plantillas
+      </a>
+
+      <a href="notificaciones.html" class="sidebar-link">
+        <span>🔔</span>
+        Notificaciones
+        <small id="sidebarNotificationCount">0</small>
+      </a>
+
+      <a href="rendimiento.html" class="sidebar-link">
+        <span>📈</span>
+        Rendimiento
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- =====================================================
+       APP SHELL
+  ====================================================== -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Ficha integral del caso</span>
+          <h1>Detalle de atención</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="notificaciones.html" class="notification-btn" aria-label="Notificaciones">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AS</span>
+
+            <div>
+              <strong id="userNameTop">Asesor</strong>
+              <small id="userRoleTop">Asesor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="rendimiento.html">Mi rendimiento</a>
+            <a href="notificaciones.html">Alertas y tareas</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+    <main class="advisor-page">
+      <!-- HERO DEL CASO -->
+      <section class="welcome-card case-hero-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="caseTypeLabel">
+            Caso
+          </span>
+
+          <h2 id="caseTitle">
+            Selecciona un caso para iniciar atención
+          </h2>
+
+          <p id="caseDescription">
+            Esta pantalla centraliza información del cliente, servicio, SLA, evidencias,
+            historial, acciones, solicitudes, derivaciones y cierre.
+          </p>
+
+          <div class="case-meta case-meta--hero" id="caseMeta">
+            <span>Sin caso cargado</span>
+          </div>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="openUpdateCaseModal">
+              Registrar avance
+            </button>
+
+            <button type="button" class="btn btn--soft" id="openRequestInfoModal">
+              Solicitar información
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="attentionOpenBotBtn">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="caseStatusBadge" class="status-pill status-pill--info">
+              Sin estado
+            </strong>
+            <small>
+              Estado, SLA y prioridad desde BD
+            </small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- EMPTY GENERAL -->
+      <section class="empty-state hidden" id="emptyCaseInfoState">
+        <span>🧾</span>
+        <h3>No hay caso seleccionado</h3>
+        <p>
+          Abre un caso desde la bandeja, cola, calendario SLA o notificaciones.
+          También puedes usar una URL como <strong>detalle-atencion.html?caso=REC-2026-000001</strong>.
+        </p>
+
+        <div class="welcome-actions">
+          <a href="bandeja.html" class="btn btn--primary">
+            Ir a bandeja
+          </a>
+
+          <a href="cola-trabajo.html" class="btn btn--soft">
+            Ir a cola
+          </a>
+        </div>
+      </section>
+
+      <!-- =====================================================
+           GRID PRINCIPAL
+      ====================================================== -->
+      <section class="bandeja-layout">
+        <!-- COLUMNA IZQUIERDA -->
+        <section class="cases-panel">
+          <!-- DATOS DEL CLIENTE -->
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Cliente y servicio</span>
+                <h2>Información operativa</h2>
+                <p>
+                  Datos obtenidos desde BD: cliente, documento, servicio, canal,
+                  SLA, prioridad y acción sugerida.
+                </p>
+              </div>
+
+              <div class="panel-header-actions">
+                <button type="button" class="panel-action" id="detailShareBtn">
+                  Compartir
+                </button>
+
+                <button type="button" class="panel-action" id="detailDownloadBtn">
+                  Constancia
+                </button>
+              </div>
+            </div>
+
+            <div class="info-grid" id="customerInfoGrid">
+              <!-- Render dinámico desde asesor.js -->
+            </div>
+          </section>
+
+          <!-- MOTIVO -->
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Motivo de atención</span>
+                <h2>Descripción del caso</h2>
+                <p>
+                  El motivo debe estar asociado al catálogo de tipos/motivos de reclamo
+                  y al servicio afectado.
+                </p>
+              </div>
+            </div>
+
+            <div class="case-reason-box">
+              <p id="caseReasonText">
+                Sin motivo registrado.
+              </p>
+            </div>
+          </section>
+
+          <!-- EVIDENCIAS -->
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Sustento</span>
+                <h2>Evidencias registradas</h2>
+                <p>
+                  Archivos, capturas, documentos o sustentos asociados al caso.
+                  Deben venir desde backend y mantener trazabilidad.
+                </p>
+              </div>
+
+              <div class="panel-header-actions">
+                <button type="button" class="panel-action" id="attentionEvidenceHelpBtn">
+                  Guía
+                </button>
+              </div>
+            </div>
+
+            <div class="evidence-list" id="attentionEvidenceList">
+              <!-- Render dinámico desde asesor.js -->
+            </div>
+
+            <div class="empty-state hidden" id="emptyEvidenceState">
+              <span>📎</span>
+              <h3>Sin evidencias registradas</h3>
+              <p>
+                Si el caso requiere sustento, solicita información adicional al cliente.
+              </p>
+
+              <button type="button" class="btn btn--soft" id="quickOpenRequestBtn">
+                Solicitar evidencia
+              </button>
+            </div>
+          </section>
+
+          <!-- HISTORIAL -->
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Trazabilidad</span>
+                <h2>Historial del caso</h2>
+                <p>
+                  Eventos de atención: registro, asignación, actualización,
+                  solicitud, derivación, seguimiento SLA y cierre.
+                </p>
+              </div>
+
+              <div class="panel-header-actions">
+                <button type="button" class="panel-action" id="refreshAttentionHistoryBtn">
+                  Actualizar
+                </button>
+              </div>
+            </div>
+
+            <div class="activity-timeline" id="attentionHistoryTimeline">
+              <!-- Render dinámico desde asesor.js -->
+            </div>
+
+            <div class="empty-state hidden" id="emptyHistoryState">
+              <span>🕘</span>
+              <h3>Sin historial visible</h3>
+              <p>
+                Cuando registres avances o acciones, aparecerán aquí.
+              </p>
+            </div>
+          </section>
+        </section>
+
+        <!-- COLUMNA DERECHA -->
+        <aside class="form-side-stack sticky-panel">
+          <!-- IA -->
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+
+              <div>
+                <h2>IA del caso</h2>
+                <p>Resumen, riesgo, bloqueo y siguiente acción.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="attentionAiSummary">
+              <!-- Render dinámico -->
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="attentionAiBtn">
+              Analizar caso
+            </button>
+          </section>
+
+          <!-- ACCIONES RÁPIDAS -->
+          <div class="request-options">
+  <button type="button" id="quickOpenUpdateBtn" class="case-action-option">
+    <span>✍️</span>
+    <div>
+      <strong>Registrar avance</strong>
+      <p>Actualiza estado, visibilidad, resumen y detalle.</p>
+    </div>
+  </button>
+
+  <button type="button" id="quickOpenRequestBtn" class="case-action-option">
+    <span>📩</span>
+    <div>
+      <strong>Solicitar información</strong>
+      <p>Envía solicitud al cliente y registra comunicación.</p>
+    </div>
+  </button>
+
+  <button type="button" id="quickOpenDeriveBtn" class="case-action-option">
+    <span>🔀</span>
+    <div>
+      <strong>Derivar caso</strong>
+      <p>Envía el caso a un área válida del catálogo.</p>
+    </div>
+  </button>
+
+  <button type="button" id="quickOpenCloseBtn" class="case-action-option">
+    <span>✅</span>
+    <div>
+      <strong>Cerrar caso</strong>
+      <p>Solo si existe sustento, respuesta final y trazabilidad.</p>
+    </div>
+  </button>
+</div>
+          <!-- SLA -->
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">SLA operativo</span>
+                <h2>Vencimiento y riesgo</h2>
+                <p>
+                  El SLA debe calcularse desde backend según reglas de negocio.
+                </p>
+              </div>
+
+              <div class="panel-header-actions">
+                <button type="button" class="panel-action" id="refreshDetailSlaBtn">
+                  Actualizar
+                </button>
+              </div>
+            </div>
+
+            <div class="sla-list" id="detailSlaList">
+              <!-- Render dinámico -->
+            </div>
+          </section>
+
+          <!-- CHECKLIST -->
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Checklist de atención</span>
+                <h2>Controles mínimos</h2>
+                <p>
+                  Validaciones necesarias antes de derivar o cerrar.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="attentionChecklist">
+              <!-- Render dinámico desde asesor.js -->
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- =====================================================
+       BUSCADOR GLOBAL
+  ====================================================== -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, cliente, DNI/RUC, servicio, SLA, plantilla o pantalla..."
+        />
+
+        <button type="button" id="closeSearchBtn">
+          Cerrar
+        </button>
+      </div>
+
+      <div class="search-results" id="searchResults">
+        <!-- Resultados dinámicos desde /api/asesor/search -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHATBOT
+  ====================================================== -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Detalle de atención</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer" aria-label="Cerrar asistente">
+        ×
+      </button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a resumir el caso, preparar una solicitud al cliente,
+        validar una derivación o revisar si el caso está listo para cierre.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Resume este caso y dime el siguiente paso">
+        Resumir caso
+      </button>
+
+      <button type="button" data-bot-prompt="Qué información falta para resolver este caso">
+        Información faltante
+      </button>
+
+      <button type="button" data-bot-prompt="Valida si este caso puede cerrarse">
+        Validar cierre
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input
+        id="botInput"
+        type="text"
+        placeholder="Escribe tu consulta..."
+        autocomplete="off"
+      />
+
+      <button type="submit">
+        Enviar
+      </button>
+    </form>
+  </aside>
+
+  <!-- =====================================================
+       BACKDROPS
+  ====================================================== -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- =====================================================
+       MODAL ACTUALIZAR ATENCIÓN
+  ====================================================== -->
+  <section class="modal" id="updateAttentionModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon">✍️</div>
+
+      <span class="eyebrow eyebrow--red">
+        Registro de avance
+      </span>
+
+      <h3>Actualizar atención del caso</h3>
+
+      <p>
+        Registra un avance formal del caso. Esta acción debe actualizar la base de datos,
+        crear evento histórico y recalcular información operativa si corresponde.
+      </p>
+
+      <div class="case-modal-summary" id="updateCaseContext">
+        <!-- Contexto dinámico -->
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="quickUpdateStatus">Nuevo estado</label>
+          <select id="quickUpdateStatus" data-catalog="estadosCaso">
+            <option value="">Cargando estados...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="quickUpdateVisibility">Visibilidad del comentario</label>
+          <select id="quickUpdateVisibility" data-catalog="visibilidades">
+            <option value="">Cargando visibilidades...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="quickUpdateSummary">Resumen ejecutivo</label>
+        <input
+          id="quickUpdateSummary"
+          type="text"
+          maxlength="160"
+          placeholder="Ej. Se validó evidencia y se mantiene atención en curso"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="quickUpdateDetail">Detalle de la atención</label>
+        <textarea
+          id="quickUpdateDetail"
+          placeholder="Describe revisión realizada, sustento, decisión, impacto, siguiente paso y responsable si aplica."
+        ></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="quickUpdateDeclaration" />
+        <span>
+          Confirmo que la actualización corresponde al caso seleccionado y debe quedar registrada en trazabilidad.
+        </span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmQuickUpdateBtn">
+          Registrar actualización
+        </button>
+
+        <button type="button" class="btn btn--soft" id="updateImproveTextBtn">
+          Mejorar redacción
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL SOLICITAR INFORMACIÓN
+  ====================================================== -->
+  <section class="modal" id="requestInfoModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon">📩</div>
+
+      <span class="eyebrow eyebrow--red">
+        Solicitud al cliente
+      </span>
+
+      <h3>Solicitar información adicional</h3>
+
+      <p>
+        Usa esta acción cuando se requiera evidencia, confirmación o información adicional.
+        El canal y plazo deben venir desde catálogos de BD.
+      </p>
+
+      <div class="case-modal-summary" id="requestCaseContext">
+        <!-- Contexto dinámico -->
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="quickRequestChannel">Canal de comunicación</label>
+          <select id="quickRequestChannel" data-catalog="canales">
+            <option value="">Cargando canales...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="quickRequestDeadline">Plazo de respuesta</label>
+          <select id="quickRequestDeadline" data-catalog="plazosRespuesta">
+            <option value="">Cargando plazos...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="quickRequestSubject">Asunto</label>
+        <input
+          id="quickRequestSubject"
+          type="text"
+          maxlength="160"
+          placeholder="Ej. Solicitud de evidencia adicional para continuar atención"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="quickRequestMessage">Mensaje al cliente</label>
+        <textarea
+          id="quickRequestMessage"
+          placeholder="Redacta el mensaje que será enviado al cliente."
+        ></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="quickRequestDeclaration" />
+        <span>
+          Confirmo que revisé el mensaje, canal y plazo antes de enviar la solicitud.
+        </span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmQuickRequestBtn">
+          Enviar solicitud
+        </button>
+
+        <button type="button" class="btn btn--soft" id="requestGenerateTextBtn">
+          Generar mensaje
+        </button>
+
+        <a href="plantillas-respuesta.html" class="btn btn--ghost-dark">
+          Ver plantillas
+        </a>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL DERIVAR CASO
+  ====================================================== -->
+  <section class="modal" id="deriveCaseModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon">🔀</div>
+
+      <span class="eyebrow eyebrow--red">
+        Derivación controlada
+      </span>
+
+      <h3>Derivar caso a otra área</h3>
+
+      <p>
+        La derivación debe estar sustentada y enviarse a un área válida del catálogo.
+        El backend debe registrar área, prioridad, motivo, usuario y fecha.
+      </p>
+
+      <div class="case-modal-summary" id="deriveCaseContext">
+        <!-- Contexto dinámico -->
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="deriveArea">Área destino</label>
+          <select id="deriveArea" data-catalog="areasDerivacion">
+            <option value="">Cargando áreas...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="derivePriority">Prioridad de derivación</label>
+          <select id="derivePriority" data-catalog="prioridades">
+            <option value="">Cargando prioridades...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="deriveReason">Motivo de derivación</label>
+        <textarea
+          id="deriveReason"
+          placeholder="Explica el análisis realizado, por qué se deriva y qué respuesta se espera del área destino."
+        ></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="deriveDeclaration" />
+        <span>
+          Confirmo que la derivación está sustentada y corresponde al caso seleccionado.
+        </span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmDeriveBtn">
+          Derivar caso
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL CERRAR CASO
+  ====================================================== -->
+  <section class="modal" id="closeCaseModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon">✅</div>
+
+      <span class="eyebrow eyebrow--red">
+        Cierre de atención
+      </span>
+
+      <h3>Validar cierre del caso</h3>
+
+      <p>
+        El cierre debe realizarse solo si existe sustento suficiente, respuesta final,
+        historial del caso y estado permitido. La respuesta será registrada en BD.
+      </p>
+
+      <div class="case-modal-summary" id="closeCaseContext">
+        <!-- Contexto dinámico -->
+      </div>
+
+      <div class="form-group">
+        <label for="closeCaseResponse">Respuesta final</label>
+        <textarea
+          id="closeCaseResponse"
+          placeholder="Redacta la respuesta final con conclusión, sustento, resultado y mensaje claro para el cliente."
+        ></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="closeCaseDeclaration" />
+        <span>
+          Confirmo que el caso cuenta con sustento, trazabilidad y respuesta final suficiente para cierre.
+        </span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmCloseCaseBtn">
+          Cerrar caso
+        </button>
+
+        <button type="button" class="btn btn--soft" id="closeCaseAiBtn">
+          Validar con IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL GENÉRICO
+  ====================================================== -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+
+      <h3 id="genericModalTitle">
+        Información
+      </h3>
+
+      <p id="genericModalText">
+        Mensaje del sistema.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/asesor.js"></script>
+</body>
+</html>

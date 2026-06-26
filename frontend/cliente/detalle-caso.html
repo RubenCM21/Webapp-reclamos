@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Detalle de caso | Claro Atención 360</title>
+
+  <meta
+    name="description"
+    content="Detalle completo de reclamo o incidencia con seguimiento, historial, evidencias, solicitudes del asesor, constancia, cierre y encuesta del cliente."
+  />
+
+  <link rel="stylesheet" href="../assets/css/cliente.css" />
+</head>
+
+<body data-page="detalle-caso">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR CLIENTE -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="../index.html" class="brand" aria-label="Ir al inicio de Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">✦</span>
+      </a>
+      <span class="brand__tag">Atención 360</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Menú principal del cliente">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="registrar-reclamo.html" class="sidebar-link">
+        <span>📝</span>
+        Registrar reclamo
+      </a>
+
+      <a href="registrar-incidencia.html" class="sidebar-link">
+        <span>⚠️</span>
+        Registrar incidencia
+      </a>
+
+      <a href="mis-casos.html" class="sidebar-link active" aria-current="page">
+        <span>🎫</span>
+        Mis casos
+      </a>
+
+      <a href="servicios-contratados.html" class="sidebar-link">
+        <span>📡</span>
+        Servicios contratados
+      </a>
+
+      <a href="notificaciones.html" class="sidebar-link">
+        <span>🔔</span>
+        Notificaciones
+        <small id="sidebarNotificationCount" aria-label="Notificaciones no leídas"></small>
+      </a>
+
+      <a href="perfil.html" class="sidebar-link">
+        <span>👤</span>
+        Perfil
+      </a>
+
+      <a href="../centro-ayuda.html" class="sidebar-link">
+        <span>❓</span>
+        Centro de ayuda
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        ClaroBot IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>🚪</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow">Seguimiento completo</span>
+          <h1 id="pageTitle">Detalle de caso</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar caso, servicio o ayuda">
+          🔎
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <button type="button" class="notification-btn" id="notificationBtn" aria-label="Ir a notificaciones">
+          🔔
+          <span id="notificationBadge"></span>
+        </button>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton" aria-label="Abrir menú de usuario">
+            <span class="user-avatar" id="userAvatar">CL</span>
+            <div>
+              <strong id="userNameTop">Cliente</strong>
+              <small id="userTypeTop">Cliente Persona</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="perfil.html">Mi perfil</a>
+            <a href="servicios-contratados.html">Mis servicios</a>
+            <a href="../seleccionar-rol.html">Cambiar perfil</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard-page">
+      <!-- HERO DETALLE -->
+      <section class="case-detail-hero">
+        <div class="case-detail-hero__content">
+          <span class="eyebrow eyebrow--red" id="detailCaseType">Caso</span>
+
+          <h2 id="detailCaseTitle">
+            Cargando información del caso...
+          </h2>
+
+          <p id="detailCaseDescription">
+            Desde esta pantalla puedes revisar el estado, SLA, historial visible,
+            evidencias, solicitudes del asesor, constancia y encuesta de cierre.
+          </p>
+
+          <div class="hero-mini-status">
+            <article>
+              <span>🎫</span>
+              <div>
+                <strong id="detailCaseStatusText">Cargando estado</strong>
+                <small>Estado actual del caso</small>
+              </div>
+            </article>
+
+            <article>
+              <span>⏱️</span>
+              <div>
+                <strong id="detailCaseSlaText">SLA en revisión</strong>
+                <small>Tiempo de atención monitoreado</small>
+              </div>
+            </article>
+          </div>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="detailDownloadBtn">
+              Descargar constancia
+            </button>
+
+            <button type="button" class="btn btn--soft" id="detailAskAiBtn">
+              Resumir con IA
+            </button>
+
+            <a href="mis-casos.html" class="btn btn--ghost-dark">
+              Volver a mis casos
+            </a>
+          </div>
+        </div>
+
+        <div class="case-detail-hero__visual" aria-hidden="true">
+          <img
+            src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=900&q=80"
+            alt=""
+          />
+
+          <div class="hero-glass-card hero-glass-card--top">
+            <span>📄</span>
+            <div>
+              <strong>Constancia digital</strong>
+              <small>Disponible para descarga</small>
+            </div>
+          </div>
+
+          <div class="hero-glass-card hero-glass-card--bottom">
+            <span>🔐</span>
+            <div>
+              <strong>Seguimiento seguro</strong>
+              <small>Solo visible para tu cuenta</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESUMEN DEL CASO -->
+      <section class="case-summary-grid detail-summary-grid" aria-label="Resumen del detalle del caso">
+        <article class="case-summary-card">
+          <span>📌</span>
+          <div>
+            <strong id="detailSummaryStatus">-</strong>
+            <p>Estado actual</p>
+          </div>
+        </article>
+
+        <article class="case-summary-card">
+          <span>👤</span>
+          <div>
+            <strong id="detailSummaryAdvisor">-</strong>
+            <p>Responsable</p>
+          </div>
+        </article>
+
+        <article class="case-summary-card">
+          <span>📎</span>
+          <div>
+            <strong id="detailSummaryEvidence">0 archivos</strong>
+            <p>Evidencias</p>
+          </div>
+        </article>
+
+        <article class="case-summary-card">
+          <span>🔔</span>
+          <div>
+            <strong id="detailSummaryPending">0 pendientes</strong>
+            <p>Solicitudes</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- LAYOUT PRINCIPAL -->
+      <section class="case-detail-layout">
+        <article class="panel-card case-detail-main">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow eyebrow--red">Vista integral</span>
+              <h2>Información del caso</h2>
+              <p>
+                Consulta cada etapa del seguimiento. Las acciones disponibles se habilitan según el estado del caso.
+              </p>
+            </div>
+
+            <div class="panel-actions-group">
+              <button type="button" class="panel-action" id="detailRefreshBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="detailShareBtn">
+                Compartir
+              </button>
+            </div>
+          </div>
+
+          <!-- TABS -->
+          <div class="detail-tabs" role="tablist" aria-label="Secciones del detalle del caso">
+            <button type="button" class="detail-tab active" data-detail-tab="resumen">
+              Resumen
+            </button>
+
+            <button type="button" class="detail-tab" data-detail-tab="seguimiento">
+              Seguimiento
+            </button>
+
+            <button type="button" class="detail-tab" data-detail-tab="historial">
+              Historial
+            </button>
+
+            <button type="button" class="detail-tab" data-detail-tab="evidencias">
+              Evidencias
+            </button>
+
+            <button type="button" class="detail-tab" data-detail-tab="solicitudes">
+              Solicitudes
+            </button>
+
+            <button type="button" class="detail-tab" data-detail-tab="encuesta">
+              Encuesta / cierre
+            </button>
+          </div>
+
+          <!-- TAB: RESUMEN -->
+          <section class="detail-tab-panel active" id="detailTabResumen">
+            <div class="detail-info-grid">
+              <article class="detail-info-card">
+                <span>🎫</span>
+                <div>
+                  <strong>Código del caso</strong>
+                  <p id="detailInfoCode">-</p>
+                </div>
+              </article>
+
+              <article class="detail-info-card">
+                <span>📡</span>
+                <div>
+                  <strong>Servicio asociado</strong>
+                  <p id="detailInfoService">-</p>
+                </div>
+              </article>
+
+              <article class="detail-info-card">
+                <span>🚦</span>
+                <div>
+                  <strong>Prioridad</strong>
+                  <p id="detailInfoPriority">-</p>
+                </div>
+              </article>
+
+              <article class="detail-info-card">
+                <span>📍</span>
+                <div>
+                  <strong>Canal de registro</strong>
+                  <p id="detailInfoChannel">-</p>
+                </div>
+              </article>
+            </div>
+
+            <article class="detail-description-card">
+              <div class="panel-card__header panel-card__header--inner">
+                <div>
+                  <span class="eyebrow eyebrow--red">Descripción</span>
+                  <h3>Detalle registrado por el cliente</h3>
+                </div>
+              </div>
+
+              <p id="detailFullDescription">
+                La descripción del caso se cargará desde el sistema.
+              </p>
+            </article>
+
+            <article class="detail-action-strip">
+              <article>
+                <span>🤖</span>
+                <div>
+                  <strong>Lectura IA</strong>
+                  <p id="detailIaShort">
+                    El resumen inteligente se mostrará cuando el caso cargue correctamente.
+                  </p>
+                </div>
+              </article>
+
+              <button type="button" class="btn btn--primary" id="detailSummaryAiBtn">
+                Generar resumen
+              </button>
+            </article>
+          </section>
+
+          <!-- TAB: SEGUIMIENTO -->
+          <section class="detail-tab-panel" id="detailTabSeguimiento">
+            <article class="tracking-header">
+              <div class="panel-card__header panel-card__header--inner">
+                <div>
+                  <span class="eyebrow eyebrow--red">SLA y avance</span>
+                  <h3>Estado de seguimiento</h3>
+                </div>
+
+                <span class="status-pill status-pill--info" id="trackingSlaRemaining">
+                  -
+                </span>
+              </div>
+
+              <div class="tracking-grid">
+                <article class="tracking-card">
+                  <span>📌</span>
+                  <div>
+                    <strong>Etapa actual</strong>
+                    <p id="trackingCurrentStage">-</p>
+                  </div>
+                </article>
+
+                <article class="tracking-card">
+                  <span>➡️</span>
+                  <div>
+                    <strong>Siguiente paso</strong>
+                    <p id="trackingNextStep">-</p>
+                  </div>
+                </article>
+              </div>
+            </article>
+
+            <div class="case-progress" id="detailProgress" aria-live="polite"></div>
+          </section>
+
+          <!-- TAB: HISTORIAL -->
+          <section class="detail-tab-panel" id="detailTabHistorial">
+            <div class="panel-card__header panel-card__header--inner">
+              <div>
+                <span class="eyebrow eyebrow--red">Historial visible</span>
+                <h3>Movimientos del caso</h3>
+                <p>
+                  Solo se muestran eventos habilitados para el cliente: cambios de estado,
+                  solicitudes, respuestas, evidencias y cierre.
+                </p>
+              </div>
+
+              <button type="button" class="panel-action" id="detailTimelineRefreshBtn">
+                Actualizar historial
+              </button>
+            </div>
+
+            <div class="activity-timeline" id="detailTimeline" aria-live="polite"></div>
+          </section>
+
+          <!-- TAB: EVIDENCIAS -->
+          <section class="detail-tab-panel" id="detailTabEvidencias">
+            <div class="panel-card__header panel-card__header--inner">
+              <div>
+                <span class="eyebrow eyebrow--red">Evidencias</span>
+                <h3>Archivos asociados al caso</h3>
+                <p>
+                  Adjunta información adicional cuando ayude a sustentar el caso o cuando el asesor la solicite.
+                </p>
+              </div>
+
+              <button type="button" class="panel-action" id="detailEvidenceHelpBtn">
+                ¿Qué adjuntar?
+              </button>
+            </div>
+
+            <div class="detail-evidence-list" id="detailEvidenceList" aria-live="polite"></div>
+
+            <div class="upload-box">
+              <div>
+                <span>📎</span>
+                <strong>Agregar nueva evidencia</strong>
+                <p>
+                  Puedes adjuntar hasta 5 archivos por envío. Formatos permitidos:
+                  PDF, JPG, PNG, Word o Excel. Máximo 10 MB por archivo.
+                </p>
+              </div>
+
+              <label for="detailEvidenceInput" class="btn btn--soft">
+                Seleccionar archivos
+              </label>
+
+              <input
+                id="detailEvidenceInput"
+                type="file"
+                hidden
+                multiple
+                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx"
+              />
+            </div>
+
+            <div class="file-list" id="detailFileList"></div>
+            <small class="form-error" id="detailEvidenceInputError"></small>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn--primary" id="detailSendEvidenceBtn">
+                Enviar evidencia
+              </button>
+            </div>
+          </section>
+
+          <!-- TAB: SOLICITUDES -->
+          <section class="detail-tab-panel" id="detailTabSolicitudes">
+            <article class="advisor-request-card">
+              <div class="advisor-request-card__header">
+                <span>📩</span>
+
+                <div>
+                  <span class="eyebrow eyebrow--red" id="requestPendingBadge">
+                    Sin pendientes
+                  </span>
+
+                  <h3 id="advisorRequestTitle">
+                    Solicitudes del asesor
+                  </h3>
+
+                  <small id="advisorRequestDate"></small>
+                </div>
+              </div>
+
+              <p id="advisorRequestText">
+                Si el asesor solicita información adicional, podrás responder desde esta sección.
+              </p>
+
+              <div class="form-group">
+                <label for="advisorRequestResponse">Respuesta al asesor</label>
+                <textarea
+                  id="advisorRequestResponse"
+                  maxlength="1500"
+                  placeholder="Escribe tu respuesta o aclaración para el asesor..."
+                ></textarea>
+                <small class="form-error" id="advisorRequestResponseError"></small>
+              </div>
+
+              <div class="upload-box">
+                <div>
+                  <span>📎</span>
+                  <strong>Adjuntar archivos a la respuesta</strong>
+                  <p>
+                    Opcional. Adjunta documentos, capturas o pruebas relacionadas con la solicitud.
+                  </p>
+                </div>
+
+                <label for="advisorRequestEvidenceInput" class="btn btn--soft">
+                  Seleccionar archivos
+                </label>
+
+                <input
+                  id="advisorRequestEvidenceInput"
+                  type="file"
+                  hidden
+                  multiple
+                  accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx"
+                />
+              </div>
+
+              <div class="file-list" id="advisorRequestFileList"></div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn--ghost-dark" id="advisorRequestDraftBtn">
+                  Guardar borrador
+                </button>
+
+                <button type="button" class="btn btn--primary" id="advisorRequestSubmitBtn">
+                  Enviar respuesta
+                </button>
+              </div>
+            </article>
+          </section>
+
+          <!-- TAB: ENCUESTA -->
+          <section class="detail-tab-panel" id="detailTabEncuesta">
+            <article class="closure-panel">
+              <div class="panel-card__header panel-card__header--inner">
+                <div>
+                  <span class="eyebrow eyebrow--red">Encuesta y cierre</span>
+                  <h3>Califica la atención recibida</h3>
+                  <p>
+                    La encuesta se habilita cuando el caso se encuentre resuelto o cerrado.
+                    Tu opinión ayuda a mejorar la calidad de atención.
+                  </p>
+                </div>
+              </div>
+
+              <div class="rating-box" aria-label="Calificación del caso">
+                <button type="button" data-rating="1" aria-label="1 estrella">⭐</button>
+                <button type="button" data-rating="2" aria-label="2 estrellas">⭐</button>
+                <button type="button" data-rating="3" aria-label="3 estrellas">⭐</button>
+                <button type="button" data-rating="4" aria-label="4 estrellas">⭐</button>
+                <button type="button" data-rating="5" aria-label="5 estrellas">⭐</button>
+              </div>
+
+              <div class="form-group">
+                <label for="caseSurveyComment">Comentario</label>
+                <textarea
+                  id="caseSurveyComment"
+                  maxlength="1000"
+                  placeholder="Cuéntanos cómo fue la atención o qué se podría mejorar..."
+                ></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn--primary" id="caseSurveySubmitBtn">
+                  Enviar encuesta
+                </button>
+              </div>
+            </article>
+          </section>
+        </article>
+
+        <!-- LATERAL -->
+        <aside class="form-side-stack">
+          <article class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>Resumen IA</h2>
+                <p>Lectura inteligente del caso.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="detailAiSummary" aria-live="polite"></div>
+
+            <div class="ai-insight-box">
+              <span>✨</span>
+              <p>
+                ClaroBot puede explicar el estado del caso, sugerir evidencia o resumir los movimientos recientes.
+              </p>
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="detailOpenBotBtn">
+              Consultar a ClaroBot
+            </button>
+          </article>
+
+          <article class="panel-card priority-panel">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow eyebrow--red">Acciones útiles</span>
+                <h2>Qué puedes hacer</h2>
+              </div>
+            </div>
+
+            <div class="suggestion-list">
+              <article>
+                <span>📎</span>
+                <div>
+                  <strong>Adjuntar evidencia</strong>
+                  <p>Úsalo cuando tengas recibos, capturas, fotos o documentos adicionales.</p>
+                </div>
+              </article>
+
+              <article>
+                <span>📩</span>
+                <div>
+                  <strong>Responder solicitud</strong>
+                  <p>Si el asesor pide información, respóndela para evitar retrasos.</p>
+                </div>
+              </article>
+
+              <article>
+                <span>📄</span>
+                <div>
+                  <strong>Descargar constancia</strong>
+                  <p>Genera un documento del caso para respaldo personal o administrativo.</p>
+                </div>
+              </article>
+            </div>
+          </article>
+
+          <article class="mini-image-card">
+            <img
+              src="https://images.unsplash.com/photo-1554224154-26032fced8bd?auto=format&fit=crop&w=700&q=80"
+              alt="Seguimiento de caso digital"
+            />
+
+            <div>
+              <span class="eyebrow eyebrow--red">Seguimiento transparente</span>
+              <h3>Todo queda registrado</h3>
+              <p>
+                Cada actualización visible se muestra en el historial del caso para que puedas revisar el avance.
+              </p>
+            </div>
+          </article>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>ClaroBot IA</strong>
+        <small>Asistente de seguimiento</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer" aria-label="Cerrar ClaroBot">
+        ×
+      </button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Hola. Puedo resumir este caso, explicar el estado, sugerir evidencia o ayudarte a responder una solicitud del asesor.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Resume este caso">
+        Resumen
+      </button>
+
+      <button type="button" data-bot-prompt="Qué debo hacer en este caso">
+        Próximo paso
+      </button>
+
+      <button type="button" data-bot-prompt="Qué evidencia puedo adjuntar">
+        Evidencia
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>🔎</span>
+
+        <input
+          type="text"
+          id="globalSearchInput"
+          placeholder="Buscar caso, servicio, notificación o ayuda..."
+        />
+
+        <button type="button" id="closeSearchBtn">
+          Esc
+        </button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <!-- MODAL: CONFIRMAR ENVÍO DE EVIDENCIA -->
+  <section class="modal" id="confirmEvidenceModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon modal__icon--warning">
+        📎
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Confirmar evidencia
+      </span>
+
+      <h3>
+        ¿Deseas enviar esta evidencia?
+      </h3>
+
+      <p>
+        Los archivos quedarán asociados al caso y podrán ser revisados por el asesor responsable.
+      </p>
+
+      <div class="case-modal-summary">
+        <div>
+          <span>Caso</span>
+          <strong id="summaryEvidenceCaseCode">-</strong>
+        </div>
+
+        <div>
+          <span>Archivos</span>
+          <strong id="summaryEvidenceFiles">Sin archivos adjuntos</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+
+        <button type="button" class="btn btn--primary" id="acceptEvidenceConfirmBtn">
+          Confirmar envío
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: CONFIRMAR RESPUESTA AL ASESOR -->
+  <section class="modal" id="confirmAdvisorResponseModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon modal__icon--warning">
+        📩
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Confirmar respuesta
+      </span>
+
+      <h3>
+        ¿Deseas enviar tu respuesta al asesor?
+      </h3>
+
+      <p>
+        La respuesta quedará registrada en el historial del caso y será visible para el equipo de atención.
+      </p>
+
+      <div class="case-modal-summary case-modal-summary--grid">
+        <div>
+          <span>Caso</span>
+          <strong id="summaryAdvisorResponseCase">-</strong>
+        </div>
+
+        <div>
+          <span>Solicitud</span>
+          <strong id="summaryAdvisorResponseTitle">Solicitud de información</strong>
+        </div>
+
+        <div class="summary-full">
+          <span>Respuesta</span>
+          <strong id="summaryAdvisorResponseText">-</strong>
+        </div>
+
+        <div class="summary-full">
+          <span>Archivos adjuntos</span>
+          <strong id="summaryAdvisorResponseFiles">Sin archivos adjuntos</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+
+        <button type="button" class="btn btn--primary" id="acceptAdvisorResponseConfirmBtn">
+          Enviar respuesta
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: CONFIRMAR ENCUESTA -->
+  <section class="modal" id="confirmSurveyModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon modal__icon--warning">
+        ⭐
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Confirmar encuesta
+      </span>
+
+      <h3>
+        ¿Deseas enviar tu calificación?
+      </h3>
+
+      <p>
+        Esta información será usada para mejorar la calidad de atención.
+      </p>
+
+      <div class="case-modal-summary">
+        <div>
+          <span>Calificación</span>
+          <strong id="summarySurveyRating">Sin calificación</strong>
+        </div>
+
+        <div>
+          <span>Comentario</span>
+          <strong id="summarySurveyComment">Sin comentario</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+
+        <button type="button" class="btn btn--primary" id="acceptSurveyConfirmBtn">
+          Enviar encuesta
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: OPERACIÓN EXITOSA EN DETALLE -->
+  <section class="modal" id="detailSuccessModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon modal__icon--success">
+        ✓
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Acción completada
+      </span>
+
+      <h3 id="detailSuccessTitle">
+        Operación registrada
+      </h3>
+
+      <p id="detailSuccessText">
+        La acción fue procesada correctamente.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon" id="genericModalIcon">
+        ℹ
+      </div>
+
+      <h3 id="genericModalTitle">
+        Información
+      </h3>
+
+      <p id="genericModalText">
+        Mensaje del sistema.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/cliente.js"></script>
+</body>
+</html>

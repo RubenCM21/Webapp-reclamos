@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Calendario SLA | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/asesor.css" />
+</head>
+
+<body data-page="asesor-calendario-sla">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+
+      <span class="brand__tag">Atención 360 | Asesor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación asesor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>📊</span>
+        Dashboard
+      </a>
+
+      <a href="bandeja.html" class="sidebar-link">
+        <span>📥</span>
+        Bandeja
+        <small id="sidebarAssignedCount">0</small>
+      </a>
+
+      <a href="detalle-atencion.html" class="sidebar-link">
+        <span>🧾</span>
+        Detalle de atención
+      </a>
+
+      <a href="cola-trabajo.html" class="sidebar-link">
+        <span>🗂️</span>
+        Cola de trabajo
+      </a>
+
+      <a href="calendario-sla.html" class="sidebar-link active">
+        <span>⏱️</span>
+        Calendario SLA
+      </a>
+
+      <a href="plantillas-respuesta.html" class="sidebar-link">
+        <span>💬</span>
+        Plantillas
+      </a>
+
+      <a href="notificaciones.html" class="sidebar-link">
+        <span>🔔</span>
+        Notificaciones
+        <small id="sidebarNotificationCount">0</small>
+      </a>
+
+      <a href="rendimiento.html" class="sidebar-link">
+        <span>📈</span>
+        Rendimiento
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- =====================================================
+       APP SHELL
+  ====================================================== -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Control de vencimientos</span>
+          <h1>Calendario SLA</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="notificaciones.html" class="notification-btn" aria-label="Notificaciones">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AS</span>
+
+            <div>
+              <strong id="userNameTop">Asesor</strong>
+              <small id="userRoleTop">Asesor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="rendimiento.html">Mi rendimiento</a>
+            <a href="notificaciones.html">Alertas y tareas</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+    <main class="advisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red">
+            Gestión preventiva SLA
+          </span>
+
+          <h2 id="slaSummaryTitle">
+            Vencimientos pendientes de carga
+          </h2>
+
+          <p id="slaSummaryText">
+            Monitorea casos vencidos, próximos a vencer, pendientes por cliente y listos
+            para cierre. El SLA debe calcularse desde backend con reglas de negocio.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="slaPrioritizeBtn">
+              Priorizar SLA
+            </button>
+
+            <button type="button" class="btn btn--soft" id="slaRefreshBtn">
+              Actualizar
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="slaExportBtn">
+              Exportar
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong>SLA en línea</strong>
+            <small>
+              Cálculo desde reglas, estado, prioridad y fecha límite
+            </small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="slaKpiGrid" aria-label="Indicadores SLA">
+        <!-- Render dinámico desde asesor.js -->
+      </section>
+
+      <!-- =====================================================
+           LAYOUT PRINCIPAL
+      ====================================================== -->
+      <section class="bandeja-layout">
+        <!-- CALENDARIO -->
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Agenda operativa</span>
+              <h2>Vencimientos por periodo</h2>
+              <p>
+                Los casos se agrupan por vencidos, hoy, mañana y semana.
+                Las acciones deben registrarse en historial y notificaciones.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="slaTodayBtn">
+                Ver hoy
+              </button>
+
+              <button type="button" class="panel-action" id="slaWeekBtn">
+                Ver semana
+              </button>
+
+              <button type="button" class="panel-action" id="slaAnalyzeBtn">
+                Analizar
+              </button>
+            </div>
+          </div>
+
+          <!-- BÚSQUEDA + FILTROS -->
+          <div class="advisor-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+
+              <input
+                id="slaSearchInput"
+                type="search"
+                placeholder="Buscar por caso, cliente, servicio, prioridad, estado o SLA..."
+              />
+            </div>
+
+            <div class="case-filters" id="slaFilters">
+              <button type="button" class="filter-chip active" data-sla-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-filter="critico">
+                Críticos
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-filter="hoy">
+                Vence hoy
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-filter="pendiente_cliente">
+                Pendiente cliente
+              </button>
+
+              <button type="button" class="filter-chip" data-sla-filter="listo_cierre">
+                Listo para cierre
+              </button>
+            </div>
+          </div>
+
+          <!-- CALENDARIO DINÁMICO -->
+          <div class="sla-calendar-grid" id="slaCalendarGrid">
+            <!-- Render dinámico desde asesor.js -->
+          </div>
+
+          <div class="empty-state hidden" id="emptySlaCalendarState">
+            <span>✅</span>
+            <h3>Sin vencimientos visibles</h3>
+            <p>
+              Cambia los filtros o actualiza el calendario. Si no aparecen casos,
+              revisa reglas SLA, fechas límite y asignaciones en BD.
+            </p>
+          </div>
+        </section>
+
+        <!-- PANEL DERECHO -->
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+
+              <div>
+                <h2>IA SLA</h2>
+                <p>Riesgo, bloqueo, vencimiento y siguiente acción.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="slaAiSummary">
+              <!-- Render dinámico -->
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="slaAnalyzeBtnPanel">
+              Analizar vencimientos
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Plan preventivo</span>
+                <h2>Acciones recomendadas</h2>
+                <p>
+                  Medidas sugeridas para evitar incumplimientos.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="slaActionPlan">
+              <!-- Render dinámico desde JS -->
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Buenas prácticas</span>
+                <h2>Control SLA</h2>
+              </div>
+            </div>
+
+            <div class="checklist-grid">
+              <article class="check-item">
+                <span class="check-icon">1</span>
+                <div>
+                  <strong>Atender vencidos primero</strong>
+                  <p>Los casos fuera de plazo deben revisarse y documentarse.</p>
+                </div>
+              </article>
+
+              <article class="check-item">
+                <span class="check-icon">2</span>
+                <div>
+                  <strong>Desbloquear cliente</strong>
+                  <p>Si falta evidencia, enviar recordatorio con plazo definido.</p>
+                </div>
+              </article>
+
+              <article class="check-item">
+                <span class="check-icon">3</span>
+                <div>
+                  <strong>Registrar seguimiento</strong>
+                  <p>Toda acción preventiva debe quedar en historial.</p>
+                </div>
+              </article>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- =====================================================
+       BUSCADOR GLOBAL
+  ====================================================== -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, cliente, DNI/RUC, servicio, SLA, plantilla o pantalla..."
+        />
+
+        <button type="button" id="closeSearchBtn">
+          Cerrar
+        </button>
+      </div>
+
+      <div class="search-results" id="searchResults">
+        <!-- Resultados dinámicos desde /api/asesor/search -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHATBOT
+  ====================================================== -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Calendario SLA</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer" aria-label="Cerrar asistente">
+        ×
+      </button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a priorizar vencimientos, redactar recordatorios,
+        registrar seguimientos preventivos y detectar casos bloqueados.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Prioriza mis casos SLA vencidos y próximos a vencer">
+        Priorizar SLA
+      </button>
+
+      <button type="button" data-bot-prompt="Qué casos dependen de respuesta del cliente">
+        Bloqueos cliente
+      </button>
+
+      <button type="button" data-bot-prompt="Redacta un recordatorio SLA profesional">
+        Recordatorio
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input
+        id="botInput"
+        type="text"
+        placeholder="Escribe tu consulta..."
+        autocomplete="off"
+      />
+
+      <button type="submit">
+        Enviar
+      </button>
+    </form>
+  </aside>
+
+  <!-- =====================================================
+       BACKDROPS
+  ====================================================== -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- =====================================================
+       MODAL RECORDATORIO SLA
+  ====================================================== -->
+  <section class="modal" id="slaReminderModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon">📩</div>
+
+      <span class="eyebrow eyebrow--red">
+        Recordatorio preventivo
+      </span>
+
+      <h3>Enviar recordatorio SLA</h3>
+
+      <p>
+        Usa esta acción cuando el caso dependa de información o confirmación del cliente.
+        El recordatorio debe quedar registrado en historial y respetar el canal configurado.
+      </p>
+
+      <div class="case-modal-summary" id="slaReminderContext">
+        <!-- Contexto dinámico del caso -->
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="slaReminderChannel">Canal de comunicación</label>
+          <select id="slaReminderChannel" data-catalog="canales">
+            <option value="">Cargando canales...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="slaReminderDeadline">Plazo solicitado</label>
+          <select id="slaReminderDeadline" data-catalog="plazosRespuesta">
+            <option value="">Cargando plazos...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="slaReminderMessage">Mensaje de recordatorio</label>
+        <textarea
+          id="slaReminderMessage"
+          placeholder="Redacta el mensaje que será enviado al cliente para evitar incumplimiento SLA."
+        ></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="slaReminderDeclaration" />
+        <span>
+          Confirmo que el recordatorio corresponde al caso seleccionado y debe quedar registrado en historial.
+        </span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSlaReminderBtn">
+          Enviar recordatorio
+        </button>
+
+        <button type="button" class="btn btn--soft" id="improveSlaReminderBtn">
+          Mejorar mensaje
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL SEGUIMIENTO SLA
+  ====================================================== -->
+  <section class="modal" id="slaFollowModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon">🔎</div>
+
+      <span class="eyebrow eyebrow--red">
+        Seguimiento preventivo
+      </span>
+
+      <h3>Registrar seguimiento SLA</h3>
+
+      <p>
+        Registra una acción preventiva para dejar constancia de la revisión
+        del vencimiento, bloqueo, riesgo o siguiente paso.
+      </p>
+
+      <div class="case-modal-summary" id="slaFollowContext">
+        <!-- Contexto dinámico -->
+      </div>
+
+      <div class="form-group">
+        <label for="slaFollowText">Detalle del seguimiento</label>
+        <textarea
+          id="slaFollowText"
+          placeholder="Describe revisión de SLA, riesgo detectado, acción preventiva y siguiente paso."
+        ></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="slaFollowDeclaration" />
+        <span>
+          Confirmo que el seguimiento corresponde al caso seleccionado y debe quedar trazado.
+        </span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSlaFollowBtn">
+          Registrar seguimiento
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL GENÉRICO
+  ====================================================== -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+
+      <h3 id="genericModalTitle">
+        Información
+      </h3>
+
+      <p id="genericModalText">
+        Mensaje del sistema.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/asesor.js"></script>
+</body>
+</html>

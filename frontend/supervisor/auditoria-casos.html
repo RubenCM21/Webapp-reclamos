@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Auditoría de casos | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/supervisor.css" />
+</head>
+
+<body data-page="supervisor-auditoria-casos">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- CONFIGURACIÓN DE PÁGINA PARA SUPERVISOR.JS -->
+  <script type="application/json" id="supervisorPageConfig">
+    {
+      "page": "supervisor-auditoria-casos",
+      "module": "SUPERVISOR_AUDITORIA",
+      "title": "Auditoría de casos",
+      "mainEndpoint": "/supervisor/auditoria",
+      "catalogEndpoint": "/supervisor/catalogos",
+      "exportEndpoint": "/supervisor/auditoria/exportar",
+      "auditModule": "AUDITORIA_CASOS_SUPERVISOR",
+      "requiresCatalogs": [
+        "usuarios_auditables",
+        "roles",
+        "acciones_auditoria_caso",
+        "criticidades_auditoria",
+        "resultados_auditoria",
+        "modulos_auditoria",
+        "formatos_exportacion_supervisor",
+        "alcances_exportacion_supervisor",
+        "niveles_detalle_reporte",
+        "destinos_exportacion"
+      ],
+      "permissions": [
+        "SUPERVISOR_VIEW_AUDIT",
+        "SUPERVISOR_COMPARE_AUDIT",
+        "SUPERVISOR_EXPORT_AUDIT"
+      ]
+    }
+  </script>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Supervisor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación supervisor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="casos-pendientes.html" class="sidebar-link">
+        <span>📋</span>
+        Casos pendientes
+        <small id="sidebarPendingCount">0</small>
+      </a>
+
+      <a href="asignaciones.html" class="sidebar-link">
+        <span>👥</span>
+        Asignaciones
+      </a>
+
+      <a href="carga-asesores.html" class="sidebar-link">
+        <span>⚖️</span>
+        Carga de asesores
+      </a>
+
+      <a href="monitoreo-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Monitoreo SLA
+        <small id="sidebarSlaCount">0</small>
+      </a>
+
+      <a href="indicadores.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores
+      </a>
+
+      <a href="reportes.html" class="sidebar-link">
+        <span>📊</span>
+        Reportes
+      </a>
+
+      <a href="auditoria-casos.html" class="sidebar-link active">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="configuracion-supervision.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Trazabilidad operativa</span>
+          <h1>Auditoría de casos</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="monitoreo-sla.html" class="notification-btn" aria-label="Alertas SLA">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">SD</span>
+            <div>
+              <strong id="userNameTop">Supervisor</strong>
+              <small id="userRoleTop">Supervisor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores.html">Indicadores</a>
+            <a href="auditoria-casos.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="supervisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red">
+            Control auditable
+          </span>
+
+          <h2>
+            Revisa acciones críticas, cambios y trazabilidad de casos
+          </h2>
+
+          <p>
+            Consulta acciones realizadas por usuarios, cambios de estado, reasignaciones,
+            escalamiento, observaciones, exportaciones, alertas SLA y modificaciones sensibles.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="refreshAuditBtn">
+              Actualizar auditoría
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--soft"
+              id="compareAuditBtn"
+              data-permission="SUPERVISOR_COMPARE_AUDIT"
+            >
+              Comparar caso
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--ghost-dark"
+              id="openAuditExportBtn"
+              data-permission="SUPERVISOR_EXPORT_AUDIT"
+            >
+              Exportar evidencia
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong>Auditoría activa</strong>
+            <small>Eventos consultados desde backend</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="auditKpiGrid" aria-label="Indicadores de auditoría"></section>
+
+      <!-- FILTROS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Filtros avanzados</span>
+            <h2>Segmentación de auditoría</h2>
+            <p>
+              Filtra eventos por caso, usuario, rol, acción, criticidad, resultado, módulo y rango de fechas.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="resetAuditFiltersBtn">
+              Limpiar filtros
+            </button>
+
+            <button
+              type="button"
+              class="panel-action"
+              id="exportAuditBtn"
+              data-permission="SUPERVISOR_EXPORT_AUDIT"
+            >
+              Exportar
+            </button>
+          </div>
+        </div>
+
+        <div class="supervisor-filter-grid">
+          <div class="form-group">
+            <label for="auditSearch">Buscar</label>
+            <input
+              id="auditSearch"
+              type="search"
+              placeholder="Buscar por caso, usuario, acción, detalle, resultado o criticidad..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="auditCaseSearch">Código de caso</label>
+            <input
+              id="auditCaseSearch"
+              type="search"
+              placeholder="Ej. CASO-000123"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="auditDateFrom">Desde</label>
+            <input id="auditDateFrom" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label for="auditDateTo">Hasta</label>
+            <input id="auditDateTo" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label for="auditUserFilter">Usuario</label>
+            <select id="auditUserFilter" data-catalog="usuarios_auditables">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="auditRoleFilter">Rol</label>
+            <select id="auditRoleFilter" data-catalog="roles">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="auditActionFilter">Acción</label>
+            <select id="auditActionFilter" data-catalog="acciones_auditoria_caso">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="auditSeverityFilter">Criticidad</label>
+            <select id="auditSeverityFilter" data-catalog="criticidades_auditoria">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="auditResultFilter">Resultado</label>
+            <select id="auditResultFilter" data-catalog="resultados_auditoria">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="auditModuleFilter">Módulo</label>
+            <select id="auditModuleFilter" data-catalog="modulos_auditoria">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- AUDITORÍA + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Eventos auditables</span>
+              <h2>Línea de tiempo de acciones</h2>
+              <p>
+                Revisa las últimas acciones registradas, con usuario, resultado, criticidad y fecha.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action active" data-audit-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="panel-action" data-audit-filter="asign">
+                Asignación
+              </button>
+
+              <button type="button" class="panel-action" data-audit-filter="sla">
+                SLA
+              </button>
+
+              <button type="button" class="panel-action" data-audit-filter="escal">
+                Escalamientos
+              </button>
+
+              <button type="button" class="panel-action" data-audit-filter="export">
+                Exportaciones
+              </button>
+            </div>
+          </div>
+
+          <div class="activity-timeline" id="auditTimeline"></div>
+
+          <div class="empty-state hidden" id="emptyAuditTimelineState">
+            <span>🕵️</span>
+            <h3>Sin eventos con este filtro</h3>
+            <p>Cambia los filtros o actualiza la auditoría.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de auditoría</h2>
+                <p>Lectura de eventos sensibles y trazabilidad.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="auditAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" data-bot-prompt="Analiza los eventos de auditoría más sensibles">
+              Analizar auditoría
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Plan de revisión</span>
+                <h2>Control sugerido</h2>
+                <p>
+                  Prioriza criticidad alta, cambios masivos y acciones sin sustento.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="auditActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- TABLA DE AUDITORÍA -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Detalle tabular</span>
+            <h2>Registro de auditoría</h2>
+            <p>
+              Vista estructurada para revisión operativa y exportación auditable.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button
+              type="button"
+              class="panel-action"
+              id="exportAuditTableBtn"
+              data-permission="SUPERVISOR_EXPORT_AUDIT"
+            >
+              Exportar tabla
+            </button>
+          </div>
+        </div>
+
+        <div class="cases-table-wrap">
+          <table class="cases-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Caso</th>
+                <th>Acción</th>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Criticidad</th>
+                <th>Resultado</th>
+                <th>Detalle</th>
+              </tr>
+            </thead>
+
+            <tbody id="auditTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state hidden" id="emptyAuditState">
+          <span>📭</span>
+          <h3>Sin registros de auditoría</h3>
+          <p>No se encontraron eventos con los filtros aplicados.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, cliente, asesor, indicador, SLA, reporte o auditoría..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Auditoría y trazabilidad</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a identificar eventos sensibles, cambios inusuales, exportaciones críticas o acciones sin trazabilidad suficiente.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Qué eventos de auditoría son más críticos">
+        Eventos críticos
+      </button>
+
+      <button type="button" data-bot-prompt="Revisa cambios de asignación y escalamiento">
+        Asignaciones
+      </button>
+
+      <button type="button" data-bot-prompt="Qué exportaciones deberían revisarse">
+        Exportaciones
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE AUDITORÍA -->
+  <section class="modal" id="auditDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🕵️</div>
+      <span class="eyebrow eyebrow--red">Detalle auditable</span>
+      <h3 id="auditDetailTitle">Evento seleccionado</h3>
+      <p id="auditDetailText">Detalle del evento registrado.</p>
+
+      <div class="case-modal-summary" id="auditDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="auditDetailExportBtn"
+          data-permission="SUPERVISOR_EXPORT_AUDIT"
+        >
+          Exportar evidencia
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL COMPARAR AUDITORÍA -->
+  <section class="modal" id="auditCompareModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔍</div>
+      <span class="eyebrow eyebrow--red">Comparación de trazabilidad</span>
+      <h3>Comparar cambios de un caso</h3>
+      <p>
+        Revisa valores anteriores y posteriores para identificar modificaciones sensibles.
+      </p>
+
+      <form class="supervisor-form" id="auditCompareForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="auditCompareCaseId">Código o ID de caso</label>
+            <input
+              id="auditCompareCaseId"
+              type="text"
+              placeholder="Ej. CASO-000123"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="auditCompareDateFrom">Desde</label>
+            <input id="auditCompareDateFrom" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label for="auditCompareDateTo">Hasta</label>
+            <input id="auditCompareDateTo" type="date" />
+          </div>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="auditCompareDeclaration" />
+          <span>Confirmo que deseo comparar la trazabilidad del caso indicado.</span>
+        </label>
+      </form>
+
+      <div class="panel-card panel-card--inner hidden" id="auditCompareResultPanel">
+        <div class="panel-card__header panel-card__header--inner">
+          <div>
+            <span class="eyebrow">Resultado</span>
+            <h3>Cambios detectados</h3>
+            <p>
+              Comparación de campos modificados en el periodo consultado.
+            </p>
+          </div>
+        </div>
+
+        <div class="cases-table-wrap">
+          <table class="cases-table">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Antes</th>
+                <th>Después</th>
+                <th>Usuario</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+
+            <tbody id="auditCompareResultBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="confirmAuditCompareBtn"
+          data-permission="SUPERVISOR_COMPARE_AUDIT"
+        >
+          Comparar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL EXPORTAR AUDITORÍA -->
+  <section class="modal" id="auditExportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📤</div>
+      <span class="eyebrow eyebrow--red">Exportación auditable</span>
+      <h3>Exportar auditoría de casos</h3>
+      <p>
+        Genera evidencia formal de trazabilidad con filtros, detalle técnico y valores antes/después.
+      </p>
+
+      <form class="supervisor-form" id="auditExportForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="auditExportFormat">Formato</label>
+            <select id="auditExportFormat" data-catalog="formatos_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="pdf">PDF auditable</option>
+              <option value="docx">Word informe</option>
+              <option value="xlsx">Excel analítico</option>
+              <option value="csv">CSV datos</option>
+              <option value="png">Imagen</option>
+              <option value="dashboard">Dashboard compartible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="auditExportScope">Alcance</label>
+            <select id="auditExportScope" data-catalog="alcances_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="filtrados">Eventos filtrados</option>
+              <option value="caso_actual">Caso actual</option>
+              <option value="criticidad_alta">Criticidad alta</option>
+              <option value="acciones_sensibles">Acciones sensibles</option>
+              <option value="todos">Todo el historial visible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="auditExportDetail">Nivel de detalle</label>
+            <select id="auditExportDetail" data-catalog="niveles_detalle_reporte">
+              <option value="auditable">Auditable</option>
+              <option value="operativo">Operativo</option>
+              <option value="ejecutivo">Ejecutivo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="auditExportDestination">Destino</label>
+            <select id="auditExportDestination" data-catalog="destinos_exportacion">
+              <option value="descarga_local">Descarga local</option>
+              <option value="historial_reportes">Guardar en historial</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="form-check">
+            <input type="checkbox" id="auditExportIncludeBeforeAfter" checked />
+            <span>Valores antes/después</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="auditExportIncludeTechnical" checked />
+            <span>Detalle técnico</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="auditExportIncludeSensitive" />
+            <span>Acciones sensibles</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="auditExportReason">Motivo de exportación</label>
+          <textarea
+            id="auditExportReason"
+            placeholder="Ej. Sustento de revisión interna de cambios de asignación y escalamiento."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="auditExportDeclaration" />
+          <span>Confirmo que la exportación tiene finalidad operativa y quedará registrada en auditoría.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="confirmAuditExportBtn"
+          data-permission="SUPERVISOR_EXPORT_AUDIT"
+        >
+          Exportar auditoría
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CONFIRMACIÓN CENTRAL -->
+  <section class="modal" id="confirmActionModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="confirmActionIcon">⚠️</div>
+      <span class="eyebrow eyebrow--red" id="confirmActionEyebrow">Confirmación requerida</span>
+      <h3 id="confirmActionTitle">Confirmar acción</h3>
+      <p id="confirmActionText">Revisa la información antes de continuar.</p>
+
+      <div class="case-modal-summary" id="confirmActionSummary"></div>
+
+      <label class="form-check">
+        <input type="checkbox" id="confirmActionDeclaration" />
+        <span id="confirmActionDeclarationText">Confirmo que deseo ejecutar esta acción.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmActionAcceptBtn">
+          Confirmar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/supervisor.js"></script>
+</body>
+</html>

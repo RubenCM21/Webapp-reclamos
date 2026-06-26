@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Catálogos | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+
+<body data-page="admin-catalogos">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Administrador</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación administrador">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="usuarios.html" class="sidebar-link">
+        <span>👤</span>
+        Usuarios
+        <small id="sidebarUserCount">0</small>
+      </a>
+
+      <a href="roles-permisos.html" class="sidebar-link">
+        <span>🔐</span>
+        Roles y permisos
+      </a>
+
+      <a href="catalogos.html" class="sidebar-link active">
+        <span>🧩</span>
+        Catálogos
+      </a>
+
+      <a href="reglas-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Reglas SLA
+      </a>
+
+      <a href="indicadores-reportes.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores y reportes
+      </a>
+
+      <a href="integraciones.html" class="sidebar-link">
+        <span>🔌</span>
+        Integraciones
+        <small id="sidebarIntegrationAlerts">0</small>
+      </a>
+
+      <a href="auditoria.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="respaldo.html" class="sidebar-link">
+        <span>💾</span>
+        Respaldo
+      </a>
+
+      <a href="configuracion-sistema.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Datos maestros</span>
+          <h1>Catálogos</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="auditoria.html" class="notification-btn" aria-label="Alertas administrativas">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AD</span>
+            <div>
+              <strong id="userNameTop">Administrador</strong>
+              <small id="userRoleTop">Administrador del sistema</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="reglas-sla.html">Reglas SLA</a>
+            <a href="indicadores-reportes.html">Reportes</a>
+            <a href="auditoria.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="catalogHeroEyebrow">
+            Gobierno de datos maestros
+          </span>
+
+          <h2 id="catalogHeroTitle">
+            Administra estados, prioridades, canales, áreas y motivos de reclamo
+          </h2>
+
+          <p id="catalogHeroText">
+            Controla los catálogos que alimentan formularios, reglas SLA, reportes, tableros,
+            asignaciones y clasificación de casos. Todo cambio debe validar dependencias e impacto funcional.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="openCreateCatalogItemBtn">
+              Nuevo elemento
+            </button>
+
+            <button type="button" class="btn btn--soft" id="validateCatalogsBtn">
+              Validar catálogos
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="exportCatalogsBtn">
+              Exportar
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="catalogSummaryTitle">Catálogos dinámicos</strong>
+            <small id="catalogSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="catalogKpiGrid" aria-label="Indicadores de catálogos">
+        <article class="kpi-card">
+          <span class="kpi-card__icon">⏳</span>
+          <div>
+            <strong>...</strong>
+            <p>Cargando</p>
+            <small>Consultando catálogos desde la base de datos.</small>
+          </div>
+        </article>
+      </section>
+
+      <!-- GRÁFICOS -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Distribución</span>
+              <h2>Elementos por tipo de catálogo</h2>
+              <p>
+                Revisión de estados, prioridades, canales, áreas, motivos, tipos de caso y otros datos maestros.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshCatalogChartBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="bar-chart" id="catalogDistributionChart">
+            <div class="loading-panel loading-panel--inline">
+              <span class="spinner"></span>
+              <strong>Cargando distribución de catálogos...</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Estado</span>
+              <h2>Vigencia de datos maestros</h2>
+              <p>
+                Identifica elementos activos, inactivos o en revisión antes de afectar procesos operativos.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshCatalogStatusBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="donut-layout">
+            <div class="donut-card" id="catalogStatusDonut" data-label="0&#10;Elementos"></div>
+            <div class="donut-legend" id="catalogStatusLegend"></div>
+          </div>
+        </section>
+      </section>
+
+      <!-- LISTADO + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Mantenimiento</span>
+              <h2>Listado de catálogos</h2>
+              <p>
+                Consulta, edita, valida impacto y controla la vigencia de los datos maestros.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshCatalogsBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="toggleCatalogViewBtn">
+                Vista tabla
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="catalogSearch"
+                type="search"
+                placeholder="Buscar por nombre, tipo, estado, dependencia, descripción o uso funcional..."
+              />
+            </div>
+
+            <div class="case-filters" id="catalogFilters">
+              <button type="button" class="filter-chip active" data-catalog-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-catalog-filter="estados">
+                Estados
+              </button>
+
+              <button type="button" class="filter-chip" data-catalog-filter="prioridades">
+                Prioridades
+              </button>
+
+              <button type="button" class="filter-chip" data-catalog-filter="canales">
+                Canales
+              </button>
+
+              <button type="button" class="filter-chip" data-catalog-filter="areas">
+                Áreas
+              </button>
+
+              <button type="button" class="filter-chip" data-catalog-filter="motivos">
+                Motivos
+              </button>
+
+              <button type="button" class="filter-chip" data-catalog-filter="tipos">
+                Tipos de caso
+              </button>
+            </div>
+          </div>
+
+          <!-- VISTA CARDS -->
+          <div class="catalog-card-grid" id="catalogCardList"></div>
+
+          <!-- VISTA TABLA -->
+          <div class="cases-table-wrap hidden" id="catalogTableWrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>Elemento</th>
+                  <th>Tipo</th>
+                  <th>Estado</th>
+                  <th>Uso</th>
+                  <th>Dependencia</th>
+                  <th>Actualización</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="catalogTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="empty-state hidden" id="emptyCatalogState">
+            <span>🧩</span>
+            <h3>No hay catálogos con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otro tipo de catálogo.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de catálogos</h2>
+                <p>
+                  Analiza duplicados, dependencias, catálogos inactivos en uso y consistencia funcional.
+                </p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="catalogAiSummary">
+              <div class="ai-summary-item">
+                <strong>Esperando datos</strong>
+                <p>El análisis se cargará cuando el backend retorne información.</p>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeCatalogsBtn">
+              Analizar catálogos
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Control funcional</span>
+                <h2>Plan recomendado</h2>
+                <p>
+                  Acciones sugeridas para mantener datos maestros consistentes.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="catalogActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar usuario, rol, catálogo, SLA, integración, reporte o evento..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Catálogos</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a validar duplicados, dependencias, elementos inactivos y catálogos usados por SLA o reportes.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Analiza catálogos duplicados">
+        Duplicados
+      </button>
+
+      <button type="button" data-bot-prompt="Qué catálogos tienen dependencias críticas">
+        Dependencias
+      </button>
+
+      <button type="button" data-bot-prompt="Recomienda limpieza de catálogos">
+        Limpieza
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE CATÁLOGO -->
+  <section class="modal" id="catalogDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="catalogDetailIcon">🧩</div>
+      <span class="eyebrow eyebrow--red">Detalle de catálogo</span>
+      <h3 id="catalogDetailTitle">Elemento seleccionado</h3>
+      <p id="catalogDetailText">Información funcional del catálogo.</p>
+
+      <div class="case-modal-summary" id="catalogDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="catalogEditBtn">
+          Editar
+        </button>
+
+        <button type="button" class="btn btn--soft" id="catalogToggleStatusBtn">
+          Cambiar estado
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="catalogAuditBtn">
+          Ver auditoría
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CREAR / EDITAR CATÁLOGO -->
+  <section class="modal" id="catalogFormModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🧩</div>
+      <span class="eyebrow eyebrow--red" id="catalogFormEyebrow">Catálogo</span>
+      <h3 id="catalogFormTitle">Crear elemento de catálogo</h3>
+      <p id="catalogFormText">
+        Registra el dato maestro, tipo de catálogo, estado, dependencia y descripción funcional.
+      </p>
+
+      <form class="admin-form" id="catalogForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="catalogItemName">Nombre del elemento</label>
+            <input id="catalogItemName" type="text" placeholder="Ej. Reclamo técnico, Alta, Prioridad crítica..." />
+          </div>
+
+          <div class="form-group">
+            <label for="catalogItemType">Tipo de catálogo</label>
+            <select id="catalogItemType">
+              <option value="">Seleccionar tipo</option>
+              <option value="Estado de caso">Estado de caso</option>
+              <option value="Prioridad">Prioridad</option>
+              <option value="Canal">Canal</option>
+              <option value="Área responsable">Área responsable</option>
+              <option value="Tipo de caso">Tipo de caso</option>
+              <option value="Motivo de reclamo">Motivo de reclamo</option>
+              <option value="Formato de exportación">Formato de exportación</option>
+            </select>
+            <p class="form-help">Este campo será cargado desde la base de datos.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="catalogItemStatus">Estado</label>
+            <select id="catalogItemStatus">
+              <option value="">Seleccionar estado</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+              <option value="En revisión">En revisión</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="catalogItemDependency">Dependencia funcional</label>
+            <select id="catalogItemDependency">
+              <option value="">Seleccionar dependencia</option>
+              <option value="Casos">Casos</option>
+              <option value="Reglas SLA">Reglas SLA</option>
+              <option value="Reportes">Reportes</option>
+              <option value="Integraciones">Integraciones</option>
+              <option value="Sin dependencia crítica">Sin dependencia crítica</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="catalogItemDescription">Descripción funcional</label>
+          <textarea id="catalogItemDescription" placeholder="Describe dónde se usa, qué representa y qué impacto tiene este dato maestro."></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="catalogFormDeclaration" />
+          <span>Confirmo que el elemento no duplica otro catálogo y que su uso funcional fue revisado.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="saveCatalogItemBtn">
+          Guardar catálogo
+        </button>
+
+        <button type="button" class="btn btn--soft" id="catalogSuggestBtn">
+          Validar elemento
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CAMBIAR ESTADO -->
+  <section class="modal" id="catalogStatusModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔄</div>
+      <span class="eyebrow eyebrow--red">Estado de catálogo</span>
+      <h3>Cambiar estado del elemento</h3>
+      <p>
+        Cambiar el estado de un catálogo puede afectar formularios, reglas SLA, reportes, filtros y casos activos.
+      </p>
+
+      <div class="case-modal-summary" id="catalogStatusSummary"></div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="newCatalogStatus">Nuevo estado</label>
+          <select id="newCatalogStatus">
+            <option value="">Seleccionar estado</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+            <option value="En revisión">En revisión</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="catalogStatusReason">Motivo</label>
+        <textarea id="catalogStatusReason" placeholder="Sustenta el cambio de estado del dato maestro."></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="catalogStatusDeclaration" />
+        <span>Confirmo que revisé dependencias e impacto funcional antes de cambiar el estado.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmCatalogStatusBtn">
+          Guardar estado
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>

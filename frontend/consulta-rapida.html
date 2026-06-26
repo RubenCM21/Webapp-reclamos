@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Consulta rápida | Claro Atención 360</title>
+
+  <meta
+    name="description"
+    content="Consulta rápida de reclamos, incidencias y tickets en Claro Atención 360."
+  />
+
+  <link rel="stylesheet" href="assets/css/consulta-rapida.css" />
+</head>
+
+<body>
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a href="index.html" class="brand">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">✦</span>
+        <span class="brand__tag">Atención 360</span>
+      </a>
+
+      <nav class="topbar__nav">
+        <a href="index.html">Inicio</a>
+        <a href="registro.html">Registrarme</a>
+        <a href="centro-ayuda.html">Centro de ayuda</a>
+        <a href="estado-servicios.html">Estado de servicios</a>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+        <a href="login.html" class="login-btn">Mi Claro</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="quick-page">
+    <section class="hero-query">
+      <div class="hero-query__background">
+        <div class="hero-query__grid"></div>
+      </div>
+
+      <div class="hero-query__content">
+        <div class="hero-copy">
+          <span class="eyebrow">Consulta rápida</span>
+          <h1>Consulta el estado de tu caso en segundos</h1>
+          <p>
+            Ingresa el código de reclamo, incidencia o ticket.
+            Podrás ver el estado actual, avance, historial resumido y recomendación del sistema.
+          </p>
+
+          <div class="hero-actions">
+            <a href="cliente/registrar-reclamo.html" class="btn btn--light">
+              Registrar reclamo
+            </a>
+            <a href="cliente/registrar-incidencia.html" class="btn btn--ghost">
+              Registrar incidencia
+            </a>
+          </div>
+        </div>
+
+        <form
+          id="quickLookupForm"
+          class="lookup-card"
+          data-endpoint="/api/public/cases/lookup"
+          data-method="GET"
+          novalidate
+        >
+          <div class="lookup-card__header">
+            <div>
+              <span class="lookup-icon">🔎</span>
+            </div>
+            <div>
+              <h2>Buscar caso</h2>
+              <p>Consulta únicamente con el código de caso.</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="caseCode">Código de caso</label>
+            <div class="input-wrapper">
+              <span>🎫</span>
+              <input
+                id="caseCode"
+                name="caseCode"
+                type="text"
+                placeholder="Ejemplo: CAS-2026-000123"
+                autocomplete="off"
+              />
+            </div>
+            <small class="form-error" id="caseCodeError"></small>
+          </div>
+
+
+          <button type="submit" class="btn btn--primary btn--full" id="lookupButton">
+            <span class="btn-text">Consultar estado</span>
+            <span class="btn-loader"></span>
+          </button>
+
+          
+        </form>
+      </div>
+    </section>
+
+    <section class="result-section hidden" id="resultSection">
+      <div class="result-layout">
+        <article class="case-summary-card">
+          <div class="case-summary-card__top">
+            <div>
+              <span class="eyebrow eyebrow--red">Resultado de consulta</span>
+              <h2 id="resultTitle">Caso CAS-2026-000123</h2>
+              <p id="resultDescription">
+                Reclamo registrado para Internet hogar.
+              </p>
+            </div>
+
+            <span class="status-badge" id="resultStatusBadge">En atención</span>
+          </div>
+
+          <div class="summary-grid">
+            <div>
+              <span>Tipo</span>
+              <strong id="resultType">Reclamo</strong>
+            </div>
+
+            <div>
+              <span>Servicio</span>
+              <strong id="resultService">Internet hogar</strong>
+            </div>
+
+            <div>
+              <span>Prioridad</span>
+              <strong id="resultPriority">Alta</strong>
+            </div>
+
+            <div>
+              <span>Última actualización</span>
+              <strong id="resultLastUpdate">21/05/2026 09:30</strong>
+            </div>
+
+            <div>
+              <span>Responsable</span>
+              <strong id="resultResponsible">Atención técnica</strong>
+            </div>
+
+            <div>
+              <span>SLA restante</span>
+              <strong id="resultSla">05h 42m</strong>
+            </div>
+          </div>
+
+          <div class="case-actions">
+            <button type="button" class="btn btn--primary" id="openFullTracking">
+              Ver seguimiento completo
+            </button>
+            <button type="button" class="btn btn--soft" id="downloadConstancy">
+              Descargar constancia
+            </button>
+            <button type="button" class="btn btn--ghost-dark" id="openAiSummary">
+              Resumen IA
+            </button>
+          </div>
+        </article>
+
+        <aside class="side-intelligence">
+          <article class="ai-card">
+            <div class="ai-card__header">
+              <span>🤖</span>
+              <strong>ClaroBot IA</strong>
+            </div>
+
+            <p id="aiRecommendation">
+              El caso está en atención. Recomendamos mantener evidencias disponibles por si el asesor solicita información adicional.
+            </p>
+
+            <button type="button" class="btn btn--soft btn--full" id="openBotFromResult">
+              Consultar a ClaroBot
+            </button>
+          </article>
+
+          <article class="risk-card">
+            <div class="risk-card__top">
+              <span>⏱️</span>
+              <strong>Riesgo SLA</strong>
+            </div>
+
+            <div class="risk-meter">
+              <span id="riskMeterBar"></span>
+            </div>
+
+            <p id="riskText">Riesgo medio. El caso aún se encuentra dentro del plazo.</p>
+          </article>
+        </aside>
+      </div>
+
+      <div class="tracker-card">
+        <div class="tracker-card__header">
+          <div>
+            <span class="eyebrow eyebrow--red">Seguimiento</span>
+            <h2>Avance del caso</h2>
+          </div>
+
+          <button type="button" class="btn btn--ghost-dark" id="refreshTracking">
+            Actualizar
+          </button>
+        </div>
+
+        <div class="tracker" id="caseTracker">
+          <div class="tracker-step done">
+            <span></span>
+            <strong>Registrado</strong>
+            <small>El caso fue creado.</small>
+          </div>
+
+          <div class="tracker-step done">
+            <span></span>
+            <strong>Clasificado</strong>
+            <small>Se asignó tipo y prioridad.</small>
+          </div>
+
+          <div class="tracker-step active">
+            <span></span>
+            <strong>En atención</strong>
+            <small>Un asesor está revisando el caso.</small>
+          </div>
+
+          <div class="tracker-step">
+            <span></span>
+            <strong>Resuelto</strong>
+            <small>Respuesta final pendiente.</small>
+          </div>
+
+          <div class="tracker-step">
+            <span></span>
+            <strong>Cerrado</strong>
+            <small>Cierre formal del caso.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <article class="timeline-card">
+          <div class="timeline-card__header">
+            <h2>Historial resumido</h2>
+            <button type="button" id="toggleTimelineView">
+              Vista compacta
+            </button>
+          </div>
+
+          <div class="timeline" id="timelineList"></div>
+        </article>
+
+        <article class="evidence-card">
+          <div class="evidence-card__header">
+            <h2>Evidencias y acciones</h2>
+            <span id="evidenceCount">0 archivos</span>
+          </div>
+
+          <div class="evidence-list" id="evidenceList"></div>
+
+          <div class="next-actions">
+            <h3>Acciones disponibles</h3>
+            <button type="button" class="next-action" id="uploadEvidenceBtn">
+              <span>📎</span>
+              Adjuntar evidencia adicional
+            </button>
+            <button type="button" class="next-action" id="respondRequestBtn">
+              <span>💬</span>
+              Responder solicitud del asesor
+            </button>
+            <button type="button" class="next-action" id="goHelpBtn">
+              <span>❓</span>
+              Ir al centro de ayuda
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="empty-state-section" id="emptyStateSection">
+      <div class="empty-state-card">
+        <span>🎫</span>
+        <h2>Busca un caso para ver su seguimiento</h2>
+        <p>
+          Puedes usar un código de reclamo, incidencia o ticket registrado en el sistema.
+      </div>
+    </section>
+  </main>
+
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>ClaroBot IA</strong>
+        <small>Asistente de consulta</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Hola. Puedo explicar el estado de tu caso, resumir el historial o indicarte el siguiente paso.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Explica el estado actual">
+        Explicar estado
+      </button>
+      <button type="button" data-bot-prompt="Resume mi caso">
+        Resumir caso
+      </button>
+      <button type="button" data-bot-prompt="Qué debo hacer ahora">
+        Siguiente paso
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <button type="button" class="floating-bot" id="floatingBot">
+    <span>🤖</span>
+    ClaroBot IA
+  </button>
+
+  <button type="button" class="accessibility-btn" aria-label="Accesibilidad">
+    ♿
+  </button>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <section class="modal" id="notFoundModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon modal__icon--danger">!</div>
+      <h3>Caso no encontrado</h3>
+      <p>
+        No encontramos información con los datos ingresados. Verifica el código de caso y el documento asociado.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Intentar nuevamente
+        </button>
+        <a href="centro-ayuda.html" class="btn btn--ghost-dark">
+          Ir a ayuda
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="aiSummaryModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🤖</div>
+      <h3>Resumen IA del caso</h3>
+      <p id="aiSummaryText">
+        El caso se encuentra en atención y aún está dentro del plazo estimado.
+      </p>
+
+      <div class="ai-summary-box" id="aiSummaryBox"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="constancyModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon modal__icon--success">✓</div>
+      <h3>Constancia generada</h3>
+      <p>
+        Se generó una constancia de consulta con la información pública disponible del caso.
+      </p>
+
+      <div class="constancy-preview" id="constancyPreview"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="assets/js/consulta-rapida.js"></script>
+</body>
+</html>

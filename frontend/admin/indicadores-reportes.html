@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Indicadores y Reportes | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+
+<body data-page="admin-indicadores-reportes">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Administrador</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación administrador">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="usuarios.html" class="sidebar-link">
+        <span>👤</span>
+        Usuarios
+        <small id="sidebarUserCount">0</small>
+      </a>
+
+      <a href="roles-permisos.html" class="sidebar-link">
+        <span>🔐</span>
+        Roles y permisos
+      </a>
+
+      <a href="catalogos.html" class="sidebar-link">
+        <span>🧩</span>
+        Catálogos
+      </a>
+
+      <a href="reglas-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Reglas SLA
+      </a>
+
+      <a href="indicadores-reportes.html" class="sidebar-link active">
+        <span>📈</span>
+        Indicadores y reportes
+      </a>
+
+      <a href="integraciones.html" class="sidebar-link">
+        <span>🔌</span>
+        Integraciones
+        <small id="sidebarIntegrationAlerts">0</small>
+      </a>
+
+      <a href="auditoria.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="respaldo.html" class="sidebar-link">
+        <span>💾</span>
+        Respaldo
+      </a>
+
+      <a href="configuracion-sistema.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Gestión ejecutiva</span>
+          <h1>Indicadores y reportes</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="auditoria.html" class="notification-btn" aria-label="Alertas administrativas">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AD</span>
+            <div>
+              <strong id="userNameTop">Administrador</strong>
+              <small id="userRoleTop">Administrador del sistema</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="auditoria.html">Auditoría</a>
+            <a href="configuracion-sistema.html">Configuración</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="adminIndicatorsHeroEyebrow">
+            Analítica administrativa
+          </span>
+
+          <h2 id="adminIndicatorsHeroTitle">
+            Mide desempeño, genera reportes y comparte tableros ejecutivos
+          </h2>
+
+          <p id="adminIndicatorsHeroText">
+            Consulta indicadores de operación, usuarios, roles, SLA, canales, integraciones,
+            auditoría y respaldo. Genera reportes en PDF, Word, Excel, CSV, imagen o dashboard compartible.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="openAdminReportModalBtn">
+              Generar reporte
+            </button>
+
+            <button type="button" class="btn btn--soft" id="compareAdminIndicatorsBtn">
+              Comparar periodos
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="exportAdminIndicatorsBtn">
+              Exportar indicadores
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="adminIndicatorsSummaryTitle">Indicadores dinámicos</strong>
+            <small id="adminIndicatorsSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- FILTROS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Filtros de consulta</span>
+            <h2>Segmentación de indicadores</h2>
+            <p>
+              Ajusta periodo, módulo, rol y canal. Si seleccionas personalizado, usa rango de fechas.
+            </p>
+          </div>
+
+          <button type="button" class="panel-action" id="refreshAdminIndicatorsBtn">
+            Actualizar
+          </button>
+        </div>
+
+        <div class="admin-filter-grid">
+          <div class="form-group">
+            <label for="adminIndicatorPeriod">Periodo</label>
+            <select id="adminIndicatorPeriod">
+              <option value="">Seleccionar periodo</option>
+              <option value="Hoy">Hoy</option>
+              <option value="Últimos 7 días">Últimos 7 días</option>
+              <option value="Últimos 30 días">Últimos 30 días</option>
+              <option value="Mes actual">Mes actual</option>
+              <option value="Trimestre actual">Trimestre actual</option>
+              <option value="Personalizado">Personalizado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="adminIndicatorModule">Módulo</label>
+            <select id="adminIndicatorModule">
+              <option value="">Todos los módulos</option>
+              <option value="Usuarios">Usuarios</option>
+              <option value="Roles y permisos">Roles y permisos</option>
+              <option value="Catálogos">Catálogos</option>
+              <option value="SLA">SLA</option>
+              <option value="Integraciones">Integraciones</option>
+              <option value="Auditoría">Auditoría</option>
+              <option value="Respaldo">Respaldo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="adminIndicatorRole">Rol</label>
+            <select id="adminIndicatorRole">
+              <option value="">Todos los roles</option>
+              <option value="Cliente">Cliente</option>
+              <option value="Asesor">Asesor</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Administrador">Administrador</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="adminIndicatorChannel">Canal</label>
+            <select id="adminIndicatorChannel">
+              <option value="">Todos los canales</option>
+              <option value="Web">Web</option>
+              <option value="App">App</option>
+              <option value="Call center">Call center</option>
+              <option value="Presencial">Presencial</option>
+              <option value="WhatsApp">WhatsApp</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="adminIndicatorsKpiGrid" aria-label="Indicadores administrativos">
+        <article class="kpi-card">
+          <span class="kpi-card__icon">⏳</span>
+          <div>
+            <strong>...</strong>
+            <p>Cargando</p>
+            <small>Consultando indicadores desde la base de datos.</small>
+          </div>
+        </article>
+      </section>
+
+      <!-- GRÁFICOS -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Evolución</span>
+              <h2>Casos y actividad por periodo</h2>
+              <p>
+                Tendencia de operaciones del sistema según los filtros aplicados.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshAdminCaseEvolutionBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="bar-chart" id="adminCaseEvolutionChart">
+            <div class="loading-panel loading-panel--inline">
+              <span class="spinner"></span>
+              <strong>Cargando evolución administrativa...</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Canales</span>
+              <h2>Distribución por canal</h2>
+              <p>
+                Participación de canales de atención, registro o interacción.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshAdminChannelDonutBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="donut-layout">
+            <div class="donut-card" id="adminChannelDonut" data-label="0&#10;Canales"></div>
+            <div class="donut-legend" id="adminChannelLegend"></div>
+          </div>
+        </section>
+      </section>
+
+      <!-- MÉTRICAS + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Métricas clave</span>
+              <h2>Panel de indicadores</h2>
+              <p>
+                Revisa avance, meta, desviación y detalle de cada indicador administrativo.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshAdminMetricCardsBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="toggleAdminMetricViewBtn">
+                Vista compacta
+              </button>
+            </div>
+          </div>
+
+          <div class="indicator-grid" id="adminMetricGrid"></div>
+
+          <div class="empty-state hidden" id="emptyAdminMetricsState">
+            <span>📈</span>
+            <h3>No hay métricas para mostrar</h3>
+            <p>Cambia los filtros o verifica el endpoint de indicadores.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de indicadores</h2>
+                <p>
+                  Analiza desviaciones, riesgos, tendencias y reportes recomendados.
+                </p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="adminIndicatorsAiSummary">
+              <div class="ai-summary-item">
+                <strong>Esperando datos</strong>
+                <p>El análisis se cargará cuando el backend retorne información.</p>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeAdminIndicatorsBtn">
+              Analizar indicadores
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Reportería</span>
+                <h2>Plan recomendado</h2>
+                <p>
+                  Acciones sugeridas para reportes, análisis y seguimiento ejecutivo.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="adminReportActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- REPORTES -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Historial de reportes</span>
+            <h2>Reportes generados y programados</h2>
+            <p>
+              Consulta reportes recientes, descarga archivos, revisa estados o genera nuevos entregables.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="refreshAdminReportsBtn">
+              Actualizar
+            </button>
+
+            <button type="button" class="panel-action" id="scheduleAdminReportBtn">
+              Programar
+            </button>
+
+            <button type="button" class="panel-action" id="openAdminReportModalBtnSecondary">
+              Nuevo reporte
+            </button>
+          </div>
+        </div>
+
+        <div class="cases-table-wrap">
+          <table class="cases-table">
+            <thead>
+              <tr>
+                <th>Reporte</th>
+                <th>Tipo</th>
+                <th>Periodo</th>
+                <th>Formato</th>
+                <th>Estado</th>
+                <th>Responsable</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody id="adminReportsTableBody">
+              <tr>
+                <td colspan="7">
+                  <div class="loading-panel loading-panel--inline">
+                    <span class="spinner"></span>
+                    <strong>Cargando reportes...</strong>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar usuario, rol, catálogo, SLA, integración, reporte o evento..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Indicadores y reportes</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a analizar métricas, comparar periodos, sugerir reportes y revisar desviaciones.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Analiza indicadores administrativos">
+        Analizar
+      </button>
+
+      <button type="button" data-bot-prompt="Qué reporte administrativo debo generar">
+        Reporte sugerido
+      </button>
+
+      <button type="button" data-bot-prompt="Compara indicadores del periodo actual">
+        Comparar
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE INDICADOR -->
+  <section class="modal" id="adminIndicatorDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="adminIndicatorDetailIcon">📈</div>
+      <span class="eyebrow eyebrow--red">Detalle de indicador</span>
+      <h3 id="adminIndicatorDetailTitle">Indicador seleccionado</h3>
+      <p id="adminIndicatorDetailText">Detalle administrativo de la métrica.</p>
+
+      <div class="case-modal-summary" id="adminIndicatorDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="adminIndicatorReportBtn">
+          Generar reporte
+        </button>
+
+        <button type="button" class="btn btn--soft" id="adminIndicatorAiBtn">
+          Analizar con IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENERAR REPORTE -->
+  <section class="modal" id="adminReportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📄</div>
+      <span class="eyebrow eyebrow--red">Generación controlada</span>
+      <h3>Generar reporte administrativo</h3>
+      <p>
+        Configura el reporte, formato, alcance y secciones incluidas. El archivo será generado por backend y auditado.
+      </p>
+
+      <form class="admin-form" id="adminReportForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="adminReportType">Tipo de reporte</label>
+            <select id="adminReportType">
+              <option value="">Seleccionar tipo</option>
+              <option value="Resumen ejecutivo">Resumen ejecutivo</option>
+              <option value="Operación y SLA">Operación y SLA</option>
+              <option value="Usuarios y accesos">Usuarios y accesos</option>
+              <option value="Integraciones">Integraciones</option>
+              <option value="Auditoría">Auditoría</option>
+              <option value="Continuidad y respaldo">Continuidad y respaldo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="adminReportPeriod">Periodo</label>
+            <select id="adminReportPeriod">
+              <option value="">Seleccionar periodo</option>
+              <option value="Hoy">Hoy</option>
+              <option value="Últimos 7 días">Últimos 7 días</option>
+              <option value="Últimos 30 días">Últimos 30 días</option>
+              <option value="Mes actual">Mes actual</option>
+              <option value="Personalizado">Personalizado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="adminReportFormat">Formato</label>
+            <select id="adminReportFormat">
+              <option value="">Seleccionar formato</option>
+              <option value="PDF">PDF</option>
+              <option value="Word">Word</option>
+              <option value="Excel">Excel</option>
+              <option value="CSV">CSV</option>
+              <option value="Imagen PNG">Imagen PNG</option>
+              <option value="Dashboard compartible">Dashboard compartible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="adminReportScope">Alcance</label>
+            <select id="adminReportScope">
+              <option value="">Seleccionar alcance</option>
+              <option value="Todos los módulos">Todos los módulos</option>
+              <option value="Usuarios y roles">Usuarios y roles</option>
+              <option value="Casos y SLA">Casos y SLA</option>
+              <option value="Integraciones y respaldo">Integraciones y respaldo</option>
+              <option value="Auditoría y seguridad">Auditoría y seguridad</option>
+              <option value="Panel actual">Panel actual</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="export-options-grid">
+          <label class="form-check">
+            <input type="checkbox" id="adminReportIncludeCharts" checked />
+            <span>Incluir gráficos</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="adminReportIncludeAudit" checked />
+            <span>Incluir auditoría</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="adminReportIncludeSla" checked />
+            <span>Incluir SLA</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="adminReportIncludeSecurity" checked />
+            <span>Incluir seguridad</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="adminReportComment">Comentario o sustento</label>
+          <textarea id="adminReportComment" placeholder="Ej. Reporte mensual para revisión ejecutiva, auditoría interna o comité operativo."></textarea>
+        </div>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmGenerateAdminReportBtn">
+          Generar reporte
+        </button>
+
+        <button type="button" class="btn btn--soft" id="suggestAdminReportBtn">
+          Sugerir configuración
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="scheduleAdminReportBtn">
+          Programar reporte
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL PROGRAMAR REPORTE -->
+  <section class="modal" id="scheduleAdminReportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🗓️</div>
+      <span class="eyebrow eyebrow--red">Programación de reportes</span>
+      <h3>Programar envío de reporte</h3>
+      <p>
+        Define frecuencia y destinatarios. Los correos deben estar separados por punto y coma (;).
+      </p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="scheduleAdminReportFrequency">Frecuencia</label>
+          <select id="scheduleAdminReportFrequency">
+            <option value="">Seleccionar frecuencia</option>
+            <option value="Diario">Diario</option>
+            <option value="Semanal">Semanal</option>
+            <option value="Quincenal">Quincenal</option>
+            <option value="Mensual">Mensual</option>
+            <option value="Trimestral">Trimestral</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="scheduleAdminReportHour">Hora de envío</label>
+          <input id="scheduleAdminReportHour" type="time" value="08:00" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="scheduleAdminReportRecipients">Destinatarios</label>
+        <textarea id="scheduleAdminReportRecipients" placeholder="gerencia@empresa.com; supervisor@empresa.com"></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="scheduleAdminReportDeclaration" />
+        <span>Confirmo que los destinatarios están autorizados para recibir información administrativa.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmScheduleAdminReportBtn">
+          Programar reporte
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/admin.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const secondaryReportBtn = document.getElementById("openAdminReportModalBtnSecondary");
+      const mainReportBtn = document.getElementById("openAdminReportModalBtn");
+
+      if (secondaryReportBtn && mainReportBtn) {
+        secondaryReportBtn.addEventListener("click", function () {
+          mainReportBtn.click();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

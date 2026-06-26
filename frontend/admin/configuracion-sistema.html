@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Configuración del Sistema | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+
+<body data-page="admin-configuracion-sistema">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Administrador</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación administrador">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="usuarios.html" class="sidebar-link">
+        <span>👤</span>
+        Usuarios
+        <small id="sidebarUserCount">0</small>
+      </a>
+
+      <a href="roles-permisos.html" class="sidebar-link">
+        <span>🔐</span>
+        Roles y permisos
+      </a>
+
+      <a href="catalogos.html" class="sidebar-link">
+        <span>🧩</span>
+        Catálogos
+      </a>
+
+      <a href="reglas-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Reglas SLA
+      </a>
+
+      <a href="indicadores-reportes.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores y reportes
+      </a>
+
+      <a href="integraciones.html" class="sidebar-link">
+        <span>🔌</span>
+        Integraciones
+        <small id="sidebarIntegrationAlerts">0</small>
+      </a>
+
+      <a href="auditoria.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="respaldo.html" class="sidebar-link">
+        <span>💾</span>
+        Respaldo
+      </a>
+
+      <a href="configuracion-sistema.html" class="sidebar-link active">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Parámetros globales</span>
+          <h1>Configuración del sistema</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="auditoria.html" class="notification-btn" aria-label="Alertas administrativas">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AD</span>
+            <div>
+              <strong id="userNameTop">Administrador</strong>
+              <small id="userRoleTop">Administrador del sistema</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="auditoria.html">Auditoría</a>
+            <a href="respaldo.html">Respaldo</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="systemConfigHeroEyebrow">
+            Configuración centralizada
+          </span>
+
+          <h2 id="systemConfigHeroTitle">
+            Administra seguridad, sesión, notificaciones, mantenimiento y parámetros generales
+          </h2>
+
+          <p id="systemConfigHeroText">
+            Controla los parámetros globales de Claro Atención 360. Todo cambio debe comparar
+            valores anteriores y nuevos, exigir confirmación, registrar motivo y guardar auditoría.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="saveSystemConfigBtn">
+              Guardar configuración
+            </button>
+
+            <button type="button" class="btn btn--soft" id="refreshSystemConfigBtn">
+              Actualizar
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="exportSystemConfigBtn">
+              Exportar configuración
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="systemConfigSummaryTitle">Configuración activa</strong>
+            <small id="systemConfigSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="systemConfigKpiGrid" aria-label="Indicadores de configuración">
+        <article class="kpi-card">
+          <span class="kpi-card__icon">⏳</span>
+          <div>
+            <strong>...</strong>
+            <p>Cargando</p>
+            <small>Consultando configuración desde la base de datos.</small>
+          </div>
+        </article>
+      </section>
+
+      <!-- CONFIGURACIÓN PRINCIPAL -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Parámetros editables</span>
+              <h2>Configuración general</h2>
+              <p>
+                Define identidad del sistema, ambiente, responsable, seguridad, alertas y mantenimiento.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="restoreSystemConfigBtn">
+                Restaurar valores
+              </button>
+
+              <button type="button" class="panel-action" id="analyzeSystemConfigBtn">
+                Analizar
+              </button>
+            </div>
+          </div>
+
+          <form class="admin-form" id="systemConfigForm">
+            <!-- IDENTIDAD -->
+            <section class="config-section">
+              <div class="config-section__header">
+                <span>🏢</span>
+                <div>
+                  <h3>Identidad de plataforma</h3>
+                  <p>Datos visibles de la plataforma, ambiente y responsable funcional.</p>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="platformName">Nombre de plataforma</label>
+                  <input id="platformName" type="text" placeholder="Claro Atención 360" />
+                </div>
+
+                <div class="form-group">
+                  <label for="platformEnvironment">Ambiente</label>
+                  <select id="platformEnvironment">
+                    <option value="">Seleccionar ambiente</option>
+                    <option value="Producción">Producción</option>
+                    <option value="Preproducción">Preproducción</option>
+                    <option value="QA">QA</option>
+                    <option value="Desarrollo">Desarrollo</option>
+                  </select>
+                  <p class="form-help">Este campo debe venir desde configuración/catálogos de BD.</p>
+                </div>
+
+                <div class="form-group">
+                  <label for="platformOwner">Responsable funcional</label>
+                  <input id="platformOwner" type="text" placeholder="Ej. Administrador del sistema" />
+                </div>
+
+                <div class="form-group">
+                  <label for="platformSupportEmail">Correo de soporte</label>
+                  <input id="platformSupportEmail" type="email" placeholder="soporte@empresa.com" />
+                </div>
+              </div>
+            </section>
+
+            <!-- SEGURIDAD -->
+            <section class="config-section">
+              <div class="config-section__header">
+                <span>🔐</span>
+                <div>
+                  <h3>Seguridad y sesión</h3>
+                  <p>Parámetros que controlan expiración, intentos fallidos, MFA y contraseña.</p>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="sessionTimeout">Expiración de sesión</label>
+                  <select id="sessionTimeout">
+                    <option value="">Seleccionar expiración</option>
+                    <option value="15 minutos">15 minutos</option>
+                    <option value="30 minutos">30 minutos</option>
+                    <option value="60 minutos">60 minutos</option>
+                    <option value="120 minutos">120 minutos</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="failedAttempts">Intentos fallidos permitidos</label>
+                  <select id="failedAttempts">
+                    <option value="">Seleccionar intentos</option>
+                    <option value="3">3 intentos</option>
+                    <option value="5">5 intentos</option>
+                    <option value="7">7 intentos</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="mfaPolicy">Política MFA</label>
+                  <select id="mfaPolicy">
+                    <option value="">Seleccionar política</option>
+                    <option value="No requerido">No requerido</option>
+                    <option value="Requerido para administradores">Requerido para administradores</option>
+                    <option value="Requerido para supervisores y administradores">Requerido para supervisores y administradores</option>
+                    <option value="Requerido para todos">Requerido para todos</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="passwordPolicy">Política de contraseña</label>
+                  <select id="passwordPolicy">
+                    <option value="">Seleccionar política</option>
+                    <option value="Básica">Básica</option>
+                    <option value="Media">Media</option>
+                    <option value="Fuerte">Fuerte</option>
+                    <option value="Corporativa estricta">Corporativa estricta</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="security-warning">
+                Los cambios de seguridad pueden cerrar sesiones, bloquear usuarios o exigir nuevas políticas de acceso.
+              </div>
+            </section>
+
+            <!-- NOTIFICACIONES -->
+            <section class="config-section">
+              <div class="config-section__header">
+                <span>🔔</span>
+                <div>
+                  <h3>Alertas y notificaciones</h3>
+                  <p>Control de eventos críticos que deben alertar al administrador.</p>
+                </div>
+              </div>
+
+              <div class="settings-toggle-grid">
+                <label class="setting-toggle-card">
+                  <input type="checkbox" id="notifySlaRisk" />
+                  <span></span>
+                  <div>
+                    <strong>Riesgo SLA</strong>
+                    <small>Alertar cuando un caso se acerque al vencimiento.</small>
+                  </div>
+                </label>
+
+                <label class="setting-toggle-card">
+                  <input type="checkbox" id="notifyUserBlocked" />
+                  <span></span>
+                  <div>
+                    <strong>Usuarios bloqueados</strong>
+                    <small>Notificar bloqueos por intentos fallidos o acción administrativa.</small>
+                  </div>
+                </label>
+
+                <label class="setting-toggle-card">
+                  <input type="checkbox" id="notifyIntegrationError" />
+                  <span></span>
+                  <div>
+                    <strong>Error de integración</strong>
+                    <small>Alertar fallas de API, webhook, correo o servicios externos.</small>
+                  </div>
+                </label>
+
+                <label class="setting-toggle-card">
+                  <input type="checkbox" id="notifyBackupFailure" />
+                  <span></span>
+                  <div>
+                    <strong>Falla de respaldo</strong>
+                    <small>Alertar errores de copia, validación o restauración.</small>
+                  </div>
+                </label>
+              </div>
+            </section>
+
+            <!-- MANTENIMIENTO -->
+            <section class="config-section">
+              <div class="config-section__header">
+                <span>🛠️</span>
+                <div>
+                  <h3>Mantenimiento y operación</h3>
+                  <p>Parámetros para ventanas de mantenimiento y comunicación a usuarios.</p>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="maintenanceMode">Modo mantenimiento</label>
+                  <select id="maintenanceMode">
+                    <option value="">Seleccionar estado</option>
+                    <option value="Inactivo">Inactivo</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Programado">Programado</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="maintenanceWindow">Ventana de mantenimiento</label>
+                  <select id="maintenanceWindow">
+                    <option value="">Seleccionar ventana</option>
+                    <option value="Sin ventana">Sin ventana</option>
+                    <option value="00:00 - 02:00">00:00 - 02:00</option>
+                    <option value="02:00 - 04:00">02:00 - 04:00</option>
+                    <option value="22:00 - 00:00">22:00 - 00:00</option>
+                    <option value="Fin de semana">Fin de semana</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="maintenanceMessage">Mensaje de mantenimiento</label>
+                <textarea
+                  id="maintenanceMessage"
+                  placeholder="Ej. La plataforma estará en mantenimiento programado desde las 00:00 hasta las 02:00."
+                ></textarea>
+              </div>
+
+              <p class="form-help">
+                Si el modo mantenimiento está activo o programado, se recomienda registrar mensaje visible y ventana.
+              </p>
+            </section>
+
+            <!-- CAMPOS OCULTOS -->
+            <input type="hidden" id="systemConfigPendingReason" value="" />
+          </form>
+        </section>
+
+        <!-- LATERAL -->
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de configuración</h2>
+                <p>
+                  Analiza riesgos en seguridad, sesión, alertas, mantenimiento y continuidad.
+                </p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="systemConfigAiSummary">
+              <div class="ai-summary-item">
+                <strong>Esperando datos</strong>
+                <p>El análisis se cargará cuando el backend retorne información.</p>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeSystemConfigBtnSecondary">
+              Analizar configuración
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Control administrativo</span>
+                <h2>Plan recomendado</h2>
+                <p>
+                  Acciones sugeridas para mantener configuración segura, coherente y auditable.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="systemConfigActionPlan"></div>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Acciones sensibles</span>
+                <h2>Gestión controlada</h2>
+                <p>
+                  Estas acciones requieren motivo, confirmación y auditoría.
+                </p>
+              </div>
+            </div>
+
+            <div class="button-stack">
+              <button type="button" class="btn btn--primary btn--full" id="saveSystemConfigBtnSecondary">
+                Guardar cambios
+              </button>
+
+              <button type="button" class="btn btn--soft btn--full" id="restoreSystemConfigBtnSecondary">
+                Restaurar valores
+              </button>
+
+              <button type="button" class="btn btn--ghost-dark btn--full" id="exportSystemConfigBtnSecondary">
+                Exportar configuración
+              </button>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- REFERENCIA -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Seguridad esperada</span>
+              <h2>Validaciones recomendadas</h2>
+              <p>
+                El backend debe validar coherencia antes de aceptar cambios globales.
+              </p>
+            </div>
+          </div>
+
+          <div class="checklist-grid">
+            <article class="checklist-item">
+              <span>1</span>
+              <div>
+                <strong>Último administrador activo</strong>
+                <p>No permitir configuración que bloquee al último usuario administrador.</p>
+              </div>
+            </article>
+
+            <article class="checklist-item">
+              <span>2</span>
+              <div>
+                <strong>Política de sesión</strong>
+                <p>Evitar expiraciones inseguras o inconsistentes con MFA.</p>
+              </div>
+            </article>
+
+            <article class="checklist-item">
+              <span>3</span>
+              <div>
+                <strong>Modo mantenimiento</strong>
+                <p>Exigir mensaje y ventana cuando el mantenimiento esté activo o programado.</p>
+              </div>
+            </article>
+
+            <article class="checklist-item">
+              <span>4</span>
+              <div>
+                <strong>Alertas críticas</strong>
+                <p>Recomendar mantener alertas activas para SLA, respaldo e integraciones.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Auditoría esperada</span>
+              <h2>Campos mínimos del evento</h2>
+              <p>
+                Toda modificación de configuración debe registrar información suficiente para trazabilidad.
+              </p>
+            </div>
+          </div>
+
+          <div class="case-modal-summary">
+            <div>
+              <span>Usuario ejecutor</span>
+              <strong>Administrador autenticado</strong>
+            </div>
+
+            <div>
+              <span>Módulo</span>
+              <strong>Configuración del sistema</strong>
+            </div>
+
+            <div>
+              <span>Acción</span>
+              <strong>Guardar / restaurar / exportar</strong>
+            </div>
+
+            <div>
+              <span>Valor anterior</span>
+              <strong>Snapshot previo</strong>
+            </div>
+
+            <div>
+              <span>Valor nuevo</span>
+              <strong>Snapshot actualizado</strong>
+            </div>
+
+            <div>
+              <span>Motivo</span>
+              <strong>Obligatorio</strong>
+            </div>
+
+            <div>
+              <span>IP / fecha</span>
+              <strong>Registro automático</strong>
+            </div>
+
+            <div>
+              <span>Resultado</span>
+              <strong>Exitoso / rechazado / error</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar usuario, rol, catálogo, SLA, integración, reporte o evento..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Configuración</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a revisar seguridad, sesión, mantenimiento, notificaciones y riesgos de configuración.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Analiza configuración del sistema">
+        Analizar
+      </button>
+
+      <button type="button" data-bot-prompt="Qué configuración de seguridad debo revisar">
+        Seguridad
+      </button>
+
+      <button type="button" data-bot-prompt="Recomienda ajustes de mantenimiento y alertas">
+        Recomendaciones
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL CONFIRMAR CONFIGURACIÓN -->
+  <section class="modal" id="confirmSystemConfigModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">⚙️</div>
+      <span class="eyebrow eyebrow--red">Confirmación final</span>
+      <h3>Guardar configuración del sistema</h3>
+      <p>
+        Esta acción actualizará parámetros globales. El sistema ya comparó cambios y solicitó motivo.
+      </p>
+
+      <div class="confirm-warning-banner">
+        Antes de confirmar, verifica que los cambios no afecten acceso, sesiones activas,
+        notificaciones críticas, mantenimiento o continuidad operativa.
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="systemConfigDeclaration" />
+        <span>Confirmo que revisé los cambios y autorizo guardar la configuración.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmSaveSystemConfigBtn">
+          Confirmar guardado
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir revisando
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/admin.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const bindMirrorClick = (sourceId, targetId) => {
+        const source = document.getElementById(sourceId);
+        const target = document.getElementById(targetId);
+
+        if (source && target) {
+          source.addEventListener("click", function () {
+            target.click();
+          });
+        }
+      };
+
+      bindMirrorClick("saveSystemConfigBtnSecondary", "saveSystemConfigBtn");
+      bindMirrorClick("restoreSystemConfigBtnSecondary", "restoreSystemConfigBtn");
+      bindMirrorClick("exportSystemConfigBtnSecondary", "exportSystemConfigBtn");
+      bindMirrorClick("analyzeSystemConfigBtnSecondary", "analyzeSystemConfigBtn");
+    });
+  </script>
+</body>
+</html>

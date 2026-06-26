@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Notificaciones | Claro Atención 360</title>
+
+  <meta
+    name="description"
+    content="Centro de notificaciones del cliente para revisar alertas, solicitudes de información, cambios de estado, SLA y mensajes del sistema."
+  />
+
+  <link rel="stylesheet" href="../assets/css/cliente.css" />
+</head>
+
+<body data-page="notificaciones">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR CLIENTE -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="../index.html" class="brand" aria-label="Ir al inicio de Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">✦</span>
+      </a>
+      <span class="brand__tag">Atención 360</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Menú principal del cliente">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="registrar-reclamo.html" class="sidebar-link">
+        <span>📝</span>
+        Registrar reclamo
+      </a>
+
+      <a href="registrar-incidencia.html" class="sidebar-link">
+        <span>⚠️</span>
+        Registrar incidencia
+      </a>
+
+      <a href="mis-casos.html" class="sidebar-link">
+        <span>🎫</span>
+        Mis casos
+      </a>
+
+      <a href="servicios-contratados.html" class="sidebar-link">
+        <span>📡</span>
+        Servicios contratados
+      </a>
+
+      <a href="notificaciones.html" class="sidebar-link active" aria-current="page">
+        <span>🔔</span>
+        Notificaciones
+        <small id="sidebarNotificationCount" aria-label="Notificaciones no leídas"></small>
+      </a>
+
+      <a href="perfil.html" class="sidebar-link">
+        <span>👤</span>
+        Perfil
+      </a>
+
+      <a href="../centro-ayuda.html" class="sidebar-link">
+        <span>❓</span>
+        Centro de ayuda
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        ClaroBot IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>🚪</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow">Centro de alertas</span>
+          <h1 id="pageTitle">Notificaciones</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar caso, servicio o ayuda">
+          🔎
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <button type="button" class="notification-btn" id="notificationBtn" aria-label="Ir a notificaciones">
+          🔔
+          <span id="notificationBadge"></span>
+        </button>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton" aria-label="Abrir menú de usuario">
+            <span class="user-avatar" id="userAvatar">CL</span>
+            <div>
+              <strong id="userNameTop">Cliente</strong>
+              <small id="userTypeTop">Cliente Persona</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="perfil.html">Mi perfil</a>
+            <a href="servicios-contratados.html">Mis servicios</a>
+            <a href="../seleccionar-rol.html">Cambiar perfil</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard-page">
+      <!-- HERO -->
+      <section class="notifications-hero">
+        <div class="notifications-hero__content">
+          <span class="eyebrow eyebrow--red">Bandeja inteligente</span>
+
+          <h2>
+            Revisa alertas, solicitudes y cambios importantes de tus casos
+          </h2>
+
+          <p>
+            Aquí encontrarás notificaciones de seguimiento, solicitudes del asesor,
+            vencimientos SLA, evidencias, cierres y mensajes del sistema. Prioriza las
+            no leídas y las que requieren una acción del cliente.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="markAllReadBtn">
+              Marcar todo como leído
+            </button>
+
+            <button type="button" class="btn btn--soft" id="analyzeNotificationsBtn">
+              Priorizar con IA
+            </button>
+
+            <a href="mis-casos.html" class="btn btn--ghost-dark">
+              Ir a mis casos
+            </a>
+          </div>
+        </div>
+
+        <div class="notifications-hero__visual" aria-hidden="true">
+          <img
+            src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=900&q=80"
+            alt=""
+          />
+
+          <div class="hero-glass-card hero-glass-card--top">
+            <span>🔔</span>
+            <div>
+              <strong id="notificationHeroUnread">0 no leídas</strong>
+              <small>Requieren revisión</small>
+            </div>
+          </div>
+
+          <div class="hero-glass-card hero-glass-card--bottom">
+            <span>📩</span>
+            <div>
+              <strong>Solicitudes y SLA</strong>
+              <small>Priorización automática</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESUMEN -->
+      <section class="case-summary-grid notification-summary-grid" aria-label="Resumen de notificaciones">
+        <article class="case-summary-card">
+          <span>🔔</span>
+          <div>
+            <strong id="summaryTotalNotifications">0</strong>
+            <p>Total de alertas</p>
+          </div>
+        </article>
+
+        <article class="case-summary-card">
+          <span>📩</span>
+          <div>
+            <strong id="summaryUnreadNotifications">0</strong>
+            <p>No leídas</p>
+          </div>
+        </article>
+
+        <article class="case-summary-card">
+          <span>🎫</span>
+          <div>
+            <strong id="summaryCaseNotifications">0</strong>
+            <p>Asociadas a casos</p>
+          </div>
+        </article>
+
+        <article class="case-summary-card">
+          <span>⏱️</span>
+          <div>
+            <strong id="summarySlaNotifications">0</strong>
+            <p>Alertas SLA</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- FILTROS -->
+      <section class="cases-toolbar panel-card">
+        <div class="panel-card__header panel-card__header--inner">
+          <div>
+            <span class="eyebrow eyebrow--red">Filtros</span>
+            <h2>Busca y prioriza tus alertas</h2>
+            <p>
+              Usa los filtros para ubicar solicitudes pendientes, alertas SLA o notificaciones
+              asociadas a un caso específico.
+            </p>
+          </div>
+        </div>
+
+        <div class="cases-toolbar__top">
+          <div class="search-box-large">
+            <span>🔎</span>
+
+            <input
+              id="notificationsSearchInput"
+              type="text"
+              placeholder="Buscar por caso, título, mensaje, tipo o prioridad..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="view-toggle" aria-label="Cambiar vista de notificaciones">
+            <button type="button" class="view-toggle__btn active" id="notificationsListViewBtn" data-view="list">
+              Lista
+            </button>
+
+            <button type="button" class="view-toggle__btn" id="notificationsCompactViewBtn" data-view="compact">
+              Compacta
+            </button>
+          </div>
+        </div>
+
+        <div class="case-filters" aria-label="Filtros rápidos de notificaciones">
+          <button type="button" class="filter-chip active" data-notification-filter="todas">
+            Todas
+          </button>
+
+          <button type="button" class="filter-chip" data-notification-filter="no-leidas">
+            No leídas
+          </button>
+
+          <button type="button" class="filter-chip" data-notification-filter="caso">
+            Casos
+          </button>
+
+          <button type="button" class="filter-chip" data-notification-filter="solicitud">
+            Solicitudes
+          </button>
+
+          <button type="button" class="filter-chip" data-notification-filter="sla">
+            SLA
+          </button>
+
+          <button type="button" class="filter-chip" data-notification-filter="sistema">
+            Sistema
+          </button>
+        </div>
+
+        <div class="advanced-filter-row">
+          <div class="form-group">
+            <label for="notificationTypeFilter">Tipo</label>
+            <select id="notificationTypeFilter">
+              <option value="todas">Todas</option>
+              <option value="caso">Caso</option>
+              <option value="solicitud">Solicitud</option>
+              <option value="sla">SLA</option>
+              <option value="evidencia">Evidencia</option>
+              <option value="cierre">Cierre</option>
+              <option value="sistema">Sistema</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="notificationStatusFilter">Estado</label>
+            <select id="notificationStatusFilter">
+              <option value="todas">Todas</option>
+              <option value="no-leidas">No leídas</option>
+              <option value="leidas">Leídas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="notificationPriorityFilter">Prioridad</label>
+            <select id="notificationPriorityFilter">
+              <option value="todas">Todas</option>
+              <option value="alta">Alta</option>
+              <option value="media">Media</option>
+              <option value="baja">Baja</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="notificationSortSelect">Ordenar por</label>
+            <select id="notificationSortSelect">
+              <option value="reciente">Más recientes</option>
+              <option value="prioridad">Mayor prioridad</option>
+              <option value="no-leidas">No leídas primero</option>
+              <option value="tipo">Tipo</option>
+            </select>
+          </div>
+
+          <div class="form-group advanced-filter-action">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn--primary btn--full" id="applyNotificationFiltersBtn">
+              Aplicar filtros
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTENIDO -->
+      <section class="notifications-page-layout notifications-page-layout--enhanced">
+        <article class="panel-card notifications-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow eyebrow--red">Bandeja</span>
+              <h2>Notificaciones recibidas</h2>
+              <p>
+                Abre una notificación para ver detalle, marcarla como leída o ir al caso asociado.
+              </p>
+            </div>
+
+            <div class="panel-actions-group">
+              <button type="button" class="panel-action" id="deleteReadNotificationsBtn">
+                Limpiar leídas
+              </button>
+
+              <button type="button" class="panel-action" id="refreshNotificationsBtn">
+                Actualizar
+              </button>
+            </div>
+          </div>
+
+          <div class="notifications-full-list" id="notificationsFullList" aria-live="polite"></div>
+
+          <div class="empty-state hidden" id="emptyNotificationsState">
+            <span>🔔</span>
+            <h3>No se encontraron notificaciones</h3>
+            <p>
+              Cambia los filtros o actualiza la bandeja. Las nuevas alertas aparecerán aquí.
+            </p>
+          </div>
+        </article>
+
+        <aside class="form-side-stack">
+          <article class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>Resumen IA</h2>
+                <p>Priorización de alertas.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="notificationsAiSummary" aria-live="polite"></div>
+
+            <div class="ai-insight-box">
+              <span>✨</span>
+              <p>
+                La IA puede identificar qué alertas requieren respuesta, cuáles son informativas
+                y qué casos podrían retrasarse por falta de acción.
+              </p>
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeNotificationsBtn">
+              Analizar alertas
+            </button>
+          </article>
+
+          <article class="panel-card assist-panel">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow eyebrow--red">Guía rápida</span>
+                <h2>Cómo leer tus alertas</h2>
+              </div>
+            </div>
+
+            <div class="checklist-list">
+              <article>
+                <span>📩</span>
+                <div>
+                  <strong>Solicitud</strong>
+                  <small>El asesor necesita información o evidencia para continuar.</small>
+                </div>
+              </article>
+
+              <article>
+                <span>⏱️</span>
+                <div>
+                  <strong>SLA</strong>
+                  <small>El caso tiene un vencimiento próximo o requiere atención prioritaria.</small>
+                </div>
+              </article>
+
+              <article>
+                <span>🎫</span>
+                <div>
+                  <strong>Caso</strong>
+                  <small>Se registró un cambio de estado o movimiento en el seguimiento.</small>
+                </div>
+              </article>
+
+              <article>
+                <span>✅</span>
+                <div>
+                  <strong>Cierre</strong>
+                  <small>El caso fue resuelto o cerrado y puede habilitar encuesta o constancia.</small>
+                </div>
+              </article>
+            </div>
+          </article>
+
+          <article class="panel-card priority-panel">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow eyebrow--red">Acciones recomendadas</span>
+                <h2>Prioriza así</h2>
+              </div>
+            </div>
+
+            <div class="suggestion-list">
+              <article>
+                <span>1</span>
+                <div>
+                  <strong>Solicitudes del asesor</strong>
+                  <p>Respóndelas primero para evitar retrasos en el caso.</p>
+                </div>
+              </article>
+
+              <article>
+                <span>2</span>
+                <div>
+                  <strong>Alertas SLA</strong>
+                  <p>Revisa casos próximos a vencimiento o críticos.</p>
+                </div>
+              </article>
+
+              <article>
+                <span>3</span>
+                <div>
+                  <strong>Actualizaciones informativas</strong>
+                  <p>Revísalas para conocer cambios recientes de estado.</p>
+                </div>
+              </article>
+            </div>
+          </article>
+
+          <article class="mini-image-card">
+            <img
+              src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=700&q=80"
+              alt="Notificaciones digitales"
+            />
+
+            <div>
+              <span class="eyebrow eyebrow--red">Alertas útiles</span>
+              <h3>Evita perder acciones pendientes</h3>
+              <p>
+                Las alertas te ayudan a responder solicitudes, revisar vencimientos y seguir cambios importantes.
+              </p>
+            </div>
+          </article>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>ClaroBot IA</strong>
+        <small>Asistente de alertas</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer" aria-label="Cerrar ClaroBot">
+        ×
+      </button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Hola. Puedo ayudarte a priorizar notificaciones, identificar solicitudes pendientes y explicar alertas SLA.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Qué alerta es urgente">
+        Urgentes
+      </button>
+
+      <button type="button" data-bot-prompt="Qué notificación requiere respuesta">
+        Requiere respuesta
+      </button>
+
+      <button type="button" data-bot-prompt="Explícame mis alertas SLA">
+        SLA
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>🔎</span>
+
+        <input
+          type="text"
+          id="globalSearchInput"
+          placeholder="Buscar caso, servicio, notificación o ayuda..."
+        />
+
+        <button type="button" id="closeSearchBtn">
+          Esc
+        </button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <!-- MODAL: DETALLE DE NOTIFICACIÓN -->
+  <section class="modal" id="notificationDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon" id="notificationModalIcon">
+        🔔
+      </div>
+
+      <span class="eyebrow eyebrow--red" id="notificationModalType">
+        Notificación
+      </span>
+
+      <h3 id="notificationModalTitle">
+        Detalle de la notificación
+      </h3>
+
+      <p id="notificationModalText">
+        Aquí se mostrará el contenido completo de la notificación seleccionada.
+      </p>
+
+      <div class="case-modal-summary case-modal-summary--grid">
+        <div>
+          <span>Caso asociado</span>
+          <strong id="notificationModalCase">-</strong>
+        </div>
+
+        <div>
+          <span>Tipo</span>
+          <strong id="notificationModalCategory">-</strong>
+        </div>
+
+        <div>
+          <span>Prioridad</span>
+          <strong id="notificationModalPriority">-</strong>
+        </div>
+
+        <div>
+          <span>Fecha</span>
+          <strong id="notificationModalDate">-</strong>
+        </div>
+
+        <div>
+          <span>Estado</span>
+          <strong id="notificationModalStatus">-</strong>
+        </div>
+
+        <div>
+          <span>Acción sugerida</span>
+          <strong id="notificationModalAction">-</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <a href="detalle-caso.html" class="btn btn--primary" id="notificationGoCaseBtn">
+          Ver caso asociado
+        </a>
+
+        <button type="button" class="btn btn--soft" id="notificationMarkReadBtn">
+          Marcar como leída
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: CONFIRMAR LIMPIEZA -->
+  <section class="modal" id="clearNotificationsModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon modal__icon--warning">
+        🧹
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Limpiar notificaciones
+      </span>
+
+      <h3>
+        ¿Deseas ocultar las notificaciones leídas?
+      </h3>
+
+      <p>
+        Esta acción solo ocultará las alertas ya revisadas en la bandeja.
+        No elimina casos, historial, evidencias ni trazabilidad del sistema.
+      </p>
+
+      <div class="case-modal-summary">
+        <div>
+          <span>Acción</span>
+          <strong>Ocultar notificaciones leídas</strong>
+        </div>
+
+        <div>
+          <span>Impacto</span>
+          <strong>No elimina información del caso</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+
+        <button type="button" class="btn btn--primary" id="acceptClearNotificationsBtn">
+          Confirmar limpieza
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: OPERACIÓN EXITOSA -->
+  <section class="modal" id="notificationSuccessModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon modal__icon--success">
+        ✓
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Acción completada
+      </span>
+
+      <h3 id="notificationSuccessTitle">
+        Notificaciones actualizadas
+      </h3>
+
+      <p id="notificationSuccessText">
+        La acción fue procesada correctamente.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon" id="genericModalIcon">
+        ℹ
+      </div>
+
+      <h3 id="genericModalTitle">
+        Información
+      </h3>
+
+      <p id="genericModalText">
+        Mensaje del sistema.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/cliente.js"></script>
+</body>
+</html>

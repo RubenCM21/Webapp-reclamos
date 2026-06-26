@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Registrar incidencia | Claro Atención 360</title>
+
+  <meta
+    name="description"
+    content="Formulario del cliente para registrar incidencias técnicas por falla de servicio, lentitud, intermitencia, error de acceso, señal o afectación masiva."
+  />
+
+  <link rel="stylesheet" href="../assets/css/cliente.css" />
+</head>
+
+<body data-page="registrar-incidencia">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR CLIENTE -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="../index.html" class="brand" aria-label="Ir al inicio de Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">✦</span>
+      </a>
+      <span class="brand__tag">Atención 360</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Menú principal del cliente">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="registrar-reclamo.html" class="sidebar-link">
+        <span>📝</span>
+        Registrar reclamo
+      </a>
+
+      <a href="registrar-incidencia.html" class="sidebar-link active" aria-current="page">
+        <span>⚠️</span>
+        Registrar incidencia
+      </a>
+
+      <a href="mis-casos.html" class="sidebar-link">
+        <span>🎫</span>
+        Mis casos
+      </a>
+
+      <a href="servicios-contratados.html" class="sidebar-link">
+        <span>📡</span>
+        Servicios contratados
+      </a>
+
+      <a href="notificaciones.html" class="sidebar-link">
+        <span>🔔</span>
+        Notificaciones
+        <small id="sidebarNotificationCount" aria-label="Notificaciones no leídas"></small>
+      </a>
+
+      <a href="perfil.html" class="sidebar-link">
+        <span>👤</span>
+        Perfil
+      </a>
+
+      <a href="../centro-ayuda.html" class="sidebar-link">
+        <span>❓</span>
+        Centro de ayuda
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        ClaroBot IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>🚪</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow">Soporte técnico</span>
+          <h1 id="pageTitle">Registrar incidencia</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar caso, servicio o ayuda">
+          🔎
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <button type="button" class="notification-btn" id="notificationBtn" aria-label="Ir a notificaciones">
+          🔔
+          <span id="notificationBadge"></span>
+        </button>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton" aria-label="Abrir menú de usuario">
+            <span class="user-avatar" id="userAvatar">CL</span>
+            <div>
+              <strong id="userNameTop">Cliente</strong>
+              <small id="userTypeTop">Cliente Persona</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="perfil.html">Mi perfil</a>
+            <a href="servicios-contratados.html">Mis servicios</a>
+            <a href="../seleccionar-rol.html">Cambiar perfil</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard-page">
+      <!-- HERO -->
+      <section class="case-form-hero">
+        <div class="case-form-hero__content">
+          <span class="eyebrow eyebrow--red">Nueva incidencia técnica</span>
+
+          <h2>
+            Reporta una falla técnica asociada a un servicio contratado
+          </h2>
+
+          <p>
+            Usa esta opción cuando tienes problemas de conectividad, señal, lentitud,
+            interrupciones, errores de acceso, caída de servicio o afectación técnica.
+            Si el problema es por cobro, facturación o atención, registra un reclamo.
+          </p>
+
+          <div class="hero-mini-status">
+            <article>
+              <span>📡</span>
+              <div>
+                <strong>Servicio afectado</strong>
+                <small>Elige el contrato real vinculado a tu cuenta.</small>
+              </div>
+            </article>
+
+            <article>
+              <span>⏱️</span>
+              <div>
+                <strong>SLA estimado</strong>
+                <small>Se calculará por impacto, urgencia y tipo de servicio.</small>
+              </div>
+            </article>
+          </div>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="incidentDiagnosticBtn">
+              Diagnóstico rápido
+            </button>
+
+            <button type="button" class="btn btn--soft" id="openBotWelcome">
+              Recibir ayuda IA
+            </button>
+
+            <a href="mis-casos.html" class="btn btn--ghost-dark">
+              Ver mis casos
+            </a>
+          </div>
+        </div>
+
+        <div class="case-form-hero__visual" aria-hidden="true">
+          <img
+            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80"
+            alt=""
+          />
+
+          <div class="hero-glass-card hero-glass-card--top">
+            <span>⚠️</span>
+            <div>
+              <strong>Incidencia técnica</strong>
+              <small>Fallas, lentitud o interrupción</small>
+            </div>
+          </div>
+
+          <div class="hero-glass-card hero-glass-card--bottom">
+            <span>🤖</span>
+            <div>
+              <strong>Diagnóstico IA</strong>
+              <small>Clasificación preliminar</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FORMULARIO + ASISTENTE -->
+      <section class="form-layout form-layout--enhanced">
+        <article class="panel-card form-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow eyebrow--red">Formulario</span>
+              <h2>Datos de la incidencia</h2>
+              <p>
+                Completa la información técnica. Los servicios, síntomas, impactos y urgencias
+                se cargan desde los catálogos del sistema.
+              </p>
+            </div>
+
+            <span class="status-pill status-pill--warning" id="incidentDraftStatus">
+              Pendiente
+            </span>
+          </div>
+
+          <form
+            id="incidentForm"
+            class="case-form"
+            data-endpoint="/api/cliente/incidencias"
+            data-method="POST"
+            novalidate
+          >
+            <!-- 01: Servicio y síntoma -->
+            <div class="form-section-title">
+              <span>01</span>
+              <div>
+                <strong>Servicio y síntoma</strong>
+                <small>Identifica dónde ocurre la falla y cómo se presenta.</small>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="incidentService">Servicio afectado</label>
+                <select id="incidentService" name="servicio_contratado_id" required>
+                  <option value="">Cargando servicios contratados...</option>
+                </select>
+                <small class="form-error" id="incidentServiceError"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="incidentSymptom">Síntoma principal</label>
+                <select id="incidentSymptom" name="sintoma_id" required>
+                  <option value="">Cargando síntomas...</option>
+                </select>
+                <small class="form-error" id="incidentSymptomError"></small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="incidentTitle">Título de la incidencia</label>
+              <input
+                id="incidentTitle"
+                name="titulo"
+                type="text"
+                maxlength="160"
+                placeholder="Ejemplo: Internet hogar sin servicio desde la mañana"
+                autocomplete="off"
+              />
+              <small class="form-error" id="incidentTitleError"></small>
+            </div>
+
+            <!-- 02: Impacto y urgencia -->
+            <div class="form-section-title">
+              <span>02</span>
+              <div>
+                <strong>Impacto y urgencia</strong>
+                <small>Ayuda a priorizar la atención según la afectación real.</small>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="incidentImpact">Impacto</label>
+                <select id="incidentImpact" name="impacto_cliente" required>
+                  <option value="">Cargando impactos...</option>
+                </select>
+                <small class="form-error" id="incidentImpactError"></small>
+              </div>
+
+              <div class="form-group">
+                <label for="incidentUrgency">Urgencia percibida</label>
+                <select id="incidentUrgency" name="urgencia_cliente" required>
+                  <option value="">Cargando urgencias...</option>
+                </select>
+                <small class="form-error" id="incidentUrgencyError"></small>
+              </div>
+            </div>
+
+            <!-- 03: Ubicación y fecha -->
+            <div class="form-section-title">
+              <span>03</span>
+              <div>
+                <strong>Ubicación y momento de inicio</strong>
+                <small>Indica dónde ocurre la falla y desde cuándo se presenta.</small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="incidentAddress">Ubicación afectada</label>
+              <input
+                id="incidentAddress"
+                name="ubicacion_referencial"
+                type="text"
+                maxlength="250"
+                placeholder="Ejemplo: Dirección instalada, piso, área, referencia o zona afectada"
+                required
+              />
+              <small class="form-error" id="incidentAddressError"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="incidentStartDate">Fecha y hora aproximada de inicio</label>
+              <input id="incidentStartDate" name="fecha_hecho" type="datetime-local" />
+              <small class="form-error" id="incidentStartDateError"></small>
+            </div>
+
+            <!-- 04: Descripción técnica -->
+            <div class="form-section-title">
+              <span>04</span>
+              <div>
+                <strong>Descripción técnica</strong>
+                <small>Describe qué ocurre, frecuencia, equipos afectados y pruebas realizadas.</small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="incidentDescription">Descripción de la incidencia</label>
+              <textarea
+                id="incidentDescription"
+                name="descripcion"
+                maxlength="2000"
+                placeholder="Ejemplo: Desde las 8:30 a.m. el internet se corta cada 10 minutos. Reinicié el router y el problema continúa. Afecta a todos los equipos conectados por WiFi."
+                required
+              ></textarea>
+              <small class="form-error" id="incidentDescriptionError"></small>
+            </div>
+
+            <!-- 05: Evidencia -->
+            <div class="form-section-title">
+              <span>05</span>
+              <div>
+                <strong>Evidencia técnica</strong>
+                <small>Adjunta pruebas que ayuden al diagnóstico. Máximo 5 archivos de 10 MB.</small>
+              </div>
+            </div>
+
+            <div class="upload-box">
+              <div>
+                <span>📎</span>
+                <strong>Adjuntar evidencia</strong>
+                <p>
+                  Puedes subir capturas, pruebas de velocidad, mensajes de error, fotos del router,
+                  pantallas de configuración, recibos técnicos o documentos relacionados.
+                </p>
+              </div>
+
+              <label for="incidentEvidence" class="btn btn--soft">
+                Seleccionar archivos
+              </label>
+
+              <input
+                id="incidentEvidence"
+                name="evidence"
+                type="file"
+                hidden
+                multiple
+                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx"
+              />
+            </div>
+
+            <div class="file-list" id="incidentFileList"></div>
+            <small class="form-error" id="incidentEvidenceError"></small>
+
+            <!-- 06: Declaración -->
+            <div class="form-section-title">
+              <span>06</span>
+              <div>
+                <strong>Declaración y confirmación</strong>
+                <small>Confirma que la información ingresada es correcta.</small>
+              </div>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" id="incidentDeclaration" name="declaration" />
+              <label for="incidentDeclaration">
+                Declaro que la información registrada es verdadera y autorizo su uso
+                para la validación, diagnóstico y seguimiento de la incidencia.
+              </label>
+            </div>
+
+            <small class="form-error" id="incidentDeclarationError"></small>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn--ghost-dark" id="incidentSaveDraft">
+                Guardar borrador
+              </button>
+
+              <button type="button" class="btn btn--soft" id="incidentPreviewBtn">
+                Vista previa
+              </button>
+
+              <button type="submit" class="btn btn--primary" id="incidentSubmitBtn">
+                <span class="btn-text">Registrar incidencia</span>
+                <span class="btn-loader"></span>
+              </button>
+            </div>
+          </form>
+        </article>
+
+        <!-- PANEL LATERAL -->
+        <aside class="form-side-stack">
+          <article class="panel-card assist-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>Clasificación IA</h2>
+                <p>Evalúa urgencia, impacto y evidencia técnica.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary">
+              <div class="ai-summary-item">
+                <strong>Consejo</strong>
+                <p>
+                  Indica si la falla afecta solo tu servicio, varios usuarios del hogar,
+                  usuarios de una empresa o si parece ser una afectación masiva.
+                </p>
+              </div>
+
+              <div class="ai-summary-item">
+                <strong>Evidencia ideal</strong>
+                <p>
+                  Incluye capturas, pruebas de velocidad, mensajes de error, fotos del router
+                  o evidencia de intermitencia.
+                </p>
+              </div>
+
+              <div class="ai-summary-item">
+                <strong>Priorización</strong>
+                <p>
+                  Si el impacto es empresarial, crítico o masivo, el sistema puede asignar
+                  mayor prioridad y menor tiempo SLA.
+                </p>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="incidentAnalyzeSideBtn">
+              Analizar incidencia
+            </button>
+          </article>
+
+          <article class="panel-card technical-check-panel">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow eyebrow--red">Checklist técnico</span>
+                <h2>Antes de enviar</h2>
+              </div>
+            </div>
+
+            <div class="checklist-list">
+              <article>
+                <span>✓</span>
+                <div>
+                  <strong>Servicio identificado</strong>
+                  <small>Selecciona el servicio exacto afectado desde tus servicios contratados.</small>
+                </div>
+              </article>
+
+              <article>
+                <span>✓</span>
+                <div>
+                  <strong>Síntoma claro</strong>
+                  <small>Indica si hay lentitud, corte, señal, acceso o intermitencia.</small>
+                </div>
+              </article>
+
+              <article>
+                <span>✓</span>
+                <div>
+                  <strong>Impacto real</strong>
+                  <small>Indica si afecta a una persona, hogar, empresa o zona.</small>
+                </div>
+              </article>
+
+              <article>
+                <span>✓</span>
+                <div>
+                  <strong>Prueba adjunta</strong>
+                  <small>Una captura o foto puede acelerar el diagnóstico técnico.</small>
+                </div>
+              </article>
+            </div>
+          </article>
+
+          <article class="panel-card priority-panel">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow eyebrow--red">Diferencia importante</span>
+                <h2>¿Incidencia o reclamo?</h2>
+              </div>
+            </div>
+
+            <div class="suggestion-list">
+              <article>
+                <span>⚠️</span>
+                <div>
+                  <strong>Incidencia</strong>
+                  <p>Falla técnica, interrupción, lentitud, señal, acceso o servicio caído.</p>
+                </div>
+              </article>
+
+              <article>
+                <span>📝</span>
+                <div>
+                  <strong>Reclamo</strong>
+                  <p>Cobros, facturación, atención, condiciones contratadas o disconformidad.</p>
+                </div>
+              </article>
+            </div>
+
+            <a href="registrar-reclamo.html" class="btn btn--soft btn--full">
+              Ir a reclamo
+            </a>
+          </article>
+
+          <article class="mini-image-card">
+            <img
+              src="https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?auto=format&fit=crop&w=700&q=80"
+              alt="Soporte técnico digital"
+            />
+
+            <div>
+              <span class="eyebrow eyebrow--red">Soporte guiado</span>
+              <h3>Mejor diagnóstico, atención más rápida</h3>
+              <p>
+                Cuanto más precisa sea la información técnica, más rápida será la clasificación
+                y derivación del caso.
+              </p>
+            </div>
+          </article>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>ClaroBot IA</strong>
+        <small>Asistente técnico</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer" aria-label="Cerrar ClaroBot">
+        ×
+      </button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Hola. Puedo ayudarte a clasificar la falla, sugerir evidencia técnica o diferenciar una incidencia de un reclamo.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Debo registrar reclamo o incidencia">
+        Reclamo o incidencia
+      </button>
+
+      <button type="button" data-bot-prompt="Qué evidencia técnica adjunto">
+        Evidencia técnica
+      </button>
+
+      <button type="button" data-bot-prompt="Cómo describo una incidencia técnica">
+        Descripción técnica
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>🔎</span>
+
+        <input
+          type="text"
+          id="globalSearchInput"
+          placeholder="Buscar caso, servicio, incidencia, reclamo o ayuda..."
+        />
+
+        <button type="button" id="closeSearchBtn">
+          Esc
+        </button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <!-- MODAL: CONFIRMACIÓN DE INCIDENCIA -->
+  <section class="modal" id="confirmIncidentModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon modal__icon--warning">
+        !
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Confirmación de incidencia
+      </span>
+
+      <h3>
+        Revisa la incidencia antes de enviarla
+      </h3>
+
+      <p>
+        Verifica el servicio afectado, síntoma, impacto, urgencia, ubicación,
+        fecha de inicio y evidencia. El sistema generará un código de caso.
+      </p>
+
+      <div class="case-modal-summary case-modal-summary--grid" id="incidentConfirmSummary">
+        <div>
+          <span>Servicio afectado</span>
+          <strong id="summaryIncidentService">-</strong>
+        </div>
+
+        <div>
+          <span>Síntoma</span>
+          <strong id="summaryIncidentSymptom">-</strong>
+        </div>
+
+        <div>
+          <span>Impacto</span>
+          <strong id="summaryIncidentImpact">-</strong>
+        </div>
+
+        <div>
+          <span>Urgencia</span>
+          <strong id="summaryIncidentUrgency">-</strong>
+        </div>
+
+        <div>
+          <span>Ubicación</span>
+          <strong id="summaryIncidentAddress">-</strong>
+        </div>
+
+        <div>
+          <span>Inicio aproximado</span>
+          <strong id="summaryIncidentStartDate">No registrado</strong>
+        </div>
+
+        <div>
+          <span>Evidencias</span>
+          <strong id="summaryIncidentEvidence">Sin archivos adjuntos</strong>
+        </div>
+
+        <div>
+          <span>Diagnóstico preliminar</span>
+          <strong id="summaryIncidentDiagnosis">Revisión estándar</strong>
+        </div>
+
+        <div class="summary-full">
+          <span>Descripción</span>
+          <strong id="summaryIncidentDescription">-</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Seguir editando
+        </button>
+
+        <button type="button" class="btn btn--soft" id="cancelIncidentConfirmBtn">
+          Cancelar
+        </button>
+
+        <button type="button" class="btn btn--primary" id="acceptIncidentConfirmBtn">
+          Confirmar registro
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: INCIDENCIA REGISTRADA -->
+  <section class="modal" id="successIncidentModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon modal__icon--success">
+        ✓
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Incidencia registrada
+      </span>
+
+      <h3>
+        Tu incidencia fue registrada correctamente
+      </h3>
+
+      <p id="successIncidentText">
+        Se generó un código de atención para que puedas realizar seguimiento desde Mis casos.
+      </p>
+
+      <div class="case-modal-summary" id="successIncidentSummary">
+        <div>
+          <span>Código de caso</span>
+          <strong id="successIncidentCode">INC-2026-000000</strong>
+        </div>
+
+        <div>
+          <span>Estado inicial</span>
+          <strong>Registrado</strong>
+        </div>
+
+        <div>
+          <span>Siguiente paso</span>
+          <strong>Diagnóstico técnico y asignación de atención</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <a href="mis-casos.html" class="btn btn--primary">
+          Ver mis casos
+        </a>
+
+        <a href="detalle-caso.html" class="btn btn--soft">
+          Ver seguimiento
+        </a>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: BORRADOR GUARDADO -->
+  <section class="modal" id="incidentDraftModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon">
+        💾
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Borrador guardado
+      </span>
+
+      <h3>
+        Tu incidencia quedó guardada como borrador
+      </h3>
+
+      <p>
+        Podrás continuar editándola antes de enviarla. El sistema intentará
+        sincronizar el borrador con backend y conservará una copia local temporal.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: DIAGNÓSTICO IA -->
+  <section class="modal" id="incidentDiagnosticModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon">
+        🤖
+      </div>
+
+      <span class="eyebrow eyebrow--red">
+        Diagnóstico preliminar
+      </span>
+
+      <h3>
+        Lectura inicial de la incidencia
+      </h3>
+
+      <p>
+        Esta lectura ayuda a orientar la prioridad, evidencia recomendada y acción sugerida.
+        La clasificación final será validada por el sistema y el equipo de atención.
+      </p>
+
+      <div class="case-modal-summary case-modal-summary--grid">
+        <div>
+          <span>Prioridad estimada</span>
+          <strong id="diagnosticPriority">Revisión estándar</strong>
+        </div>
+
+        <div>
+          <span>Tipo de afectación</span>
+          <strong id="diagnosticAffectation">No indicado</strong>
+        </div>
+
+        <div>
+          <span>Evidencia recomendada</span>
+          <strong id="diagnosticEvidence">Captura o prueba técnica</strong>
+        </div>
+
+        <div>
+          <span>Acción sugerida</span>
+          <strong id="diagnosticAction">Completar datos y registrar incidencia</strong>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+
+        <button type="button" class="btn btn--soft" id="incidentAnalyzeSideBtn">
+          Consultar a ClaroBot
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar modal">
+        ×
+      </button>
+
+      <div class="modal__icon" id="genericModalIcon">
+        ℹ
+      </div>
+
+      <h3 id="genericModalTitle">
+        Información
+      </h3>
+
+      <p id="genericModalText">
+        Mensaje del sistema.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/cliente.js"></script>
+</body>
+</html>

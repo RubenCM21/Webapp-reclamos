@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Reportes | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/supervisor.css" />
+</head>
+
+<body data-page="supervisor-reportes">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- CONFIGURACIÓN DE PÁGINA PARA SUPERVISOR.JS -->
+  <script type="application/json" id="supervisorPageConfig">
+    {
+      "page": "supervisor-reportes",
+      "module": "SUPERVISOR_REPORTES",
+      "title": "Reportes",
+      "mainEndpoint": "/supervisor/reportes",
+      "catalogEndpoint": "/supervisor/catalogos",
+      "exportEndpoint": "/supervisor/exportar/reportes",
+      "auditModule": "REPORTES_SUPERVISOR",
+      "requiresCatalogs": [
+        "tipos_reporte_supervisor",
+        "periodos_reporte",
+        "alcances_reporte",
+        "estados_reporte",
+        "niveles_detalle_reporte",
+        "formatos_exportacion_supervisor",
+        "frecuencias_reporte",
+        "destinos_exportacion",
+        "destinatarios_reporte"
+      ],
+      "permissions": [
+        "SUPERVISOR_VIEW_REPORTS",
+        "SUPERVISOR_GENERATE_REPORT",
+        "SUPERVISOR_SCHEDULE_REPORT",
+        "SUPERVISOR_EXPORT_REPORTS",
+        "SUPERVISOR_DOWNLOAD_REPORT"
+      ]
+    }
+  </script>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Supervisor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación supervisor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="casos-pendientes.html" class="sidebar-link">
+        <span>📋</span>
+        Casos pendientes
+        <small id="sidebarPendingCount">0</small>
+      </a>
+
+      <a href="asignaciones.html" class="sidebar-link">
+        <span>👥</span>
+        Asignaciones
+      </a>
+
+      <a href="carga-asesores.html" class="sidebar-link">
+        <span>⚖️</span>
+        Carga de asesores
+      </a>
+
+      <a href="monitoreo-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Monitoreo SLA
+        <small id="sidebarSlaCount">0</small>
+      </a>
+
+      <a href="indicadores.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores
+      </a>
+
+      <a href="reportes.html" class="sidebar-link active">
+        <span>📊</span>
+        Reportes
+      </a>
+
+      <a href="auditoria-casos.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="configuracion-supervision.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Informes y descargas</span>
+          <h1>Reportes</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="monitoreo-sla.html" class="notification-btn" aria-label="Alertas SLA">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">SD</span>
+            <div>
+              <strong id="userNameTop">Supervisor</strong>
+              <small id="userRoleTop">Supervisor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores.html">Indicadores</a>
+            <a href="auditoria-casos.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="supervisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red">
+            Centro de reportes
+          </span>
+
+          <h2>
+            Genera, programa y consulta reportes de supervisión
+          </h2>
+
+          <p>
+            Crea reportes ejecutivos u operativos de dashboard, casos pendientes, asignaciones,
+            carga de asesores, SLA, indicadores y auditoría. Toda generación o exportación debe quedar auditada.
+          </p>
+
+          <div class="welcome-actions">
+            <button
+              type="button"
+              class="btn btn--primary"
+              id="openGenerateReportBtn"
+              data-permission="SUPERVISOR_GENERATE_REPORT"
+            >
+              Generar reporte
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--soft"
+              id="openScheduleReportBtn"
+              data-permission="SUPERVISOR_SCHEDULE_REPORT"
+            >
+              Programar reporte
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--ghost-dark"
+              id="openReportExportBtn"
+              data-permission="SUPERVISOR_EXPORT_REPORTS"
+            >
+              Exportar historial
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong>Reportes dinámicos</strong>
+            <small>Formatos controlados desde backend</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="reportsKpiGrid" aria-label="Indicadores de reportes"></section>
+
+      <!-- FILTROS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Filtros</span>
+            <h2>Historial y plantillas</h2>
+            <p>
+              Filtra reportes por tipo, periodo, alcance, estado y fecha de generación.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="refreshReportsBtn">
+              Actualizar
+            </button>
+
+            <button type="button" class="panel-action" id="resetReportFiltersBtn">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        <div class="supervisor-filter-grid">
+          <div class="form-group">
+            <label for="reportSearch">Buscar</label>
+            <input
+              id="reportSearch"
+              type="search"
+              placeholder="Buscar por nombre, tipo, formato, estado o responsable..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="reportTypeFilter">Tipo de reporte</label>
+            <select id="reportTypeFilter" data-catalog="tipos_reporte_supervisor">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="reportPeriodFilter">Periodo</label>
+            <select id="reportPeriodFilter" data-catalog="periodos_reporte">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="reportScopeFilter">Alcance</label>
+            <select id="reportScopeFilter" data-catalog="alcances_reporte">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="reportStatusFilter">Estado</label>
+            <select id="reportStatusFilter" data-catalog="estados_reporte">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="reportDateFrom">Desde</label>
+            <input id="reportDateFrom" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label for="reportDateTo">Hasta</label>
+            <input id="reportDateTo" type="date" />
+          </div>
+        </div>
+      </section>
+
+      <!-- PLANTILLAS + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Plantillas disponibles</span>
+              <h2>Tipos de reportes de supervisión</h2>
+              <p>
+                Selecciona una plantilla para generar reportes con estructura profesional.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button
+                type="button"
+                class="panel-action"
+                id="generateReportBtn"
+                data-permission="SUPERVISOR_GENERATE_REPORT"
+              >
+                Nuevo reporte
+              </button>
+            </div>
+          </div>
+
+          <div class="indicator-grid indicator-grid--large" id="reportTemplatesGrid"></div>
+
+          <div class="empty-state hidden" id="emptyReportTemplatesState">
+            <span>📄</span>
+            <h3>Sin plantillas disponibles</h3>
+            <p>Las plantillas aparecerán cuando el backend devuelva el catálogo de reportes.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de reportes</h2>
+                <p>Recomendaciones de formato y alcance.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="reportsAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" data-bot-prompt="Recomienda qué reporte debo generar">
+              Recomendar reporte
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Plan de generación</span>
+                <h2>Buenas prácticas</h2>
+                <p>
+                  Define alcance, formato, motivo y destino antes de descargar.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="reportsActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- HISTORIAL -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Historial</span>
+            <h2>Reportes generados</h2>
+            <p>
+              Consulta reportes generados, descárgalos nuevamente o revisa su estado.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button
+              type="button"
+              class="panel-action"
+              id="exportReportsBtn"
+              data-permission="SUPERVISOR_EXPORT_REPORTS"
+            >
+              Exportar historial
+            </button>
+          </div>
+        </div>
+
+        <div class="cases-table-wrap">
+          <table class="cases-table">
+            <thead>
+              <tr>
+                <th>Reporte</th>
+                <th>Tipo</th>
+                <th>Periodo</th>
+                <th>Formato</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody id="reportsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state hidden" id="emptyReportsState">
+          <span>📊</span>
+          <h3>Sin reportes generados</h3>
+          <p>Cuando generes reportes aparecerán en este historial.</p>
+        </div>
+      </section>
+
+      <!-- RECIENTES -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Actividad reciente</span>
+            <h2>Últimos reportes</h2>
+            <p>
+              Vista rápida de reportes generados o programados recientemente.
+            </p>
+          </div>
+        </div>
+
+        <div class="activity-timeline" id="recentReportsList"></div>
+
+        <div class="empty-state hidden" id="emptyRecentReportsState">
+          <span>🕘</span>
+          <h3>Sin reportes recientes</h3>
+          <p>La actividad reciente aparecerá cuando existan reportes generados.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, cliente, asesor, indicador, SLA, reporte o auditoría..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Reportes de supervisión</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo recomendar formato, alcance, plantilla o estructura de reporte según lo que necesites presentar.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Qué reporte debo generar para jefatura">
+        Para jefatura
+      </button>
+
+      <button type="button" data-bot-prompt="Qué formato conviene para indicadores">
+        Indicadores
+      </button>
+
+      <button type="button" data-bot-prompt="Qué incluir en un reporte SLA">
+        SLA
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL GENERAR REPORTE -->
+  <section class="modal" id="generateReportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📊</div>
+      <span class="eyebrow eyebrow--red">Generación de reporte</span>
+      <h3>Generar nuevo reporte</h3>
+      <p>
+        Define tipo, formato, periodo, alcance y motivo. Antes de generar puedes preparar una vista previa.
+      </p>
+
+      <form class="supervisor-form" id="generateReportForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="generateReportType">Tipo de reporte</label>
+            <select id="generateReportType" data-catalog="tipos_reporte_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="dashboard">Dashboard supervisor</option>
+              <option value="casos_pendientes">Casos pendientes</option>
+              <option value="asignaciones">Asignaciones</option>
+              <option value="carga_asesores">Carga de asesores</option>
+              <option value="monitoreo_sla">Monitoreo SLA</option>
+              <option value="indicadores">Indicadores</option>
+              <option value="auditoria">Auditoría de casos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="generateReportFormat">Formato</label>
+            <select id="generateReportFormat" data-catalog="formatos_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="pdf">PDF ejecutivo</option>
+              <option value="docx">Word informe</option>
+              <option value="xlsx">Excel analítico</option>
+              <option value="png">Imagen</option>
+              <option value="csv">CSV datos</option>
+              <option value="dashboard">Dashboard compartible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="generateReportPeriod">Periodo</label>
+            <select id="generateReportPeriod" data-catalog="periodos_reporte" required>
+              <option value="">Seleccionar</option>
+              <option value="hoy">Hoy</option>
+              <option value="semana">Semana actual</option>
+              <option value="mes">Mes actual</option>
+              <option value="trimestre">Trimestre actual</option>
+              <option value="personalizado">Personalizado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="generateReportScope">Alcance</label>
+            <select id="generateReportScope" data-catalog="alcances_reporte" required>
+              <option value="">Seleccionar</option>
+              <option value="vista_actual">Vista actual</option>
+              <option value="filtros_actuales">Filtros actuales</option>
+              <option value="todo_modulo">Todo el módulo</option>
+              <option value="resumen_ejecutivo">Resumen ejecutivo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="generateReportDetail">Nivel de detalle</label>
+            <select id="generateReportDetail" data-catalog="niveles_detalle_reporte">
+              <option value="operativo">Operativo</option>
+              <option value="ejecutivo">Ejecutivo</option>
+              <option value="auditable">Auditable</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="generateReportDestination">Destino</label>
+            <select id="generateReportDestination" data-catalog="destinos_exportacion">
+              <option value="descarga_local">Descarga local</option>
+              <option value="historial_reportes">Guardar en historial</option>
+              <option value="compartir_enlace">Generar enlace compartible</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="form-check">
+            <input type="checkbox" id="generateReportIncludeKpis" checked />
+            <span>Incluir KPIs</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="generateReportIncludeCharts" checked />
+            <span>Incluir gráficos</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="generateReportIncludeDetail" checked />
+            <span>Incluir detalle operativo</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="generateReportIncludeAudit" />
+            <span>Incluir trazabilidad</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="generateReportReason">Motivo de generación</label>
+          <textarea
+            id="generateReportReason"
+            placeholder="Ej. Presentación semanal de desempeño operativo a jefatura."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="generateReportDeclaration" />
+          <span>Confirmo que el reporte tiene finalidad operativa y quedará registrado en auditoría.</span>
+        </label>
+      </form>
+
+      <div class="panel-card panel-card--inner hidden" id="reportPreviewPanel">
+        <div class="panel-card__header panel-card__header--inner">
+          <div>
+            <span class="eyebrow">Vista previa</span>
+            <h3>Alcance estimado del reporte</h3>
+            <p>
+              Revisa la cantidad de registros y el contenido antes de generar.
+            </p>
+          </div>
+        </div>
+
+        <div class="case-modal-summary" id="reportPreviewSummary"></div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--soft" id="reportPreviewBtn">
+          Preparar vista previa
+        </button>
+
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="confirmGenerateReportBtn"
+          data-permission="SUPERVISOR_GENERATE_REPORT"
+        >
+          Generar reporte
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL PROGRAMAR REPORTE -->
+  <section class="modal" id="scheduleReportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🗓️</div>
+      <span class="eyebrow eyebrow--red">Programación</span>
+      <h3>Programar reporte recurrente</h3>
+      <p>
+        Programa reportes periódicos para seguimiento operativo. La programación debe quedar registrada.
+      </p>
+
+      <form class="supervisor-form" id="scheduleReportForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="scheduleReportType">Tipo de reporte</label>
+            <select id="scheduleReportType" data-catalog="tipos_reporte_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="dashboard">Dashboard supervisor</option>
+              <option value="monitoreo_sla">Monitoreo SLA</option>
+              <option value="indicadores">Indicadores</option>
+              <option value="carga_asesores">Carga de asesores</option>
+              <option value="auditoria">Auditoría</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="scheduleReportFrequency">Frecuencia</label>
+            <select id="scheduleReportFrequency" data-catalog="frecuencias_reporte" required>
+              <option value="">Seleccionar</option>
+              <option value="diario">Diario</option>
+              <option value="semanal">Semanal</option>
+              <option value="quincenal">Quincenal</option>
+              <option value="mensual">Mensual</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="scheduleReportFormat">Formato</label>
+            <select id="scheduleReportFormat" data-catalog="formatos_exportacion_supervisor">
+              <option value="pdf">PDF ejecutivo</option>
+              <option value="xlsx">Excel analítico</option>
+              <option value="docx">Word informe</option>
+              <option value="dashboard">Dashboard compartible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="scheduleReportScope">Alcance</label>
+            <select id="scheduleReportScope" data-catalog="alcances_reporte">
+              <option value="resumen_ejecutivo">Resumen ejecutivo</option>
+              <option value="todo_modulo">Todo el módulo</option>
+              <option value="filtros_actuales">Filtros actuales</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="scheduleReportRecipients">Destinatarios</label>
+          <input
+            id="scheduleReportRecipients"
+            type="text"
+            placeholder="Ej. supervisor@claro.com.pe; jefatura@claro.com.pe"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="scheduleReportReason">Motivo de programación</label>
+          <textarea
+            id="scheduleReportReason"
+            placeholder="Ej. Envío semanal automático para seguimiento de SLA y desempeño."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="scheduleReportDeclaration" />
+          <span>Confirmo que la programación tiene finalidad operativa y será auditada.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="confirmScheduleReportBtn"
+          data-permission="SUPERVISOR_SCHEDULE_REPORT"
+        >
+          Programar reporte
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DETALLE REPORTE -->
+  <section class="modal" id="reportDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📄</div>
+      <span class="eyebrow eyebrow--red">Detalle del reporte</span>
+      <h3 id="reportDetailTitle">Reporte seleccionado</h3>
+      <p id="reportDetailText">Detalle del reporte generado.</p>
+
+      <div class="case-modal-summary" id="reportDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="downloadReportDetailBtn">
+          Descargar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL EXPORTAR HISTORIAL DE REPORTES -->
+  <section class="modal" id="reportsExportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📤</div>
+      <span class="eyebrow eyebrow--red">Exportación</span>
+      <h3>Exportar historial de reportes</h3>
+      <p>
+        Exporta el historial de reportes generados, programados y descargados.
+      </p>
+
+      <form class="supervisor-form" id="reportsExportForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="reportsExportFormat">Formato</label>
+            <select id="reportsExportFormat" data-catalog="formatos_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="pdf">PDF ejecutivo</option>
+              <option value="docx">Word informe</option>
+              <option value="xlsx">Excel analítico</option>
+              <option value="png">Imagen</option>
+              <option value="csv">CSV datos</option>
+              <option value="dashboard">Dashboard compartible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="reportsExportScope">Alcance</label>
+            <select id="reportsExportScope" data-catalog="alcances_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="filtrados">Reportes filtrados</option>
+              <option value="todos">Todo el historial</option>
+              <option value="programados">Solo programados</option>
+              <option value="generados">Solo generados</option>
+              <option value="descargas">Historial de descargas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="reportsExportDetail">Nivel de detalle</label>
+            <select id="reportsExportDetail" data-catalog="niveles_detalle_reporte">
+              <option value="operativo">Operativo</option>
+              <option value="ejecutivo">Ejecutivo</option>
+              <option value="auditable">Auditable</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="reportsExportDestination">Destino</label>
+            <select id="reportsExportDestination" data-catalog="destinos_exportacion">
+              <option value="descarga_local">Descarga local</option>
+              <option value="historial_reportes">Guardar en historial</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="form-check">
+            <input type="checkbox" id="reportsExportIncludeHistory" checked />
+            <span>Historial de generación</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="reportsExportIncludeScheduled" />
+            <span>Reportes programados</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="reportsExportIncludeTemplates" />
+            <span>Plantillas</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="reportsExportIncludeAudit" />
+            <span>Auditoría de descargas</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="reportsExportReason">Motivo de exportación</label>
+          <textarea
+            id="reportsExportReason"
+            placeholder="Ej. Revisión de reportes generados durante el mes."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="reportsExportDeclaration" />
+          <span>Confirmo que la exportación tiene finalidad operativa y quedará registrada en auditoría.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="confirmReportsExportBtn"
+          data-permission="SUPERVISOR_EXPORT_REPORTS"
+        >
+          Exportar historial
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CONFIRMACIÓN CENTRAL -->
+  <section class="modal" id="confirmActionModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="confirmActionIcon">⚠️</div>
+      <span class="eyebrow eyebrow--red" id="confirmActionEyebrow">Confirmación requerida</span>
+      <h3 id="confirmActionTitle">Confirmar acción</h3>
+      <p id="confirmActionText">Revisa la información antes de continuar.</p>
+
+      <div class="case-modal-summary" id="confirmActionSummary"></div>
+
+      <label class="form-check">
+        <input type="checkbox" id="confirmActionDeclaration" />
+        <span id="confirmActionDeclarationText">Confirmo que deseo ejecutar esta acción.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmActionAcceptBtn">
+          Confirmar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/supervisor.js"></script>
+</body>
+</html>

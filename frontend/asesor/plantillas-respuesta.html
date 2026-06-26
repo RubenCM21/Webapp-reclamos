@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Plantillas de Respuesta | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/asesor.css" />
+</head>
+
+<body data-page="asesor-plantillas-respuesta">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+
+      <span class="brand__tag">Atención 360 | Asesor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación asesor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>📊</span>
+        Dashboard
+      </a>
+
+      <a href="bandeja.html" class="sidebar-link">
+        <span>📥</span>
+        Bandeja
+        <small id="sidebarAssignedCount">0</small>
+      </a>
+
+      <a href="detalle-atencion.html" class="sidebar-link">
+        <span>🧾</span>
+        Detalle de atención
+      </a>
+
+      <a href="cola-trabajo.html" class="sidebar-link">
+        <span>🗂️</span>
+        Cola de trabajo
+      </a>
+
+      <a href="calendario-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Calendario SLA
+      </a>
+
+      <a href="plantillas-respuesta.html" class="sidebar-link active">
+        <span>💬</span>
+        Plantillas
+      </a>
+
+      <a href="notificaciones.html" class="sidebar-link">
+        <span>🔔</span>
+        Notificaciones
+        <small id="sidebarNotificationCount">0</small>
+      </a>
+
+      <a href="rendimiento.html" class="sidebar-link">
+        <span>📈</span>
+        Rendimiento
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- =====================================================
+       APP SHELL
+  ====================================================== -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Mensajería operativa</span>
+          <h1>Plantillas de respuesta</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="notificaciones.html" class="notification-btn" aria-label="Notificaciones">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AS</span>
+
+            <div>
+              <strong id="userNameTop">Asesor</strong>
+              <small id="userRoleTop">Asesor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="rendimiento.html">Mi rendimiento</a>
+            <a href="notificaciones.html">Alertas y tareas</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+    <main class="advisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red">
+            Catálogo conectado a casos
+          </span>
+
+          <h2 id="templateSummaryTitle">
+            Plantillas pendientes de carga
+          </h2>
+
+          <p id="templateSummaryText">
+            Usa respuestas oficiales o personales para solicitar evidencia,
+            responder reclamos, derivar casos, registrar seguimientos o preparar cierres.
+            Las variables deben reemplazarse con datos reales del caso desde BD.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="newTemplateBtn">
+              Nueva plantilla
+            </button>
+
+            <button type="button" class="btn btn--soft" id="refreshTemplatesBtn">
+              Actualizar
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="templateExportBtn">
+              Exportar
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong>Variables dinámicas</strong>
+            <small>
+              Cliente, caso, servicio, SLA, asesor y motivo desde BD
+            </small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="templateKpiGrid" aria-label="Indicadores de plantillas">
+        <!-- Render dinámico desde asesor.js -->
+      </section>
+
+      <!-- =====================================================
+           LAYOUT PRINCIPAL
+      ====================================================== -->
+      <section class="bandeja-layout">
+        <!-- CATÁLOGO -->
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Catálogo de respuestas</span>
+              <h2>Plantillas disponibles</h2>
+              <p>
+                Las categorías, canales y variables deben venir de catálogos de BD.
+                Cada envío debe registrar comunicación y trazabilidad del caso.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="templateAiBtn">
+                Crear con IA
+              </button>
+
+              <button type="button" class="panel-action" id="templateAnalyzeBtn">
+                Analizar
+              </button>
+
+              <button type="button" class="panel-action" id="manageVariablesBtn">
+                Variables
+              </button>
+            </div>
+          </div>
+
+          <!-- BÚSQUEDA + FILTROS -->
+          <div class="advisor-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+
+              <input
+                id="templateSearchInput"
+                type="search"
+                placeholder="Buscar por nombre, categoría, canal, contenido o variable..."
+              />
+            </div>
+
+            <div class="case-filters" id="templateFilters">
+              <button type="button" class="filter-chip active" data-template-filter="todos">
+                Todas
+              </button>
+
+              <button type="button" class="filter-chip" data-template-filter="evidencia">
+                Evidencia
+              </button>
+
+              <button type="button" class="filter-chip" data-template-filter="reclamo">
+                Reclamo
+              </button>
+
+              <button type="button" class="filter-chip" data-template-filter="derivacion">
+                Derivación
+              </button>
+
+              <button type="button" class="filter-chip" data-template-filter="cierre">
+                Cierre
+              </button>
+            </div>
+          </div>
+
+          <!-- GRID DINÁMICO -->
+          <div class="template-grid" id="templateGrid">
+            <!-- Render dinámico desde asesor.js -->
+          </div>
+
+          <div class="empty-state hidden" id="emptyTemplateState">
+            <span>💬</span>
+            <h3>No hay plantillas visibles</h3>
+            <p>
+              Cambia el filtro o actualiza el catálogo. Si no aparecen plantillas,
+              revisa la carga en base de datos.
+            </p>
+
+            <button type="button" class="btn btn--soft" id="newTemplateEmptyBtn" data-open-modal="newTemplateModal">
+              Crear plantilla
+            </button>
+          </div>
+        </section>
+
+        <!-- PANEL DERECHO -->
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+
+              <div>
+                <h2>IA de redacción</h2>
+                <p>Tono profesional, claridad y trazabilidad.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="templatesAiSummary">
+              <!-- Render dinámico -->
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="templateAiBtnPanel">
+              Redactar con IA
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Variables disponibles</span>
+                <h2>Datos reemplazables</h2>
+                <p>
+                  Deben administrarse desde BD para mantener consistencia.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="templateVariablesList">
+              <!-- Render dinámico desde catálogo -->
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Control de calidad</span>
+                <h2>Antes de enviar</h2>
+              </div>
+            </div>
+
+            <div class="checklist-grid">
+              <article class="check-item">
+                <span class="check-icon">1</span>
+                <div>
+                  <strong>Seleccionar caso real</strong>
+                  <p>La plantilla debe vincularse a un caso existente de BD.</p>
+                </div>
+              </article>
+
+              <article class="check-item">
+                <span class="check-icon">2</span>
+                <div>
+                  <strong>Validar canal</strong>
+                  <p>El canal debe venir del catálogo y ser compatible con el cliente.</p>
+                </div>
+              </article>
+
+              <article class="check-item">
+                <span class="check-icon">3</span>
+                <div>
+                  <strong>Confirmar mensaje</strong>
+                  <p>El asesor debe revisar el texto antes de registrarlo.</p>
+                </div>
+              </article>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- =====================================================
+       BUSCADOR GLOBAL
+  ====================================================== -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, cliente, DNI/RUC, servicio, SLA, plantilla o pantalla..."
+        />
+
+        <button type="button" id="closeSearchBtn">
+          Cerrar
+        </button>
+      </div>
+
+      <div class="search-results" id="searchResults">
+        <!-- Resultados dinámicos desde /api/asesor/search -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       CHATBOT
+  ====================================================== -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Plantillas de respuesta</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer" aria-label="Cerrar asistente">
+        ×
+      </button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a redactar mensajes claros, mejorar tono,
+        usar variables y adaptar respuestas según el tipo de caso.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Crea una plantilla profesional para solicitar evidencia">
+        Solicitar evidencia
+      </button>
+
+      <button type="button" data-bot-prompt="Crea una plantilla para cierre de reclamo">
+        Cierre de caso
+      </button>
+
+      <button type="button" data-bot-prompt="Mejora el tono de una respuesta al cliente">
+        Mejorar tono
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input
+        id="botInput"
+        type="text"
+        placeholder="Escribe tu consulta..."
+        autocomplete="off"
+      />
+
+      <button type="submit">
+        Enviar
+      </button>
+    </form>
+  </aside>
+
+  <!-- =====================================================
+       BACKDROPS
+  ====================================================== -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- =====================================================
+       MODAL PREVISUALIZAR PLANTILLA
+  ====================================================== -->
+  <section class="modal" id="previewTemplateModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon" id="previewTemplateIcon">💬</div>
+
+      <span class="eyebrow eyebrow--red">
+        Vista previa
+      </span>
+
+      <h3 id="previewTemplateTitle">
+        Plantilla seleccionada
+      </h3>
+
+      <p id="previewTemplateDescription">
+        Revisa el contenido antes de usarlo en un caso real.
+      </p>
+
+      <div class="case-modal-summary" id="previewTemplateSummary">
+        <!-- Resumen dinámico -->
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="previewUseTemplateBtn">
+          Usar plantilla
+        </button>
+
+        <button type="button" class="btn btn--soft" id="improveTemplateBtn">
+          Mejorar con IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL USAR PLANTILLA
+  ====================================================== -->
+  <section class="modal" id="useTemplateModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon">📤</div>
+
+      <span class="eyebrow eyebrow--red">
+        Aplicar plantilla
+      </span>
+
+      <h3>Enviar mensaje desde plantilla</h3>
+
+      <p>
+        Selecciona un caso real, canal de comunicación y mensaje final.
+        La comunicación debe quedar registrada en el historial del caso.
+      </p>
+
+      <div class="case-modal-summary" id="useTemplateContext">
+        <!-- Contexto dinámico -->
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="templateCaseCode">Caso asociado</label>
+          <input
+            id="templateCaseCode"
+            type="search"
+            placeholder="Buscar caso por código, cliente, documento o servicio..."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="templateChannel">Canal de comunicación</label>
+          <select id="templateChannel" data-catalog="canales">
+            <option value="">Cargando canales...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="templateMessage">Mensaje final</label>
+        <textarea
+          id="templateMessage"
+          placeholder="El contenido de la plantilla aparecerá aquí y podrá ser ajustado antes de enviarse."
+        ></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="templateDeclaration" />
+        <span>
+          Confirmo que revisé el caso, canal y mensaje antes de registrar la comunicación.
+        </span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="sendTemplateBtn">
+          Enviar mensaje
+        </button>
+
+        <button type="button" class="btn btn--soft" id="templateToneBtn">
+          Mejorar tono
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL NUEVA PLANTILLA
+  ====================================================== -->
+  <section class="modal" id="newTemplateModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon">➕</div>
+
+      <span class="eyebrow eyebrow--red">
+        Gestión de catálogo
+      </span>
+
+      <h3>Nueva plantilla de respuesta</h3>
+
+      <p>
+        Crea una plantilla base. En una webapp empresarial, puede quedar como borrador
+        o requerir aprobación de supervisor/administrador antes de uso oficial.
+      </p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="newTemplateName">Nombre de plantilla</label>
+          <input
+            id="newTemplateName"
+            type="text"
+            maxlength="120"
+            placeholder="Ej. Solicitud de evidencia por falla de servicio"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="newTemplateCategory">Categoría</label>
+          <select id="newTemplateCategory" data-catalog="categoriasPlantilla">
+            <option value="">Cargando categorías...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="newTemplateBody">Contenido base</label>
+        <textarea
+          id="newTemplateBody"
+          placeholder="Redacta el contenido usando variables como {cliente_nombre}, {codigo_caso}, {servicio_afectado}."
+        ></textarea>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="newTemplateDeclaration" />
+        <span>
+          Confirmo que esta plantilla tiene un tono profesional y puede usarse como base de comunicación.
+        </span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="saveTemplateBtn">
+          Guardar plantilla
+        </button>
+
+        <button type="button" class="btn btn--soft" id="generateNewTemplateBtn">
+          Generar contenido
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL VARIABLES
+  ====================================================== -->
+  <section class="modal" id="variablesModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon">{ }</div>
+
+      <span class="eyebrow eyebrow--red">
+        Variables dinámicas
+      </span>
+
+      <h3>Variables disponibles para plantillas</h3>
+
+      <p>
+        Estas variables deben venir de BD y reemplazarse automáticamente con información
+        del caso, cliente, servicio, SLA y asesor.
+      </p>
+
+      <div class="case-modal-summary" id="variablesModalSummary">
+        <!-- Render dinámico desde catálogo -->
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Entendido
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       MODAL GENÉRICO
+  ====================================================== -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal aria-label="Cerrar">
+        ×
+      </button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+
+      <h3 id="genericModalTitle">
+        Información
+      </h3>
+
+      <p id="genericModalText">
+        Mensaje del sistema.
+      </p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/asesor.js"></script>
+</body>
+</html>

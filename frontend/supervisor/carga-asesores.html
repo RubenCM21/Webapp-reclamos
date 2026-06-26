@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Carga de asesores | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/supervisor.css" />
+</head>
+
+<body data-page="supervisor-carga-asesores">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- CONFIGURACIÓN DE PÁGINA PARA SUPERVISOR.JS -->
+  <script type="application/json" id="supervisorPageConfig">
+    {
+      "page": "supervisor-carga-asesores",
+      "module": "SUPERVISOR_CARGA_ASESORES",
+      "title": "Carga de asesores",
+      "mainEndpoint": "/supervisor/carga-asesores",
+      "catalogEndpoint": "/supervisor/catalogos",
+      "exportEndpoint": "/supervisor/exportar/carga-asesores",
+      "auditModule": "CARGA_ASESORES_SUPERVISOR",
+      "requiresCatalogs": [
+        "asesores",
+        "asesores_con_carga",
+        "asesores_disponibles",
+        "areas_operativas",
+        "especialidades_asesor",
+        "estados_disponibilidad_asesor",
+        "motivos_disponibilidad_asesor",
+        "niveles_carga_asesor",
+        "turnos_asesor",
+        "rangos_productividad",
+        "criterios_redistribucion",
+        "formatos_exportacion_supervisor",
+        "alcances_exportacion_supervisor"
+      ],
+      "permissions": [
+        "SUPERVISOR_VIEW_ADVISOR_LOAD",
+        "SUPERVISOR_REASSIGN_CASE",
+        "SUPERVISOR_CHANGE_ADVISOR_AVAILABILITY",
+        "SUPERVISOR_EXPORT_ADVISOR_LOAD",
+        "SUPERVISOR_VIEW_AUDIT"
+      ]
+    }
+  </script>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Supervisor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación supervisor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="casos-pendientes.html" class="sidebar-link">
+        <span>📋</span>
+        Casos pendientes
+        <small id="sidebarPendingCount">0</small>
+      </a>
+
+      <a href="asignaciones.html" class="sidebar-link">
+        <span>👥</span>
+        Asignaciones
+      </a>
+
+      <a href="carga-asesores.html" class="sidebar-link active">
+        <span>⚖️</span>
+        Carga de asesores
+      </a>
+
+      <a href="monitoreo-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Monitoreo SLA
+        <small id="sidebarSlaCount">0</small>
+      </a>
+
+      <a href="indicadores.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores
+      </a>
+
+      <a href="reportes.html" class="sidebar-link">
+        <span>📊</span>
+        Reportes
+      </a>
+
+      <a href="auditoria-casos.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="configuracion-supervision.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Capacidad operativa</span>
+          <h1>Carga de asesores</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="monitoreo-sla.html" class="notification-btn" aria-label="Alertas SLA">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">SD</span>
+            <div>
+              <strong id="userNameTop">Supervisor</strong>
+              <small id="userRoleTop">Supervisor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores.html">Indicadores</a>
+            <a href="auditoria-casos.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="supervisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="advisorLoadHeroEyebrow">
+            Balance del equipo
+          </span>
+
+          <h2 id="advisorLoadHeroTitle">
+            Evalúa disponibilidad, carga y productividad
+          </h2>
+
+          <p id="advisorLoadHeroText">
+            Revisa la carga por asesor, casos críticos, riesgos SLA, productividad, estado de disponibilidad
+            y oportunidades de redistribución.
+          </p>
+
+          <div class="welcome-actions">
+            <button
+              type="button"
+              class="btn btn--primary"
+              id="balanceLoadAiBtn"
+            >
+              Balancear con IA
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--soft"
+              id="openRedistributeLoadBtn"
+              data-permission="SUPERVISOR_REASSIGN_CASE"
+            >
+              Redistribuir carga
+            </button>
+
+            <a href="asignaciones.html" class="btn btn--ghost-dark">
+              Ir a asignaciones
+            </a>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="advisorLoadSummaryTitle">Carga dinámica</strong>
+            <small id="advisorLoadSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="advisorLoadKpiGrid" aria-label="Indicadores de carga"></section>
+
+      <!-- FILTROS AVANZADOS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Filtros avanzados</span>
+            <h2>Segmentación de capacidad</h2>
+            <p>
+              Filtra asesores por área, especialidad, turno, disponibilidad, carga, productividad y riesgo SLA.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="applyAdvisorLoadFiltersBtn">
+              Aplicar filtros
+            </button>
+
+            <button type="button" class="panel-action" id="resetAdvisorLoadFiltersBtn">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        <div class="supervisor-filter-grid">
+          <div class="form-group">
+            <label for="advisorLoadAreaFilter">Área</label>
+            <select id="advisorLoadAreaFilter" data-catalog="areas_operativas">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadSpecialtyFilter">Especialidad</label>
+            <select id="advisorLoadSpecialtyFilter" data-catalog="especialidades_asesor">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadAvailabilityFilter">Disponibilidad</label>
+            <select id="advisorLoadAvailabilityFilter" data-catalog="estados_disponibilidad_asesor">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadCapacityFilter">Nivel de carga</label>
+            <select id="advisorLoadCapacityFilter" data-catalog="niveles_carga_asesor">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadShiftFilter">Turno</label>
+            <select id="advisorLoadShiftFilter" data-catalog="turnos_asesor">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadProductivityFilter">Productividad</label>
+            <select id="advisorLoadProductivityFilter" data-catalog="rangos_productividad">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadCriticalMinFilter">Mín. críticos</label>
+            <input id="advisorLoadCriticalMinFilter" type="number" min="0" placeholder="Ej. 1" />
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadSlaMinFilter">Mín. SLA riesgo</label>
+            <input id="advisorLoadSlaMinFilter" type="number" min="0" placeholder="Ej. 1" />
+          </div>
+        </div>
+      </section>
+
+      <!-- TABLA DE ASESORES + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Equipo de atención</span>
+              <h2>Carga por asesor</h2>
+              <p>
+                Compara capacidad, casos asignados, casos críticos, SLA y productividad.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshAdvisorLoadPageBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="toggleAdvisorLoadViewBtn">
+                Vista tabla
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="exportAdvisorLoadBtn"
+                data-permission="SUPERVISOR_EXPORT_ADVISOR_LOAD"
+              >
+                Exportar
+              </button>
+            </div>
+          </div>
+
+          <div class="supervisor-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="advisorLoadSearch"
+                type="search"
+                placeholder="Buscar asesor, especialidad, estado, carga, correo o alerta..."
+              />
+            </div>
+
+            <div class="case-filters" id="advisorLoadFilters">
+              <button type="button" class="filter-chip active" data-load-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-load-filter="disponibles">
+                Disponibles
+              </button>
+
+              <button type="button" class="filter-chip" data-load-filter="sobrecargados">
+                Sobrecargados
+              </button>
+
+              <button type="button" class="filter-chip" data-load-filter="criticos">
+                Con críticos
+              </button>
+
+              <button type="button" class="filter-chip" data-load-filter="sla_riesgo">
+                Riesgo SLA
+              </button>
+
+              <button type="button" class="filter-chip" data-load-filter="no_disponibles">
+                No disponibles
+              </button>
+            </div>
+          </div>
+
+          <!-- BARRA DE SELECCIÓN MASIVA -->
+          <div class="bulk-action-bar hidden" id="advisorLoadBulkBar">
+            <div>
+              <strong id="advisorLoadSelectedCount">0</strong>
+              <span>asesores seleccionados</span>
+            </div>
+
+            <div class="panel-header-actions">
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkRedistributeLoadBtn"
+                data-permission="SUPERVISOR_REASSIGN_CASE"
+              >
+                Redistribuir
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkChangeAvailabilityBtn"
+                data-permission="SUPERVISOR_CHANGE_ADVISOR_AVAILABILITY"
+              >
+                Cambiar disponibilidad
+              </button>
+
+              <button
+                type="button"
+                class="panel-action"
+                id="bulkExportAdvisorLoadBtn"
+                data-permission="SUPERVISOR_EXPORT_ADVISOR_LOAD"
+              >
+                Exportar seleccionados
+              </button>
+
+              <button type="button" class="panel-action" id="clearAdvisorLoadSelectionBtn">
+                Limpiar selección
+              </button>
+            </div>
+          </div>
+
+          <!-- VISTA CARDS -->
+          <div class="advisor-load-list advisor-load-list--large" id="advisorLoadList"></div>
+
+          <!-- VISTA TABLA -->
+          <div class="cases-table-wrap hidden" id="advisorLoadTableWrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>
+                    <input type="checkbox" id="advisorLoadSelectAll" aria-label="Seleccionar todos los asesores" />
+                  </th>
+                  <th>Asesor</th>
+                  <th>Especialidad</th>
+                  <th>Estado</th>
+                  <th>Casos</th>
+                  <th>Críticos</th>
+                  <th>SLA riesgo</th>
+                  <th>Productividad</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="advisorLoadTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- PAGINACIÓN -->
+          <div class="pagination-bar" id="advisorLoadPagination">
+            <div>
+              <span id="advisorLoadPaginationSummary">Mostrando 0 de 0 asesores</span>
+            </div>
+
+            <div class="pagination-actions">
+              <button type="button" class="panel-action" id="advisorLoadPrevPageBtn">
+                Anterior
+              </button>
+
+              <span id="advisorLoadCurrentPage">Página 1</span>
+
+              <button type="button" class="panel-action" id="advisorLoadNextPageBtn">
+                Siguiente
+              </button>
+
+              <select id="advisorLoadPageSize" aria-label="Asesores por página">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="empty-state hidden" id="emptyAdvisorLoadPageState">
+            <span>👥</span>
+            <h3>No hay asesores con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de carga</h2>
+                <p>Recomendaciones para redistribuir casos.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="advisorLoadAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeAdvisorLoadBtn">
+              Analizar carga
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Plan de balance</span>
+                <h2>Acciones sugeridas</h2>
+                <p>Secuencia para reducir sobrecarga y riesgo SLA.</p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="advisorLoadActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- MAPA DE CARGA -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Mapa operativo</span>
+            <h2>Distribución de carga del equipo</h2>
+            <p>
+              Vista comparativa de asesores por carga, disponibilidad y criticidad.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="refreshLoadMapBtn">
+              Refrescar mapa
+            </button>
+
+            <button type="button" class="panel-action" id="loadMapAiBtn">
+              Interpretar IA
+            </button>
+          </div>
+        </div>
+
+        <div class="load-map-grid" id="advisorLoadMap"></div>
+
+        <div class="empty-state hidden" id="emptyAdvisorLoadMapState">
+          <span>⚖️</span>
+          <h3>Sin mapa disponible</h3>
+          <p>El mapa se mostrará cuando existan datos de carga del equipo.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, cliente, asesor, indicador, SLA, reporte o auditoría..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Carga de asesores</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo identificar asesores sobrecargados, recomendar redistribución y detectar riesgos SLA por responsable.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Qué asesor está sobrecargado">
+        Sobrecarga
+      </button>
+
+      <button type="button" data-bot-prompt="Recomienda redistribución de carga">
+        Redistribuir
+      </button>
+
+      <button type="button" data-bot-prompt="Qué asesor tiene riesgo SLA">
+        Riesgo SLA
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE ASESOR -->
+  <section class="modal" id="advisorDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="advisorDetailIcon">👤</div>
+      <span class="eyebrow eyebrow--red">Detalle del asesor</span>
+      <h3 id="advisorDetailTitle">Asesor seleccionado</h3>
+      <p id="advisorDetailText">Resumen operativo del asesor seleccionado.</p>
+
+      <div class="case-modal-summary" id="advisorDetailSummary"></div>
+
+      <div class="panel-card panel-card--inner">
+        <div class="panel-card__header panel-card__header--inner">
+          <div>
+            <span class="eyebrow">Casos activos</span>
+            <h3>Casos asignados al asesor</h3>
+            <p>Lista resumida para evaluar redistribución o bloqueo de disponibilidad.</p>
+          </div>
+
+          <a href="asignaciones.html" class="panel-link" id="advisorDetailAssignmentsLink">
+            Ver asignaciones
+          </a>
+        </div>
+
+        <div class="case-list" id="advisorDetailCasesList"></div>
+
+        <div class="empty-state hidden" id="emptyAdvisorDetailCasesState">
+          <span>📭</span>
+          <h3>Sin casos activos</h3>
+          <p>El asesor no tiene casos cargados en la vista actual.</p>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="advisorDetailReassignBtn"
+          data-permission="SUPERVISOR_REASSIGN_CASE"
+        >
+          Reasignar carga
+        </button>
+
+        <button
+          type="button"
+          class="btn btn--soft"
+          id="advisorDetailAvailabilityBtn"
+          data-permission="SUPERVISOR_CHANGE_ADVISOR_AVAILABILITY"
+        >
+          Cambiar disponibilidad
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" id="advisorDetailAuditBtn">
+          Ver auditoría
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Volver
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL REDISTRIBUIR CARGA -->
+  <section class="modal" id="redistributeLoadModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">⚖️</div>
+      <span class="eyebrow eyebrow--red">Redistribución</span>
+      <h3>Preparar redistribución de carga</h3>
+      <p>
+        La redistribución debe generar una vista previa de casos antes de aplicarse.
+      </p>
+
+      <div class="case-modal-summary" id="redistributeLoadContext"></div>
+
+      <form class="supervisor-form" id="redistributeLoadForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="redistributeFromAdvisor">Asesor origen</label>
+            <select id="redistributeFromAdvisor" data-catalog="asesores_con_carga" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="redistributeToAdvisor">Asesor destino</label>
+            <select id="redistributeToAdvisor" data-catalog="asesores_disponibles" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="redistributeCasesCount">Cantidad máxima</label>
+            <input id="redistributeCasesCount" type="number" min="1" max="50" placeholder="Ej. 3" />
+          </div>
+
+          <div class="form-group">
+            <label for="redistributeCriteria">Criterio</label>
+            <select id="redistributeCriteria" data-catalog="criterios_redistribucion" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="redistributeComment">Sustento</label>
+          <textarea
+            id="redistributeComment"
+            placeholder="Explica por qué corresponde redistribuir estos casos."
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="redistributeDeclaration" />
+          <span>Confirmo que la redistribución considera capacidad, criticidad y SLA.</span>
+        </label>
+      </form>
+
+      <div class="panel-card panel-card--inner hidden" id="redistributePreviewPanel">
+        <div class="panel-card__header panel-card__header--inner">
+          <div>
+            <span class="eyebrow">Vista previa</span>
+            <h3>Casos sugeridos para redistribución</h3>
+            <p id="redistributePreviewText">
+              La propuesta aparecerá después de preparar la redistribución.
+            </p>
+          </div>
+        </div>
+
+        <div class="cases-table-wrap">
+          <table class="cases-table">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" id="redistributeSelectAllCases" aria-label="Seleccionar todos los casos sugeridos" />
+                </th>
+                <th>Caso</th>
+                <th>Cliente</th>
+                <th>Prioridad</th>
+                <th>SLA</th>
+                <th>Origen</th>
+                <th>Destino sugerido</th>
+                <th>Motivo</th>
+              </tr>
+            </thead>
+
+            <tbody id="redistributePreviewBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="prepareRedistributeLoadBtn">
+          Preparar vista previa
+        </button>
+
+        <button type="button" class="btn btn--primary hidden" id="confirmRedistributeLoadBtn">
+          Aplicar redistribución
+        </button>
+
+        <button type="button" class="btn btn--soft" id="redistributeLoadAiBtn">
+          Recomendar IA
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DISPONIBILIDAD -->
+  <section class="modal" id="advisorAvailabilityModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🟢</div>
+      <span class="eyebrow eyebrow--red">Disponibilidad</span>
+      <h3>Cambiar disponibilidad del asesor</h3>
+      <p>Actualiza si el asesor puede recibir nuevos casos o debe bloquear asignaciones temporalmente.</p>
+
+      <div class="case-modal-summary" id="advisorAvailabilityContext"></div>
+
+      <form class="supervisor-form" id="advisorAvailabilityForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="advisorAvailabilityStatus">Nuevo estado</label>
+            <select id="advisorAvailabilityStatus" data-catalog="estados_disponibilidad_asesor" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorAvailabilityReason">Motivo</label>
+            <select id="advisorAvailabilityReason" data-catalog="motivos_disponibilidad_asesor" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorAvailabilityUntil">Disponible hasta</label>
+            <input id="advisorAvailabilityUntil" type="datetime-local" />
+          </div>
+
+          <div class="form-group">
+            <label for="advisorAvailabilityNotify">Notificación</label>
+            <select id="advisorAvailabilityNotify" data-catalog="canales_alerta">
+              <option value="notificacion_interna">Notificación interna</option>
+              <option value="correo">Correo</option>
+              <option value="panel">Panel de alertas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="advisorAvailabilityComment">Comentario</label>
+          <textarea
+            id="advisorAvailabilityComment"
+            placeholder="Registra el sustento del cambio de disponibilidad."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="advisorAvailabilityDeclaration" />
+          <span>Confirmo que el cambio será visible para asignaciones operativas y quedará auditado.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmAdvisorAvailabilityBtn">
+          Guardar disponibilidad
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CAMBIO MASIVO DE DISPONIBILIDAD -->
+  <section class="modal" id="bulkAdvisorAvailabilityModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">👥</div>
+      <span class="eyebrow eyebrow--red">Disponibilidad masiva</span>
+      <h3>Cambiar disponibilidad de asesores seleccionados</h3>
+      <p>
+        Usa esta acción solo para cambios operativos controlados, como turnos, ausencia o bloqueo temporal.
+      </p>
+
+      <div class="case-modal-summary" id="bulkAdvisorAvailabilitySummary"></div>
+
+      <form class="supervisor-form" id="bulkAdvisorAvailabilityForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="bulkAdvisorAvailabilityStatus">Nuevo estado</label>
+            <select id="bulkAdvisorAvailabilityStatus" data-catalog="estados_disponibilidad_asesor" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="bulkAdvisorAvailabilityReason">Motivo</label>
+            <select id="bulkAdvisorAvailabilityReason" data-catalog="motivos_disponibilidad_asesor" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bulkAdvisorAvailabilityComment">Sustento</label>
+          <textarea
+            id="bulkAdvisorAvailabilityComment"
+            placeholder="Explica por qué se aplica el cambio a varios asesores."
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="bulkAdvisorAvailabilityDeclaration" />
+          <span>Confirmo que revisé a los asesores seleccionados y el cambio quedará auditado.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmBulkAdvisorAvailabilityBtn">
+          Guardar cambios
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL EXPORTAR CARGA -->
+  <section class="modal" id="advisorLoadExportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📤</div>
+      <span class="eyebrow eyebrow--red">Exportación</span>
+      <h3>Exportar carga de asesores</h3>
+      <p>
+        Genera un reporte formal de capacidad, disponibilidad, productividad y riesgos.
+      </p>
+
+      <form class="supervisor-form" id="advisorLoadExportForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="advisorLoadExportFormat">Formato</label>
+            <select id="advisorLoadExportFormat" data-catalog="formatos_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="pdf">PDF ejecutivo</option>
+              <option value="xlsx">Excel analítico</option>
+              <option value="csv">CSV datos</option>
+              <option value="docx">Word informe</option>
+              <option value="png">Imagen</option>
+              <option value="dashboard">Dashboard compartible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadExportScope">Alcance</label>
+            <select id="advisorLoadExportScope" data-catalog="alcances_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="filtrados">Asesores filtrados</option>
+              <option value="seleccionados">Asesores seleccionados</option>
+              <option value="sobrecargados">Sobrecargados</option>
+              <option value="sla_riesgo">Con riesgo SLA</option>
+              <option value="todos">Todo el equipo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadExportDetail">Nivel de detalle</label>
+            <select id="advisorLoadExportDetail" data-catalog="niveles_detalle_reporte">
+              <option value="operativo">Operativo</option>
+              <option value="ejecutivo">Ejecutivo</option>
+              <option value="auditable">Auditable</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="advisorLoadExportDestination">Destino</label>
+            <select id="advisorLoadExportDestination" data-catalog="destinos_exportacion">
+              <option value="descarga_local">Descarga local</option>
+              <option value="historial_reportes">Guardar en historial</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="form-check">
+            <input type="checkbox" id="advisorLoadExportIncludeCases" checked />
+            <span>Casos asignados</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="advisorLoadExportIncludeSla" checked />
+            <span>Riesgo SLA</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="advisorLoadExportIncludeProductivity" checked />
+            <span>Productividad</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="advisorLoadExportIncludeRecommendations" />
+            <span>Recomendaciones</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="advisorLoadExportReason">Motivo de exportación</label>
+          <textarea
+            id="advisorLoadExportReason"
+            placeholder="Ej. Revisión de balance de carga y redistribución de casos críticos."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="advisorLoadExportDeclaration" />
+          <span>Confirmo que la exportación tiene finalidad operativa y quedará registrada en auditoría.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmAdvisorLoadExportBtn">
+          Exportar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CONFIRMACIÓN CENTRAL -->
+  <section class="modal" id="confirmActionModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="confirmActionIcon">⚠️</div>
+      <span class="eyebrow eyebrow--red" id="confirmActionEyebrow">Confirmación requerida</span>
+      <h3 id="confirmActionTitle">Confirmar acción</h3>
+      <p id="confirmActionText">Revisa la información antes de continuar.</p>
+
+      <div class="case-modal-summary" id="confirmActionSummary"></div>
+
+      <label class="form-check">
+        <input type="checkbox" id="confirmActionDeclaration" />
+        <span id="confirmActionDeclarationText">Confirmo que deseo ejecutar esta acción.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmActionAcceptBtn">
+          Confirmar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/supervisor.js"></script>
+</body>
+</html>

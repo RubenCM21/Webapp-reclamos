@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Configuración de supervisión | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/supervisor.css" />
+</head>
+
+<body data-page="supervisor-configuracion-supervision">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- CONFIGURACIÓN DE PÁGINA PARA SUPERVISOR.JS -->
+  <script type="application/json" id="supervisorPageConfig">
+    {
+      "page": "supervisor-configuracion-supervision",
+      "module": "SUPERVISOR_CONFIGURACION",
+      "title": "Configuración de supervisión",
+      "mainEndpoint": "/supervisor/configuracion",
+      "catalogEndpoint": "/supervisor/catalogos",
+      "exportEndpoint": "/supervisor/exportar/configuracion",
+      "auditModule": "CONFIGURACION_SUPERVISOR",
+      "requiresCatalogs": [
+        "categorias_config_supervision",
+        "estados_configuracion",
+        "responsables_configuracion",
+        "impactos_configuracion",
+        "tipos_solicitud_configuracion",
+        "tipos_caso",
+        "canales_atencion",
+        "tipos_cliente",
+        "niveles_impacto_caso",
+        "prioridades_caso",
+        "formatos_exportacion_supervisor",
+        "alcances_exportacion_supervisor",
+        "niveles_detalle_reporte",
+        "destinos_exportacion"
+      ],
+      "permissions": [
+        "SUPERVISOR_VIEW_CONFIG",
+        "SUPERVISOR_SIMULATE_CONFIG",
+        "SUPERVISOR_REQUEST_CONFIG_CHANGE",
+        "SUPERVISOR_EXPORT_CONFIG"
+      ]
+    }
+  </script>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Supervisor</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación supervisor">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="casos-pendientes.html" class="sidebar-link">
+        <span>📋</span>
+        Casos pendientes
+        <small id="sidebarPendingCount">0</small>
+      </a>
+
+      <a href="asignaciones.html" class="sidebar-link">
+        <span>👥</span>
+        Asignaciones
+      </a>
+
+      <a href="carga-asesores.html" class="sidebar-link">
+        <span>⚖️</span>
+        Carga de asesores
+      </a>
+
+      <a href="monitoreo-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Monitoreo SLA
+        <small id="sidebarSlaCount">0</small>
+      </a>
+
+      <a href="indicadores.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores
+      </a>
+
+      <a href="reportes.html" class="sidebar-link">
+        <span>📊</span>
+        Reportes
+      </a>
+
+      <a href="auditoria-casos.html" class="sidebar-link">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="configuracion-supervision.html" class="sidebar-link active">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Parámetros operativos</span>
+          <h1>Configuración de supervisión</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="monitoreo-sla.html" class="notification-btn" aria-label="Alertas SLA">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">SD</span>
+            <div>
+              <strong id="userNameTop">Supervisor</strong>
+              <small id="userRoleTop">Supervisor de Atención</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="indicadores.html">Indicadores</a>
+            <a href="auditoria-casos.html">Auditoría</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="supervisor-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red">
+            Configuración en modo seguro
+          </span>
+
+          <h2>
+            Consulta reglas, simula impacto y solicita cambios al Administrador
+          </h2>
+
+          <p>
+            El Supervisor puede revisar reglas operativas de asignación, SLA, rutas, prioridad y alertas.
+            Para mantener control interno, los cambios globales se envían como solicitud y no se aplican directamente.
+          </p>
+
+          <div class="welcome-actions">
+            <button
+              type="button"
+              class="btn btn--primary"
+              id="simulatePriorityBtn"
+              data-permission="SUPERVISOR_SIMULATE_CONFIG"
+            >
+              Simular prioridad
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--soft"
+              id="openConfigChangeRequestBtn"
+              data-permission="SUPERVISOR_REQUEST_CONFIG_CHANGE"
+            >
+              Solicitar cambio
+            </button>
+
+            <button
+              type="button"
+              class="btn btn--ghost-dark"
+              id="exportConfigBtn"
+              data-permission="SUPERVISOR_EXPORT_CONFIG"
+            >
+              Exportar configuración
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="openBotWelcome">
+              Consultar IA
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong>Modo solo lectura</strong>
+            <small>Los cambios requieren aprobación del Administrador</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="configKpiGrid" aria-label="Indicadores de configuración"></section>
+
+      <!-- FILTROS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Filtros avanzados</span>
+            <h2>Consulta de reglas operativas</h2>
+            <p>
+              Filtra por categoría, estado, responsable, impacto y texto de búsqueda.
+            </p>
+          </div>
+
+          <div class="panel-header-actions">
+            <button type="button" class="panel-action" id="refreshConfigBtn">
+              Actualizar
+            </button>
+
+            <button type="button" class="panel-action" id="resetConfigFiltersBtn">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        <div class="supervisor-filter-grid">
+          <div class="form-group">
+            <label for="configSearch">Buscar</label>
+            <input
+              id="configSearch"
+              type="search"
+              placeholder="Buscar regla, ruta, SLA, prioridad, responsable o descripción..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="configCategoryFilter">Categoría</label>
+            <select id="configCategoryFilter" data-catalog="categorias_config_supervision">
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="configStatusFilter">Estado</label>
+            <select id="configStatusFilter" data-catalog="estados_configuracion">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="configResponsibleFilter">Responsable</label>
+            <select id="configResponsibleFilter" data-catalog="responsables_configuracion">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="configImpactFilter">Impacto</label>
+            <select id="configImpactFilter" data-catalog="impactos_configuracion">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- REGLAS + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Reglas vigentes</span>
+              <h2>Configuración operativa activa</h2>
+              <p>
+                Consulta reglas de asignación, priorización, SLA, derivación y alertas.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action active" data-config-filter="todos">
+                Todas
+              </button>
+
+              <button type="button" class="panel-action" data-config-filter="sla">
+                SLA
+              </button>
+
+              <button type="button" class="panel-action" data-config-filter="prioridad">
+                Prioridad
+              </button>
+
+              <button type="button" class="panel-action" data-config-filter="asignacion">
+                Asignación
+              </button>
+
+              <button type="button" class="panel-action" data-config-filter="alerta">
+                Alertas
+              </button>
+            </div>
+          </div>
+
+          <div class="case-list" id="configRulesList"></div>
+
+          <div class="empty-state hidden" id="emptyConfigRulesState">
+            <span>⚙️</span>
+            <h3>Sin reglas con este filtro</h3>
+            <p>Cambia los filtros o actualiza la configuración.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de configuración</h2>
+                <p>Analiza impacto y consistencia de reglas.</p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="configAiSummary"></div>
+
+            <button type="button" class="btn btn--primary btn--full" data-bot-prompt="Analiza la configuración de supervisión">
+              Analizar configuración
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Plan seguro</span>
+                <h2>Gestión de cambios</h2>
+                <p>
+                  Simula, sustenta y solicita aprobación antes de cambiar reglas.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="configActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+
+      <!-- TABLA DE REGLAS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Detalle tabular</span>
+            <h2>Reglas de configuración</h2>
+            <p>
+              Vista estructurada para revisión de parámetros vigentes.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="panel-action"
+            id="requestConfigChangeBtn"
+            data-permission="SUPERVISOR_REQUEST_CONFIG_CHANGE"
+          >
+            Solicitar cambio
+          </button>
+        </div>
+
+        <div class="cases-table-wrap">
+          <table class="cases-table">
+            <thead>
+              <tr>
+                <th>Regla</th>
+                <th>Categoría</th>
+                <th>Valor</th>
+                <th>Estado</th>
+                <th>Responsable</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody id="configRulesTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- RUTAS OPERATIVAS -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Rutas y derivaciones</span>
+            <h2>Reglas de ruta operativa</h2>
+            <p>
+              Revisa origen, destino, criterio y SLA interno para derivaciones.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="panel-action"
+            id="routeRuleRequestBtn"
+            data-permission="SUPERVISOR_REQUEST_CONFIG_CHANGE"
+          >
+            Solicitar cambio de ruta
+          </button>
+        </div>
+
+        <div class="case-list" id="routeRulesList"></div>
+
+        <div class="empty-state hidden" id="emptyRouteRulesState">
+          <span>🧭</span>
+          <h3>Sin rutas configuradas</h3>
+          <p>Las rutas aparecerán cuando el backend devuelva reglas de derivación.</p>
+        </div>
+      </section>
+
+      <!-- SOLICITUDES DE CAMBIO -->
+      <section class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <span class="eyebrow">Solicitudes</span>
+            <h2>Solicitudes de cambio enviadas</h2>
+            <p>
+              Historial de solicitudes que el Supervisor envió al Administrador para revisión.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="panel-action"
+            id="slaRuleRequestBtn"
+            data-permission="SUPERVISOR_REQUEST_CONFIG_CHANGE"
+          >
+            Solicitar cambio SLA
+          </button>
+        </div>
+
+        <div class="activity-timeline" id="configRequestsList"></div>
+
+        <div class="empty-state hidden" id="emptyConfigRequestsState">
+          <span>📝</span>
+          <h3>Sin solicitudes registradas</h3>
+          <p>Cuando solicites cambios aparecerán en esta sección.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar caso, cliente, asesor, indicador, SLA, reporte o auditoría..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Configuración de supervisión</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo explicar reglas, simular impacto, detectar inconsistencias o ayudarte a sustentar una solicitud de cambio.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Explica las reglas SLA activas">
+        SLA
+      </button>
+
+      <button type="button" data-bot-prompt="Qué regla debería revisarse">
+        Revisar regla
+      </button>
+
+      <button type="button" data-bot-prompt="Ayúdame a sustentar una solicitud de cambio">
+        Solicitud
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE REGLA -->
+  <section class="modal" id="configRuleDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">⚙️</div>
+      <span class="eyebrow eyebrow--red">Detalle de configuración</span>
+      <h3 id="configRuleDetailTitle">Regla seleccionada</h3>
+      <p id="configRuleDetailText">Detalle de la regla operativa.</p>
+
+      <div class="case-modal-summary" id="configRuleDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="configRuleDetailRequestBtn"
+          data-permission="SUPERVISOR_REQUEST_CONFIG_CHANGE"
+        >
+          Solicitar cambio
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL SIMULAR PRIORIDAD -->
+  <section class="modal" id="simulatePriorityModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🧪</div>
+      <span class="eyebrow eyebrow--red">Simulación</span>
+      <h3>Simular prioridad y ruta de caso</h3>
+      <p>
+        Esta simulación no modifica reglas. Sirve para validar cómo se clasificaría un caso con los parámetros actuales.
+      </p>
+
+      <form class="supervisor-form" id="simulatePriorityForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="simulateCaseType">Tipo de caso</label>
+            <select id="simulateCaseType" data-catalog="tipos_caso" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="simulateChannel">Canal</label>
+            <select id="simulateChannel" data-catalog="canales_atencion" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="simulateClientType">Tipo de cliente</label>
+            <select id="simulateClientType" data-catalog="tipos_cliente" required>
+              <option value="">Seleccionar</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="simulateImpact">Impacto</label>
+            <select id="simulateImpact" data-catalog="niveles_impacto_caso" required>
+              <option value="">Seleccionar</option>
+              <option value="bajo">Bajo</option>
+              <option value="medio">Medio</option>
+              <option value="alto">Alto</option>
+              <option value="critico">Crítico</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="simulateSla">SLA estimado</label>
+            <select id="simulateSla" data-catalog="rangos_sla_supervisor">
+              <option value="">Sin SLA específico</option>
+              <option value="menos_4h">Menos de 4 horas</option>
+              <option value="menos_8h">Menos de 8 horas</option>
+              <option value="menos_24h">Menos de 24 horas</option>
+              <option value="mayor_24h">Mayor a 24 horas</option>
+            </select>
+          </div>
+        </div>
+      </form>
+
+      <div class="panel-card panel-card--inner hidden" id="simulatePriorityResultPanel">
+        <div class="panel-card__header panel-card__header--inner">
+          <div>
+            <span class="eyebrow">Resultado</span>
+            <h3>Clasificación sugerida</h3>
+            <p>
+              Resultado calculado por backend según reglas vigentes.
+            </p>
+          </div>
+        </div>
+
+        <div class="case-modal-summary" id="simulatePriorityResult"></div>
+      </div>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="confirmSimulatePriorityBtn"
+          data-permission="SUPERVISOR_SIMULATE_CONFIG"
+        >
+          Simular
+        </button>
+
+        <button type="button" class="btn btn--soft" id="simulatePriorityRequestBtn">
+          Solicitar ajuste
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL SOLICITUD DE CAMBIO -->
+  <section class="modal" id="configChangeRequestModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📝</div>
+      <span class="eyebrow eyebrow--red">Solicitud al Administrador</span>
+      <h3>Solicitar cambio de configuración</h3>
+      <p>
+        La solicitud será enviada al Administrador para evaluación. No cambia reglas directamente.
+      </p>
+
+      <form class="supervisor-form" id="configChangeRequestForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="configChangeType">Tipo de solicitud</label>
+            <select id="configChangeType" data-catalog="tipos_solicitud_configuracion" required>
+              <option value="">Seleccionar</option>
+              <option value="sla">Cambio de SLA</option>
+              <option value="prioridad">Cambio de prioridad</option>
+              <option value="ruta">Cambio de ruta</option>
+              <option value="asignacion">Cambio de asignación</option>
+              <option value="alerta">Cambio de alerta</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="configChangeRuleId">Regla asociada</label>
+            <input
+              id="configChangeRuleId"
+              type="text"
+              placeholder="ID o código de regla. Opcional."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="configChangeImpact">Impacto esperado</label>
+            <select id="configChangeImpact" data-catalog="impactos_configuracion">
+              <option value="">Seleccionar</option>
+              <option value="bajo">Bajo</option>
+              <option value="medio">Medio</option>
+              <option value="alto">Alto</option>
+              <option value="critico">Crítico</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="configChangeReason">Motivo</label>
+          <textarea
+            id="configChangeReason"
+            placeholder="Explica el problema operativo detectado."
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="configChangeProposal">Propuesta</label>
+          <textarea
+            id="configChangeProposal"
+            placeholder="Describe el cambio solicitado y el resultado esperado."
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="configChangeComment">Comentario adicional</label>
+          <textarea
+            id="configChangeComment"
+            placeholder="Incluye evidencia, ejemplos de casos o sustento adicional."
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="configChangeDeclaration" />
+          <span>Confirmo que esta solicitud debe ser evaluada por el Administrador antes de aplicarse.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="confirmConfigChangeRequestBtn"
+          data-permission="SUPERVISOR_REQUEST_CONFIG_CHANGE"
+        >
+          Enviar solicitud
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL EXPORTAR CONFIGURACIÓN -->
+  <section class="modal" id="configExportModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">📤</div>
+      <span class="eyebrow eyebrow--red">Exportación</span>
+      <h3>Exportar configuración de supervisión</h3>
+      <p>
+        Exporta reglas vigentes, rutas operativas y solicitudes de cambio para revisión o auditoría.
+      </p>
+
+      <form class="supervisor-form" id="configExportForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="configExportFormat">Formato</label>
+            <select id="configExportFormat" data-catalog="formatos_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="pdf">PDF ejecutivo</option>
+              <option value="docx">Word informe</option>
+              <option value="xlsx">Excel analítico</option>
+              <option value="csv">CSV datos</option>
+              <option value="png">Imagen</option>
+              <option value="dashboard">Dashboard compartible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="configExportScope">Alcance</label>
+            <select id="configExportScope" data-catalog="alcances_exportacion_supervisor" required>
+              <option value="">Seleccionar</option>
+              <option value="reglas_filtradas">Reglas filtradas</option>
+              <option value="rutas">Rutas operativas</option>
+              <option value="solicitudes">Solicitudes de cambio</option>
+              <option value="todo">Toda la configuración visible</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="configExportDetail">Nivel de detalle</label>
+            <select id="configExportDetail" data-catalog="niveles_detalle_reporte">
+              <option value="operativo">Operativo</option>
+              <option value="ejecutivo">Ejecutivo</option>
+              <option value="auditable">Auditable</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="configExportDestination">Destino</label>
+            <select id="configExportDestination" data-catalog="destinos_exportacion">
+              <option value="descarga_local">Descarga local</option>
+              <option value="historial_reportes">Guardar en historial</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="form-check">
+            <input type="checkbox" id="configExportIncludeRules" checked />
+            <span>Reglas vigentes</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="configExportIncludeRoutes" checked />
+            <span>Rutas operativas</span>
+          </label>
+
+          <label class="form-check">
+            <input type="checkbox" id="configExportIncludeRequests" />
+            <span>Solicitudes de cambio</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="configExportReason">Motivo de exportación</label>
+          <textarea
+            id="configExportReason"
+            placeholder="Ej. Revisión operativa de reglas SLA y rutas de derivación."
+            required
+          ></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" id="configExportDeclaration" />
+          <span>Confirmo que la exportación tiene finalidad operativa y quedará registrada en auditoría.</span>
+        </label>
+      </form>
+
+      <div class="modal__actions">
+        <button
+          type="button"
+          class="btn btn--primary"
+          id="confirmConfigExportBtn"
+          data-permission="SUPERVISOR_EXPORT_CONFIG"
+        >
+          Exportar configuración
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL CONFIRMACIÓN CENTRAL -->
+  <section class="modal" id="confirmActionModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="confirmActionIcon">⚠️</div>
+      <span class="eyebrow eyebrow--red" id="confirmActionEyebrow">Confirmación requerida</span>
+      <h3 id="confirmActionTitle">Confirmar acción</h3>
+      <p id="confirmActionText">Revisa la información antes de continuar.</p>
+
+      <div class="case-modal-summary" id="confirmActionSummary"></div>
+
+      <label class="form-check">
+        <input type="checkbox" id="confirmActionDeclaration" />
+        <span id="confirmActionDeclarationText">Confirmo que deseo ejecutar esta acción.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmActionAcceptBtn">
+          Confirmar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/supervisor.js"></script>
+</body>
+</html>
