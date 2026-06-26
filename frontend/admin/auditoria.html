@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Auditoría | Claro Atención 360</title>
+
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+
+<body data-page="admin-auditoria">
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <a href="dashboard.html" class="brand" aria-label="Claro Atención 360">
+        <span class="brand__name">Claro</span>
+        <span class="brand__spark">●</span>
+      </a>
+      <span class="brand__tag">Atención 360 | Administrador</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navegación administrador">
+      <a href="dashboard.html" class="sidebar-link">
+        <span>🏠</span>
+        Dashboard
+      </a>
+
+      <a href="usuarios.html" class="sidebar-link">
+        <span>👤</span>
+        Usuarios
+        <small id="sidebarUserCount">0</small>
+      </a>
+
+      <a href="roles-permisos.html" class="sidebar-link">
+        <span>🔐</span>
+        Roles y permisos
+      </a>
+
+      <a href="catalogos.html" class="sidebar-link">
+        <span>🧩</span>
+        Catálogos
+      </a>
+
+      <a href="reglas-sla.html" class="sidebar-link">
+        <span>⏱️</span>
+        Reglas SLA
+      </a>
+
+      <a href="indicadores-reportes.html" class="sidebar-link">
+        <span>📈</span>
+        Indicadores y reportes
+      </a>
+
+      <a href="integraciones.html" class="sidebar-link">
+        <span>🔌</span>
+        Integraciones
+        <small id="sidebarIntegrationAlerts">0</small>
+      </a>
+
+      <a href="auditoria.html" class="sidebar-link active">
+        <span>🕵️</span>
+        Auditoría
+      </a>
+
+      <a href="respaldo.html" class="sidebar-link">
+        <span>💾</span>
+        Respaldo
+      </a>
+
+      <a href="configuracion-sistema.html" class="sidebar-link">
+        <span>⚙️</span>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar-ai-btn" id="openBotSidebar">
+        <span>🤖</span>
+        Asistente IA
+      </button>
+
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <span>↩</span>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- APP -->
+  <div class="app-shell">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú">
+          ☰
+        </button>
+
+        <div>
+          <span class="eyebrow eyebrow--red">Trazabilidad administrativa</span>
+          <h1>Auditoría</h1>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="icon-btn" id="globalSearchBtn" aria-label="Buscar">
+          ⌕
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <a href="auditoria.html" class="notification-btn" aria-label="Alertas administrativas">
+          🔔
+          <span id="notificationBadge">0</span>
+        </a>
+
+        <div class="user-menu">
+          <button type="button" class="user-menu__button" id="userMenuButton">
+            <span class="user-avatar" id="userAvatar">AD</span>
+            <div>
+              <strong id="userNameTop">Administrador</strong>
+              <small id="userRoleTop">Administrador del sistema</small>
+            </div>
+          </button>
+
+          <div class="user-menu__dropdown" id="userMenuDropdown">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="indicadores-reportes.html">Reportes</a>
+            <a href="configuracion-sistema.html">Configuración</a>
+            <button type="button" id="logoutDropdownBtn">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-page">
+      <!-- HERO -->
+      <section class="welcome-card">
+        <div class="welcome-card__copy">
+          <span class="eyebrow eyebrow--red" id="auditHeroEyebrow">
+            Control, evidencia y cumplimiento
+          </span>
+
+          <h2 id="auditHeroTitle">
+            Consulta acciones administrativas, cambios sensibles y diferencias antes/después
+          </h2>
+
+          <p id="auditHeroText">
+            Supervisa eventos de usuarios, roles, permisos, catálogos, reglas SLA, reportes,
+            integraciones, respaldo y configuración. Toda descarga o comparación queda registrada.
+          </p>
+
+          <div class="welcome-actions">
+            <button type="button" class="btn btn--primary" id="compareAuditEventsBtn">
+              Comparar eventos
+            </button>
+
+            <button type="button" class="btn btn--soft" id="downloadAuditEventsBtn">
+              Descargar eventos
+            </button>
+
+            <button type="button" class="btn btn--ghost-dark" id="exportAdminAuditBtn">
+              Exportar auditoría
+            </button>
+          </div>
+        </div>
+
+        <aside class="welcome-card__status">
+          <div class="status-orb">
+            <span></span>
+          </div>
+
+          <div>
+            <strong id="auditSummaryTitle">Eventos auditables</strong>
+            <small id="auditSummaryText">Resumen pendiente de carga.</small>
+          </div>
+        </aside>
+      </section>
+
+      <!-- KPIS -->
+      <section class="kpi-grid" id="adminAuditKpiGrid" aria-label="Indicadores de auditoría">
+        <article class="kpi-card">
+          <span class="kpi-card__icon">⏳</span>
+          <div>
+            <strong>...</strong>
+            <p>Cargando</p>
+            <small>Consultando auditoría desde la base de datos.</small>
+          </div>
+        </article>
+      </section>
+
+      <!-- GRÁFICOS / RIESGOS -->
+      <section class="dashboard-grid dashboard-grid--secondary">
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Eventos por módulo</span>
+              <h2>Distribución de auditoría</h2>
+              <p>
+                Cantidad de eventos administrativos por módulo afectado.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshAuditTypeChartBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="bar-chart" id="adminAuditTypeChart">
+            <div class="loading-panel loading-panel--inline">
+              <span class="spinner"></span>
+              <strong>Cargando eventos por módulo...</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Eventos críticos</span>
+              <h2>Riesgos y sensibilidad</h2>
+              <p>
+                Cambios sensibles o críticos que requieren revisión administrativa.
+              </p>
+            </div>
+
+            <button type="button" class="panel-action" id="refreshAuditRiskBtn">
+              Actualizar
+            </button>
+          </div>
+
+          <div class="admin-alert-list" id="adminAuditRiskList">
+            <div class="loading-panel loading-panel--inline">
+              <span class="spinner"></span>
+              <strong>Cargando eventos críticos...</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- EVENTOS + IA -->
+      <section class="dashboard-grid">
+        <section class="panel-card cases-panel">
+          <div class="panel-card__header">
+            <div>
+              <span class="eyebrow">Bitácora administrativa</span>
+              <h2>Eventos auditables</h2>
+              <p>
+                Consulta trazabilidad por fecha, módulo, usuario, acción, resultado, IP, origen y sensibilidad.
+              </p>
+            </div>
+
+            <div class="panel-header-actions">
+              <button type="button" class="panel-action" id="refreshAuditEventsBtn">
+                Actualizar
+              </button>
+
+              <button type="button" class="panel-action" id="generateAdminAuditInsightBtn">
+                Generar insight
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="search-box-large">
+              <span>⌕</span>
+              <input
+                id="adminAuditSearch"
+                type="search"
+                placeholder="Buscar por módulo, acción, usuario, IP, resultado, entidad o valor modificado..."
+              />
+            </div>
+
+            <div class="case-filters" id="adminAuditFilters">
+              <button type="button" class="filter-chip active" data-admin-audit-filter="todos">
+                Todos
+              </button>
+
+              <button type="button" class="filter-chip" data-admin-audit-filter="usuarios">
+                Usuarios
+              </button>
+
+              <button type="button" class="filter-chip" data-admin-audit-filter="roles">
+                Roles y permisos
+              </button>
+
+              <button type="button" class="filter-chip" data-admin-audit-filter="catalogos">
+                Catálogos
+              </button>
+
+              <button type="button" class="filter-chip" data-admin-audit-filter="sla">
+                SLA
+              </button>
+
+              <button type="button" class="filter-chip" data-admin-audit-filter="integraciones">
+                Integraciones
+              </button>
+
+              <button type="button" class="filter-chip" data-admin-audit-filter="configuracion">
+                Configuración
+              </button>
+
+              <button type="button" class="filter-chip" data-admin-audit-filter="criticos">
+                Críticos
+              </button>
+            </div>
+          </div>
+
+          <div class="cases-table-wrap">
+            <table class="cases-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Módulo</th>
+                  <th>Acción</th>
+                  <th>Usuario</th>
+                  <th>Antes</th>
+                  <th>Después</th>
+                  <th>Resultado</th>
+                  <th>Detalle</th>
+                </tr>
+              </thead>
+
+              <tbody id="adminAuditTableBody">
+                <tr>
+                  <td colspan="8">
+                    <div class="loading-panel loading-panel--inline">
+                      <span class="spinner"></span>
+                      <strong>Cargando auditoría...</strong>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="empty-state hidden" id="emptyAdminAuditState">
+            <span>🕵️</span>
+            <h3>No hay eventos con este filtro</h3>
+            <p>Cambia la búsqueda o selecciona otra categoría de auditoría.</p>
+          </div>
+        </section>
+
+        <aside class="form-side-stack sticky-panel">
+          <section class="panel-card ai-panel">
+            <div class="ai-panel__header">
+              <span>🤖</span>
+              <div>
+                <h2>IA de auditoría</h2>
+                <p>
+                  Analiza eventos sensibles, patrones de cambio, accesos críticos, IPs y posibles riesgos.
+                </p>
+              </div>
+            </div>
+
+            <div class="ai-summary" id="adminAuditAiSummary">
+              <div class="ai-summary-item">
+                <strong>Esperando datos</strong>
+                <p>El análisis se cargará cuando el backend retorne información.</p>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn--primary btn--full" id="analyzeAdminAuditBtn">
+              Analizar auditoría
+            </button>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-card__header">
+              <div>
+                <span class="eyebrow">Evidencia</span>
+                <h2>Plan de revisión</h2>
+                <p>
+                  Acciones sugeridas para revisión de trazabilidad administrativa.
+                </p>
+              </div>
+            </div>
+
+            <div class="checklist-grid" id="adminAuditActionPlan"></div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- BUSCADOR GLOBAL -->
+  <section class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-modal__content">
+      <div class="search-modal__bar">
+        <span>⌕</span>
+        <input
+          id="globalSearchInput"
+          type="search"
+          placeholder="Buscar usuario, rol, catálogo, SLA, integración, reporte o evento..."
+        />
+        <button type="button" id="closeSearchBtn">Cerrar</button>
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <aside class="bot-drawer" id="botDrawer" aria-hidden="true">
+    <div class="bot-drawer__header">
+      <div>
+        <span>🤖</span>
+        <strong>Asistente IA</strong>
+        <small>Auditoría</small>
+      </div>
+
+      <button type="button" id="closeBotDrawer">×</button>
+    </div>
+
+    <div class="bot-drawer__messages" id="botMessages">
+      <div class="message message--bot">
+        Puedo ayudarte a identificar cambios críticos, accesos sensibles, patrones de auditoría y eventos que requieren revisión.
+      </div>
+    </div>
+
+    <div class="bot-drawer__quick">
+      <button type="button" data-bot-prompt="Analiza eventos críticos de auditoría">
+        Críticos
+      </button>
+
+      <button type="button" data-bot-prompt="Qué cambios administrativos son más sensibles">
+        Sensibles
+      </button>
+
+      <button type="button" data-bot-prompt="Compara los eventos recientes de auditoría">
+        Comparar
+      </button>
+    </div>
+
+    <form class="bot-drawer__form" id="botForm">
+      <input id="botInput" type="text" placeholder="Escribe tu consulta..." autocomplete="off" />
+      <button type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <!-- BACKDROPS -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- MODAL DETALLE AUDITORÍA -->
+  <section class="modal" id="adminAuditDetailModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="adminAuditDetailIcon">🕵️</div>
+      <span class="eyebrow eyebrow--red">Detalle auditable</span>
+      <h3 id="adminAuditDetailTitle">Evento seleccionado</h3>
+      <p id="adminAuditDetailText">Detalle de trazabilidad administrativa.</p>
+
+      <div class="case-modal-summary" id="adminAuditDetailSummary"></div>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="adminAuditDownloadDetailBtn">
+          Descargar detalle
+        </button>
+
+        <button type="button" class="btn btn--soft" id="adminAuditCompareDetailBtn">
+          Comparar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL COMPARAR AUDITORÍA -->
+  <section class="modal" id="adminAuditCompareModal" aria-hidden="true">
+    <div class="modal__content modal__content--wide">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon">🔎</div>
+      <span class="eyebrow eyebrow--red">Comparación de eventos</span>
+      <h3>Comparar eventos administrativos</h3>
+      <p>
+        Selecciona módulo y tipo de comparación para revisar cambios, patrones, repetición de acciones o sensibilidad.
+      </p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="adminAuditCompareModule">Módulo</label>
+          <select id="adminAuditCompareModule">
+            <option value="">Seleccionar módulo</option>
+            <option value="Usuarios">Usuarios</option>
+            <option value="Roles y permisos">Roles y permisos</option>
+            <option value="Catálogos">Catálogos</option>
+            <option value="Reglas SLA">Reglas SLA</option>
+            <option value="Indicadores y reportes">Indicadores y reportes</option>
+            <option value="Integraciones">Integraciones</option>
+            <option value="Respaldo">Respaldo</option>
+            <option value="Configuración">Configuración</option>
+          </select>
+          <p class="form-help">Este campo será cargado desde la base de datos.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="adminAuditCompareType">Tipo de comparación</label>
+          <select id="adminAuditCompareType">
+            <option value="">Seleccionar comparación</option>
+            <option value="Antes y después">Antes y después</option>
+            <option value="Eventos por usuario">Eventos por usuario</option>
+            <option value="Eventos críticos">Eventos críticos</option>
+            <option value="Cambios repetidos">Cambios repetidos</option>
+            <option value="Acciones fallidas">Acciones fallidas</option>
+            <option value="Cambios de permisos">Cambios de permisos</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="adminAuditCompareStart">Fecha inicio</label>
+          <input id="adminAuditCompareStart" type="date" />
+        </div>
+
+        <div class="form-group">
+          <label for="adminAuditCompareEnd">Fecha fin</label>
+          <input id="adminAuditCompareEnd" type="date" />
+        </div>
+      </div>
+
+      <label class="form-check">
+        <input type="checkbox" id="adminAuditCompareDeclaration" />
+        <span>Confirmo que la comparación será usada para fines administrativos o de control interno.</span>
+      </label>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" id="confirmAdminAuditCompareBtn">
+          Comparar
+        </button>
+
+        <button type="button" class="btn btn--ghost-dark" data-close-modal>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL GENÉRICO -->
+  <section class="modal" id="genericModal" aria-hidden="true">
+    <div class="modal__content">
+      <button type="button" class="modal__close" data-close-modal>×</button>
+
+      <div class="modal__icon" id="genericModalIcon">ℹ</div>
+      <h3 id="genericModalTitle">Información</h3>
+      <p id="genericModalText">Mensaje del sistema.</p>
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--primary" data-close-modal>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>
